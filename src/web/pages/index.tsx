@@ -162,6 +162,16 @@ export default function Index() {
 
             {/* Right side */}
             <div className="flex items-center gap-4">
+              {/* Social icons */}
+              <div className="hidden lg:flex items-center gap-2">
+                <a href="https://tiktok.com/@panettotrend" target="_blank" rel="noopener noreferrer" className="p-2 text-stone-500 hover:text-[#C9A962] transition-colors duration-300">
+                  <TikTokIcon />
+                </a>
+                <a href="https://instagram.com/panetto_trend" target="_blank" rel="noopener noreferrer" className="p-2 text-stone-500 hover:text-[#C9A962] transition-colors duration-300">
+                  <InstagramIcon />
+                </a>
+              </div>
+
               {/* Search */}
               <div className="hidden sm:block relative">
                 <input
@@ -210,9 +220,17 @@ export default function Index() {
               <button onClick={() => scrollToSection(trendRef)} className="block w-full text-left py-3 text-stone-600 hover:text-[#C9A962] text-sm tracking-wide uppercase border-b border-stone-100">PanettoTrend</button>
               <button onClick={() => scrollToSection(teesRef)} className="block w-full text-left py-3 text-stone-600 hover:text-[#C9A962] text-sm tracking-wide uppercase border-b border-stone-100">PanettoTees</button>
               <button onClick={() => scrollToSection(bookRef)} className="block w-full text-left py-3 text-stone-600 hover:text-[#C9A962] text-sm tracking-wide uppercase border-b border-stone-100">PanettoBook</button>
-              <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 py-3 text-stone-600 hover:text-[#C9A962] text-sm tracking-wide uppercase">
+              <a href="https://tiktok.com/@panettotrend" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 py-3 text-stone-600 hover:text-[#C9A962] text-sm tracking-wide uppercase">
                 <TikTokIcon /> TikTok Shop
               </a>
+              <div className="flex items-center gap-4 pt-4">
+                <a href="https://tiktok.com/@panettotrend" target="_blank" rel="noopener noreferrer" className="p-2 text-stone-500 hover:text-[#C9A962] transition-colors">
+                  <TikTokIcon />
+                </a>
+                <a href="https://instagram.com/panetto_trend" target="_blank" rel="noopener noreferrer" className="p-2 text-stone-500 hover:text-[#C9A962] transition-colors">
+                  <InstagramIcon />
+                </a>
+              </div>
             </div>
           </div>
         )}
@@ -428,10 +446,10 @@ export default function Index() {
               </h3>
               <p className="text-stone-400 mb-8 max-w-sm font-light leading-relaxed">Deine erste Adresse für trendige TikTok Produkte. Gadgets, Fashion & eBooks – alles für deinen Lifestyle.</p>
               <div className="flex gap-4">
-                <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" className="w-11 h-11 flex items-center justify-center border border-stone-700 text-stone-400 hover:border-[#C9A962] hover:text-[#C9A962] transition-all">
+                <a href="https://tiktok.com/@panettotrend" target="_blank" rel="noopener noreferrer" className="w-11 h-11 flex items-center justify-center border border-stone-700 text-stone-400 hover:border-[#C9A962] hover:text-[#C9A962] transition-all duration-300">
                   <TikTokIcon />
                 </a>
-                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="w-11 h-11 flex items-center justify-center border border-stone-700 text-stone-400 hover:border-[#C9A962] hover:text-[#C9A962] transition-all">
+                <a href="https://instagram.com/panetto_trend" target="_blank" rel="noopener noreferrer" className="w-11 h-11 flex items-center justify-center border border-stone-700 text-stone-400 hover:border-[#C9A962] hover:text-[#C9A962] transition-all duration-300">
                   <InstagramIcon />
                 </a>
               </div>
@@ -606,9 +624,16 @@ function ProductCard({ product, addToCart, setSizeChartOpen }: { product: Produc
       <div className="relative aspect-square overflow-hidden bg-stone-50">
         <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
         {product.badge && (
-          <span className="absolute top-4 left-4 px-3 py-1 bg-[#C9A962] text-white text-xs font-medium tracking-wide uppercase">
-            {product.badge}
-          </span>
+          <div className="absolute top-4 right-4 w-14 h-14 flex items-center justify-center">
+            <div className="absolute inset-0 bg-gradient-to-br from-[#D4AF37] via-[#C9A962] to-[#B8984F] rounded-full shadow-lg opacity-90"></div>
+            <div className="absolute inset-[2px] bg-gradient-to-br from-[#E8D48A] via-[#C9A962] to-[#A68B4D] rounded-full"></div>
+            <div className="relative flex flex-col items-center justify-center text-center">
+              <svg className="w-4 h-4 text-stone-900" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.1z" />
+              </svg>
+              <span className="text-[6px] font-bold text-stone-900 uppercase tracking-tight leading-none mt-0.5">Viral</span>
+            </div>
+          </div>
         )}
       </div>
       <div className="p-6">
