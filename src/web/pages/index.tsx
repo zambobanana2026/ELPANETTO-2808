@@ -93,10 +93,16 @@ export default function Index() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [sizeChartOpen, setSizeChartOpen] = useState(false);
   const [newsletter, setNewsletter] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
   const trendRef = useRef<HTMLDivElement>(null);
   const teesRef = useRef<HTMLDivElement>(null);
   const bookRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 1200);
+    return () => clearTimeout(timer);
+  }, []);
 
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const cartTotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -138,6 +144,27 @@ export default function Index() {
 
   return (
     <div className="min-h-screen bg-[#FAF9F6] text-stone-900 font-sans">
+      {/* Loading Screen */}
+      {isLoading && (
+        <div className="fixed inset-0 z-[100] bg-[#FAF9F6] flex items-center justify-center animate-loader-fade-out" style={{ animationDelay: '0.8s', animationFillMode: 'forwards' }}>
+          <div className="text-center">
+            <div className="relative mb-8">
+              <div className="w-16 h-16 border-2 border-stone-200 rounded-full animate-spin" style={{ borderTopColor: '#C9A962' }}></div>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-3 h-3 bg-[#C9A962] rounded-full animate-pulse"></div>
+              </div>
+            </div>
+            <h1 className="text-3xl font-light tracking-[0.25em] uppercase animate-loader-text">
+              <span className="text-stone-900">El</span>
+              <span className="text-[#C9A962]">Panetto</span>
+            </h1>
+            <p className="text-stone-400 text-sm mt-3 tracking-wider font-light animate-loader-text" style={{ animationDelay: '0.2s' }}>
+              Premium Shopping Experience
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Navbar */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-[#FAF9F6]/95 backdrop-blur-md border-b border-stone-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -624,6 +651,16 @@ export default function Index() {
           50% { opacity: 0.95; box-shadow: 0 0 20px rgba(212, 175, 55, 0.6), 0 0 40px rgba(212, 175, 55, 0.3); }
         }
         .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+        @keyframes loader-fade-out {
+          from { opacity: 1; }
+          to { opacity: 0; pointer-events: none; }
+        }
+        .animate-loader-fade-out { animation: loader-fade-out 0.4s ease-out forwards; }
+        @keyframes loader-text {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-loader-text { animation: loader-text 0.5s ease-out forwards; }
       `}</style>
     </div>
   );
@@ -637,7 +674,7 @@ function ProductCard({ product, addToCart, setSizeChartOpen }: { product: Produc
   return (
     <div className="group bg-white border border-stone-100 overflow-hidden hover:border-[#C9A962]/50 transition-all duration-500 hover:shadow-xl hover:shadow-stone-200/50">
       <div className="relative aspect-square overflow-hidden bg-stone-50">
-        <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+        <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out" />
         {/* Discount badge for trend products only */}
         {product.category === "trend" && (
           <div className="absolute top-4 left-4 px-2 py-1 bg-red-600 text-white text-[10px] font-semibold tracking-wide uppercase shadow-md">
@@ -645,7 +682,7 @@ function ProductCard({ product, addToCart, setSizeChartOpen }: { product: Produc
           </div>
         )}
         {product.badge && (
-          <div className="absolute top-4 right-4 w-14 h-14 flex items-center justify-center">
+          <div className="absolute top-4 right-4 w-14 h-14 flex items-center justify-center group/badge">
             <div className="absolute inset-0 bg-gradient-to-br from-[#D4AF37] via-[#C9A962] to-[#B8984F] rounded-full shadow-lg opacity-90"></div>
             <div className="absolute inset-[2px] bg-gradient-to-br from-[#E8D48A] via-[#C9A962] to-[#A68B4D] rounded-full"></div>
             <div className="relative flex flex-col items-center justify-center text-center">
@@ -653,6 +690,11 @@ function ProductCard({ product, addToCart, setSizeChartOpen }: { product: Produc
                 <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.1z" />
               </svg>
               <span className="text-[6px] font-bold text-stone-900 uppercase tracking-tight leading-none mt-0.5">Viral</span>
+            </div>
+            {/* Tooltip */}
+            <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 px-3 py-1.5 bg-gradient-to-r from-[#E8D48A] to-[#C9A962] text-stone-900 text-[10px] font-medium whitespace-nowrap rounded shadow-lg opacity-0 group-hover/badge:opacity-100 transition-opacity duration-300 pointer-events-none z-10">
+              Trending auf TikTok
+              <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#E8D48A] rotate-45"></div>
             </div>
           </div>
         )}
