@@ -670,6 +670,21 @@ export default function Index() {
 function ProductCard({ product, addToCart, setSizeChartOpen }: { product: Product; addToCart: (p: Product, s?: string, c?: string) => void; setSizeChartOpen: (v: boolean) => void }) {
   const [selectedSize, setSelectedSize] = useState(product.sizes?.[1] || "");
   const [selectedColor, setSelectedColor] = useState(product.colors?.[0] || "");
+  const [tooltipVisible, setTooltipVisible] = useState(false);
+
+  // Auto-hide tooltip after 3 seconds
+  useEffect(() => {
+    if (tooltipVisible) {
+      const timer = setTimeout(() => setTooltipVisible(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [tooltipVisible]);
+
+  const handleBadgeClick = (e: React.MouseEvent | React.TouchEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setTooltipVisible(prev => !prev);
+  };
 
   return (
     <div className="group bg-white border border-stone-100 overflow-hidden hover:border-[#C9A962]/50 transition-all duration-500 hover:shadow-xl hover:shadow-stone-200/50">
@@ -682,17 +697,21 @@ function ProductCard({ product, addToCart, setSizeChartOpen }: { product: Produc
           </div>
         )}
         {product.badge && (
-          <div className="absolute top-4 right-4 w-14 h-14 flex items-center justify-center group/badge">
+          <div 
+            className="absolute top-4 right-4 w-14 h-14 flex items-center justify-center group/badge cursor-pointer"
+            onClick={handleBadgeClick}
+            onTouchEnd={handleBadgeClick}
+          >
             <div className="absolute inset-0 bg-gradient-to-br from-[#D4AF37] via-[#C9A962] to-[#B8984F] rounded-full shadow-lg opacity-90"></div>
             <div className="absolute inset-[2px] bg-gradient-to-br from-[#E8D48A] via-[#C9A962] to-[#A68B4D] rounded-full"></div>
-            <div className="relative flex flex-col items-center justify-center text-center">
+            <div className="relative flex flex-col items-center justify-center text-center pointer-events-none">
               <svg className="w-4 h-4 text-stone-900" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.1z" />
               </svg>
               <span className="text-[6px] font-bold text-stone-900 uppercase tracking-tight leading-none mt-0.5">Viral</span>
             </div>
-            {/* Tooltip */}
-            <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 px-3 py-1.5 bg-gradient-to-r from-[#E8D48A] to-[#C9A962] text-stone-900 text-[10px] font-medium whitespace-nowrap rounded shadow-lg opacity-0 group-hover/badge:opacity-100 transition-opacity duration-300 pointer-events-none z-10">
+            {/* Tooltip - shows on hover (desktop) or click/tap (mobile) */}
+            <div className={`absolute -bottom-10 left-1/2 -translate-x-1/2 px-3 py-1.5 bg-gradient-to-r from-[#E8D48A] to-[#C9A962] text-stone-900 text-[10px] font-medium whitespace-nowrap rounded shadow-lg transition-opacity duration-300 pointer-events-none z-10 ${tooltipVisible ? 'opacity-100' : 'opacity-0 group-hover/badge:opacity-100'}`}>
               Trending auf TikTok
               <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#E8D48A] rotate-45"></div>
             </div>
