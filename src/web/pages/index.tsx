@@ -251,8 +251,8 @@ export default function Index() {
 
         <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="animate-fade-up">
-            <span className="inline-block px-6 py-2 mb-8 text-xs font-medium tracking-[0.3em] text-[#C9A962] uppercase border border-[#C9A962]/30">
-              Trending auf TikTok
+            <span className="inline-block px-6 py-2 mb-8 text-sm font-extrabold tracking-[0.3em] text-[#D4AF37] uppercase border border-[#D4AF37]/40 animate-pulse-glow" style={{ textShadow: '0 0 20px rgba(212, 175, 55, 0.5), 0 0 40px rgba(212, 175, 55, 0.3)' }}>
+              Viral auf TikTok Shop
             </span>
           </div>
 
@@ -485,8 +485,18 @@ export default function Index() {
             </div>
           </div>
 
-          <div className="mt-16 pt-8 border-t border-stone-800 text-center text-stone-500 text-sm font-light">
-            © {new Date().getFullYear()} El Panetto. Alle Rechte vorbehalten.
+          <div className="mt-16 pt-8 border-t border-stone-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <span className="text-stone-500 text-sm font-light">
+              © {new Date().getFullYear()} El Panetto. Alle Rechte vorbehalten.
+            </span>
+            <div className="flex gap-3">
+              <a href="https://tiktok.com/@panettotrend" target="_blank" rel="noopener noreferrer" className="p-2 text-stone-500 hover:text-[#C9A962] transition-colors duration-300">
+                <TikTokIcon />
+              </a>
+              <a href="https://instagram.com/panetto_trend" target="_blank" rel="noopener noreferrer" className="p-2 text-stone-500 hover:text-[#C9A962] transition-colors duration-300">
+                <InstagramIcon />
+              </a>
+            </div>
           </div>
         </div>
       </footer>
@@ -609,6 +619,11 @@ export default function Index() {
         .animation-delay-100 { animation-delay: 100ms; }
         .animation-delay-200 { animation-delay: 200ms; }
         .animation-delay-300 { animation-delay: 300ms; }
+        @keyframes pulse-glow {
+          0%, 100% { opacity: 1; box-shadow: 0 0 5px rgba(212, 175, 55, 0.3); }
+          50% { opacity: 0.95; box-shadow: 0 0 20px rgba(212, 175, 55, 0.6), 0 0 40px rgba(212, 175, 55, 0.3); }
+        }
+        .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
       `}</style>
     </div>
   );
@@ -623,6 +638,12 @@ function ProductCard({ product, addToCart, setSizeChartOpen }: { product: Produc
     <div className="group bg-white border border-stone-100 overflow-hidden hover:border-[#C9A962]/50 transition-all duration-500 hover:shadow-xl hover:shadow-stone-200/50">
       <div className="relative aspect-square overflow-hidden bg-stone-50">
         <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+        {/* Discount badge for trend products only */}
+        {product.category === "trend" && (
+          <div className="absolute top-4 left-4 px-2 py-1 bg-red-600 text-white text-[10px] font-semibold tracking-wide uppercase shadow-md">
+            Nur heute -10%
+          </div>
+        )}
         {product.badge && (
           <div className="absolute top-4 right-4 w-14 h-14 flex items-center justify-center">
             <div className="absolute inset-0 bg-gradient-to-br from-[#D4AF37] via-[#C9A962] to-[#B8984F] rounded-full shadow-lg opacity-90"></div>
