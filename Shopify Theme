@@ -1,0 +1,11 @@
+Filename: config/settings_schema.json
+
+Content:
+[
+  {
+    "name": "theme_info",
+    "theme_name": "ElPanetto",
+    "theme_version": "1.0.0",
+    "theme_author": "Panetto Trend"
+  }
+]
