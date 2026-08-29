@@ -1,0 +1,1270 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title id="pageTitle">P1 – Bankkaufmann/Bankkauffrau Onboarding</title>
+<style>
+:root{--ink:#252525;--paper:#f6f4f0;--line:#d9d5cf;--mint:#8fe3cf;--ci:#7f7a74;--green:#16a36a;--orange:#ef9b28;--red:#df4545}
+*{box-sizing:border-box} body{margin:0;background:#ebe8e3;color:var(--ink);font-family:Arial,Helvetica,sans-serif}
+#app{max-width:1180px;margin:0 auto;padding:22px}
+.slide{display:none;background:var(--paper);min-height:760px;padding:44px 48px 38px;position:relative;border:1px solid var(--line)}
+.slide.active{display:block}
+.num{position:absolute;right:42px;top:34px;font-size:34px;font-weight:800;color:#55cdb2;letter-spacing:-2px}
+.brand{font-size:12px;letter-spacing:3px;font-weight:800;color:#777}
+h1{font-size:clamp(38px,6vw,78px);line-height:.93;letter-spacing:-3px;margin:62px 0 24px;max-width:850px}
+h2{font-size:30px;letter-spacing:-1px;margin:24px 0 8px}.lead{font-size:18px;line-height:1.55;max-width:850px}.meta{color:#6e6a65;line-height:1.5}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:22px 0}.grid4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.tile,.box{background:white;border:1px solid var(--line);padding:20px}.tile b{display:block;font-size:18px}.tile small{display:block;color:#777;line-height:1.45;margin-top:8px}
+.btn{border:0;background:var(--ci);color:white;padding:13px 18px;font-weight:800;letter-spacing:.5px;cursor:pointer;margin-top:12px}.btn.alt{background:white;color:var(--ink);border:1px solid var(--line)}
+input,textarea{width:100%;padding:13px;border:1px solid var(--line);background:white;font:inherit;margin-top:8px}textarea{min-height:85px}
+.checks{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0}.choice{border:1px solid var(--line);background:white;padding:12px 14px;cursor:pointer}.choice.on{border-color:var(--ci);outline:2px solid color-mix(in srgb,var(--ci) 35%,transparent)}
+.colors{display:flex;flex-wrap:wrap;gap:9px;margin:18px 0}.sw{width:36px;height:36px;border-radius:50%;cursor:pointer;border:2px solid white;box-shadow:0 0 0 1px #ccc}
+.video{width:min(100%,340px);aspect-ratio:9/16;background:#d9d4ce;border:2px dashed #aaa;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;margin:24px auto;padding:20px}.play{font-size:36px}
+.phase{border-top:5px solid var(--ci);padding-top:14px;margin-top:26px}.days{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-top:18px}.day{background:white;border:1px solid var(--line);padding:14px;min-height:110px}.day b{font-size:13px}
+.traffic{display:flex;gap:8px;margin-top:10px}.lamp{width:18px;height:18px;border-radius:50%;border:1px solid #aaa;cursor:pointer}.g{background:var(--green)}.o{background:var(--orange)}.r{background:var(--red)}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:28px}.nav .homeBtn{flex:0 0 auto;padding:13px 15px;font-size:16px;line-height:1}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.kpi{padding:16px;background:white;border:1px solid var(--line)}.kpi strong{font-size:28px;display:block}
+.note{border-left:4px solid var(--mint);padding:14px 16px;background:white;margin:18px 0}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:9;align-items:center;justify-content:center;padding:20px}.modal.open{display:flex}.dialog{background:var(--paper);width:min(520px,100%);padding:28px;border:1px solid var(--line)}
+@media(max-width:700px){#app{padding:0}.slide{min-height:100vh;padding:28px 20px}.num{right:20px;top:18px}.grid,.grid4,.kpis{grid-template-columns:1fr}.days{grid-template-columns:repeat(2,1fr)}h1{margin-top:54px}.video{width:260px}}
+.evalChoice.on{color:white;background:var(--ci);border-color:var(--ci)}
+
+.contextbar{display:none;position:absolute;top:12px;left:50%;transform:translateX(-50%);text-align:center;max-width:68%;font-size:10px;letter-spacing:1.1px;font-weight:800;line-height:1.35;color:#555}
+.contextbar span{display:block;font-size:11px;color:var(--ci);letter-spacing:.7px}
+.mobile-week-summary{background:white;border:1px solid var(--line);padding:14px;margin-top:16px}.mobile-week-summary b{font-size:13px}
+.mobile-week-summary .traffic{margin:8px 0}.range{font-size:14px;letter-spacing:1px;color:var(--ci);font-weight:800;margin-top:8px}
+@media(max-width:700px){
+ body{background:var(--paper)}
+ #app{max-width:480px;margin:0 auto;padding:0}
+ .slide{min-height:100dvh;border:0;padding:58px 16px 86px}
+ .num{right:16px;top:14px;font-size:30px}
+ .brand{font-size:10px;letter-spacing:2px}
+ .contextbar{display:block}
+ h1{font-size:43px;line-height:.95;letter-spacing:-2.2px;margin:42px 0 16px}
+ h2{font-size:25px}
+ .lead{font-size:16px;line-height:1.45}
+ .grid,.grid4{gap:10px}
+ .tile,.box{padding:15px}
+ .days{grid-template-columns:1fr}
+ .day{min-height:auto;padding:13px}
+ .nav{position:fixed;z-index:8;bottom:0;left:50%;transform:translateX(-50%);width:min(480px,100%);margin:0;background:rgba(246,244,240,.96);border-top:1px solid var(--line);padding:10px 12px}
+ .nav .btn{margin:0;padding:12px}
+ .nav .homeBtn{padding:12px 13px;font-size:15px}
+ #progress{align-self:center;font-size:11px}
+ .video{width:210px;margin:16px auto}
+ .evaluationSlide .box{padding:12px;margin-bottom:8px!important}
+ .evaluationSlide .choice{width:100%;text-align:left;padding:10px;font-size:12px}
+}
+
+.weekSummary{margin-top:18px;border:1px solid var(--line);background:#fff;padding:16px}
+.weekSummaryTop{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;font-size:11px;letter-spacing:1px}
+.weekSummaryTop span{color:var(--ci);font-weight:800;text-align:right}
+.summaryCounts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}
+.summaryCounts div{border:1px solid var(--line);padding:12px;text-align:center}
+.summaryCounts strong{display:block;font-size:28px;line-height:1}
+.summaryCounts small{display:block;font-size:9px;letter-spacing:.7px;margin-top:7px}
+.summaryText{font-size:13px;line-height:1.45;border-top:1px solid var(--line);padding-top:12px}
+.ctaFinal .eyebrow{font-size:11px;font-weight:800;letter-spacing:2px;color:var(--ci);margin-top:28px}
+.ctaHero{margin:22px 0;border:1px solid var(--line);padding:22px;background:#fff}
+.ctaHero>b{font-size:11px;letter-spacing:1.5px;color:var(--ci)}
+.ctaHero h2{font-size:34px;line-height:.95;margin:10px 0 12px}
+.ctaHero p{margin:0;line-height:1.5}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.miniCta{margin-top:14px;border:0;background:transparent;font-weight:900;letter-spacing:1px;font-size:11px;padding:0;cursor:pointer}
+.problemClose{margin-top:22px;padding:16px;border-left:4px solid var(--ci);background:#fff}
+.problemClose b{display:block;margin-bottom:7px;font-size:12px;letter-spacing:1px}
+.problemClose span{font-size:14px;line-height:1.45}
+.thanks{margin-top:34px!important;font-size:30px!important}
+@media(max-width:700px){.grid3{grid-template-columns:1fr}.ctaFinal .slide{padding-bottom:100px}.ctaHero h2{font-size:31px}.weekSummaryTop{display:block}.weekSummaryTop span{display:block;text-align:left;margin-top:5px}.summaryCounts strong{font-size:24px}}
+</style>
+<style>
+.weekSummarySlide .range{margin-top:46px}.bigCounts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:22px 0 14px}.bigCounts div{border:1px solid var(--line);background:#fff;padding:14px;text-align:center}.bigCounts strong{display:block;font-size:40px}.bigCounts small{display:block;font-size:10px;margin-top:7px}.summaryLists{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:12px 0}.summaryList{border:1px solid var(--line);background:#fff;padding:14px;min-height:170px}.summaryList>b{display:block;font-size:11px;letter-spacing:.7px;margin-bottom:10px}.summaryList div{font-size:12px;line-height:1.45}.summaryList span{display:block;padding:5px 0;border-bottom:1px solid var(--line)}.summaryList span:last-child{border-bottom:0}.patternRadar{margin-top:22px;border:1px solid var(--line);padding:18px;background:#fff}.patternRadar>b{font-size:12px;letter-spacing:1.2px;color:var(--ci)}.patternRadar p{font-size:14px;line-height:1.5;margin:9px 0}.radarLine{display:flex;justify-content:space-between;gap:12px;border-top:1px solid var(--line);padding-top:10px;font-size:11px;letter-spacing:.8px}.radarLine strong{color:var(--ci)}@media(max-width:700px){.bigCounts,.summaryLists{grid-template-columns:1fr}.bigCounts strong{font-size:32px}.summaryList{min-height:auto}.radarLine{display:block}.radarLine strong{display:block;margin-top:5px}}</style>
+<style>
+.evaluationSlide .evaluationPanel{display:block;margin-top:18px}
+.evaluationSlide .evaluationRow{display:block;background:#fff;border:1px solid var(--line);padding:14px;margin:0 0 10px}
+.evaluationSlide .evaluationTitle{display:block;font-size:13px;font-weight:800;letter-spacing:.2px;margin-bottom:10px}
+.evaluationSlide .evaluationChoices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.evaluationSlide .evalChoice{min-height:54px;padding:8px 7px;font-size:11px;line-height:1.15;text-align:center;white-space:normal;background:#fff}
+.evaluationSlide .evalChoice.on[data-val="red"]{background:var(--red)!important;border-color:var(--red)!important;color:#fff!important}
+.evaluationSlide .evalChoice.on[data-val="orange"]{background:var(--orange)!important;border-color:var(--orange)!important;color:#fff!important}
+.evaluationSlide .evalChoice.on[data-val="green"]{background:var(--green)!important;border-color:var(--green)!important;color:#fff!important}
+</style>
+<style>
+.cumulativeWeek{border:1px solid var(--line);background:#fff;padding:14px;margin-bottom:10px}
+.cumulativeWeek h3{margin:0 0 8px;font-size:14px}
+.cumulativeDots{display:flex;gap:8px;font-size:12px}
+.cumulativeDots span{padding:6px 8px;border:1px solid var(--line);font-size:12px}
+.cumulativeRed{margin-top:8px;font-size:12px;line-height:1.4}
+.redIssueEmpty{font-size:13px;color:#777;padding:10px 0}
+.redIssueCard{border:1px solid var(--line);background:#fff;padding:12px;margin:10px 0}
+.redIssueCard b{display:block;margin-bottom:8px;font-size:12px}
+.redIssueCard small{display:block;margin-top:6px;color:#777}
+@media(max-width:700px){
+  .redIssueCard textarea{min-height:105px;font-size:14px}
+  .cumulativeWeek{padding:14px}
+}
+</style>
+
+<style>
+.weeklyCheck{margin-top:22px;border-top:5px solid var(--ci);padding-top:16px}
+.weeklyCheckIntro{background:#fff;border:1px solid var(--line);padding:16px 16px 14px;margin:14px 0 12px}
+.weeklyCheckIntro b{display:block;font-size:12px;letter-spacing:1.2px;color:var(--ci);margin-bottom:7px}
+.weeklyCheckIntro h2{margin:0 0 8px;font-size:28px;line-height:1.05}
+.weeklyCheckIntro p{margin:0;line-height:1.45}
+.weeklyCheckGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.weeklyCheckCard{background:#fff;border:1px solid var(--line);padding:14px}
+.weeklyCheckCard.full{grid-column:1/-1}
+.weeklyCheckCard label{display:block;font-size:12px;font-weight:800;letter-spacing:.7px;margin-bottom:8px}
+.weeklyCheckCard textarea{width:100%;min-height:86px;box-sizing:border-box;border:1px solid var(--line);padding:10px;font:inherit;line-height:1.4;resize:vertical;background:#fff}
+.weeklyCheckHint{font-size:12px;color:#666;margin-top:7px;line-height:1.35}
+@media(max-width:700px){.weeklyCheckGrid{grid-template-columns:1fr}.weeklyCheckCard.full{grid-column:auto}.weeklyCheckIntro h2{font-size:25px}.weeklyCheckCard textarea{min-height:96px}}
+</style>
+
+<style>
+.printReport{margin-top:14px}
+.printReport .reportBox{border:1px solid var(--line);background:#fff;padding:16px;margin:10px 0}
+.printReport .reportBox b{display:block;font-size:11px;letter-spacing:1.2px;color:var(--ci);margin-bottom:9px}
+.printReport textarea,.printReport input{width:100%;box-sizing:border-box;border:1px solid var(--line);padding:10px;font:inherit}
+.printReport textarea{min-height:82px}
+.reportActions{display:grid;gap:10px;margin-top:14px}
+.reportActions button{min-height:52px;border:0;padding:12px;background:var(--ci);color:#fff;font-weight:800;font:inherit;letter-spacing:.3px}
+.reportActions .secondary{background:#555}
+.reportPreview{margin-top:16px}
+.reportPreviewEmpty{border:1px solid var(--line);padding:16px;background:#fff;font-size:13px;color:#777}
+.reportWeekCard{border:1px solid var(--line);background:#fff;padding:18px;margin-bottom:12px}
+.reportWeekCard .rwTop{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;border-bottom:1px solid var(--line);padding-bottom:10px}
+.reportWeekCard .rwTop b{font-size:12px;letter-spacing:1.4px}
+.reportWeekCard .rwTop span{font-size:11px;color:#999;letter-spacing:.5px}
+.rwCounts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.rwCounts div{text-align:center;padding:10px 4px;background:#f6f4f0;border:1px solid var(--line)}
+.rwCounts strong{display:block;font-size:22px;line-height:1}
+.rwCounts small{display:block;font-size:9px;letter-spacing:.5px;margin-top:5px;color:#777}
+.rwCounts .rc-red strong{color:var(--red)}
+.rwCounts .rc-orange strong{color:var(--orange)}
+.rwCounts .rc-green strong{color:var(--green)}
+.rwRedList b{display:block;font-size:10px;letter-spacing:1.2px;color:var(--ci);margin-bottom:8px}
+.rwItem{padding:8px 0;border-top:1px solid var(--line);font-size:13px;line-height:1.4}
+.rwItem:first-of-type{border-top:0}
+.rwName{font-weight:800}
+.rwComment{color:#777;margin-top:4px;font-size:12px}
+.rwEmpty{font-size:12px;color:#999}
+@media(max-width:700px){.rwCounts strong{font-size:19px}}
+</style>
+
+<style>
+
+.reportList{font-size:12px;line-height:1.45}
+</style>
+
+<style>
+.weekFocus{display:grid;gap:9px;margin:14px 0}
+.weekFocus>div{background:#fff;border:1px solid var(--line);padding:12px;line-height:1.4}
+.pdfHeaderBtn{border:0;border-radius:999px;background:#d92828;color:#fff;font-weight:900;padding:11px 16px;font-size:12px;letter-spacing:.2px;box-shadow:0 2px 8px rgba(217,40,40,.18);white-space:nowrap}
+.pdfHeaderBtn:active{transform:scale(.98)}
+@media(max-width:700px){.pdfHeaderBtn{padding:10px 13px;font-size:11px}}
+</style>
+
+<style>
+.slide[data-slide="25"]{position:relative}
+.pdfHeaderRow{position:absolute;top:18px;left:50%;right:auto;transform:translateX(-50%);z-index:100;display:block}
+.pdfHeaderBtn{display:block!important;visibility:visible!important;opacity:1!important;border:0!important;border-radius:999px!important;background:#e12b2b!important;color:#fff!important;font-weight:900!important;padding:10px 15px!important;line-height:1.05!important;font-size:11px!important;text-align:center!important;box-shadow:0 3px 10px rgba(225,43,43,.28)!important;cursor:pointer!important;min-width:190px!important}
+@media(max-width:700px){.pdfHeaderRow{top:14px;left:50%;transform:translateX(-50%)}.pdfHeaderBtn{padding:9px 12px!important;font-size:10px!important}}
+</style>
+
+<style>
+/* P1 Motor-Erweiterung: aktiver Mitarbeiter + Ampel-Zeitreise pro Kompetenz */
+.tile-active{outline:2px solid var(--ci)}
+.timelineRow{border:1px solid var(--line);background:#fff;padding:14px;margin-bottom:10px}
+.timelineRow b{display:block;font-size:12px;letter-spacing:.4px;margin-bottom:10px}
+.timelineDots{display:flex;gap:14px;flex-wrap:wrap}
+.timelineDot{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:10px;letter-spacing:.5px;color:#777;font-weight:800}
+.timelineDot .lampBig{width:22px;height:22px;border-radius:50%;border:1px solid #ccc;background:#e4e1db}
+.timelineDot .lampBig.red{background:var(--red);border-color:var(--red)}
+.timelineDot .lampBig.orange{background:var(--orange);border-color:var(--orange)}
+.timelineDot .lampBig.green{background:var(--green);border-color:var(--green)}
+.timelineEmpty{font-size:13px;color:#777;padding:10px 0}
+</style>
+
+</head>
+<body><div id="app">
+
+<section class="slide active" data-slide="1"><div class="brand" data-copy="brandLine">P1 / ONBOARDING</div><div class="num">01</div><div class="contextbar" id="contextBar1">DEIN BETRIEB<span>MITARBEITER: NOCH NICHT AUSGEWÄHLT</span></div>
+<h1 data-copy="welcomeTitle">WILLKOMMEN AN BORD.<br>WIR LEGEN LOS.</h1>
+<p class="lead" data-copy="welcomeLead">Dieses Onboarding-System begleitet dich durch die ersten vier Wochen eines neuen Mitarbeiters.</p>
+<div class="video"><b data-video-key="welcome">TEAM BEGRÜSST DICH</b><div class="play">▶</div><small>VIDEO-PLATZHALTER · 9:16 · optional</small></div>
+<div class="note" data-copy="welcomeNote">„Herzlich willkommen zu deinem Onboarding.“</div>
+<div class="grid grid4"><div class="tile"><b>4 WOCHEN.</b><small>Tägliche Einarbeitung, Kompetenz-Ampeln und Checkpoints.</small></div><div class="tile"><b id="tileMaxMaLabel">BIS ZU 20 MA.</b><small>Jeder Mitarbeiter mit eigenem Startdatum und Fortschritt.</small></div><div class="tile"><b>BETRIEBLICH.</b><small data-copy="tile3Text">Arbeitsmittel, Besonderheiten und Fachwissen individuell einrichten.</small></div><div class="tile"><b>TRANSPARENT.</b><small>Zeitreise und Muster-Radar zeigen, wo es wirklich hängt.</small></div></div></section>
+
+<section class="slide" data-slide="2"><div class="brand">P1 / SO FUNKTIONIERT DEIN ONBOARDING</div><div class="num">02</div><div class="contextbar" id="contextBar2">DEIN BETRIEB<span>MITARBEITER: NOCH NICHT AUSGEWÄHLT</span></div>
+<h1>KEIN ZETTELCHAOS.<br>EIN KLARER FAHRPLAN.</h1>
+<p class="lead">P1 führt dich durch die komplette erste Einarbeitungszeit. Du musst nicht jeden Tag neu überlegen, was heute wichtig ist: Erst richtest du deinen Betrieb ein. Dann legst du den Mitarbeiter an. Anschließend begleitest du die Entwicklung über vier klare Phasen – mit Beobachtungen, Kompetenz-Ampeln und einem gemeinsamen Abschluss.</p>
+<div class="grid grid4">
+<div class="tile"><b>01 EINRICHTEN</b><small>Deinen Betrieb, Arbeitsbereiche, Arbeitsmittel, Fachwissen und betriebliche Besonderheiten passend zu eurem echten Alltag hinterlegen.</small></div>
+<div class="tile"><b>02 VORBEREITEN</b><small>Neuen Mitarbeiter anlegen, Start festlegen und Unterlagen sowie betriebliche Voraussetzungen vor dem ersten Einsatz prüfen.</small></div>
+<div class="tile"><b>03 BEGLEITEN</b><small>Die Einarbeitung nicht nur abhaken: beobachten, erklären, wiederholen und sehen, wie sicher die einzelnen Aufgaben bereits sitzen.</small></div>
+<div class="tile"><b>04 AUSWERTEN</b><small>Die Entwicklung über die gesamte Zeit sichtbar machen, Engpässe erkennen und konkrete nächste Schritte vereinbaren.</small></div>
+</div>
+<div class="note"><b>DER KERN VON P1:</b> Eine Aufgabe ist nicht automatisch gelernt, nur weil sie einmal erledigt wurde. Deshalb arbeitet P1 mit einer einfachen Ampel: Rot = noch nicht sicher. Orange = in Einarbeitung. Grün = sitzt. So siehst du Entwicklung statt bloßer Häkchen.</div>
+<div class="box"><b>DEIN ABLAUF AUF EINEN BLICK.</b><p class="lead" style="margin:12px 0 0">BETRIEB EINRICHTEN → MITARBEITER ANLEGEN → VOR DEM START PRÜFEN → TAG 1–7 → TAG 8–14 → TAG 15–21 → TAG 22–30 → CHECKPOINT → ENTWICKLUNG AUSWERTEN</p></div>
+</section>
+
+<section class="slide" data-slide="3"><div class="brand">P1</div><div class="num">03</div><div class="contextbar" id="contextBar3">DEIN BETRIEB<span>MITARBEITER: NOCH NICHT AUSGEWÄHLT</span></div><h1 data-copy="businessTitle">DEIN BETRIEB.</h1><h2 data-copy="businessSubtitle">GRUNDDATEN DEINES BETRIEBS.</h2><div class="grid"><div><label>Name des Betriebs<input id="bizName" data-copy-placeholder="businessNamePlaceholder" placeholder="z. B. Musterfirma GmbH"></label></div><div><label>Standort / Filiale<input id="bizLocation" placeholder="Ort oder Filiale"></label></div><div><label>Ansprechpartner<input id="bizContact" placeholder="Name"></label></div><div><label>Führungskraft<input id="bizLead" placeholder="Name"></label></div></div></section>
+
+<section class="slide" data-slide="4"><div class="brand">P1</div><div class="num">04</div><div class="contextbar" id="contextBar4">DEIN BETRIEB<span>MITARBEITER: NOCH NICHT AUSGEWÄHLT</span></div><h1>DEIN LOOK.</h1><p class="lead">Wähle eine der 20 Farben oder nutze deine eigene Corporate-Identity-Farbe. Die mintgrünen Seitennummern bleiben das feste P1-Erkennungsmerkmal.</p><div class="colors" id="colors"></div><label>Eigene CI-Farbe<input type="color" id="customColor" value="#7f7a74"></label></section>
+
+<section class="slide" data-slide="5"><div class="brand">P1</div><div class="num">05</div><div class="contextbar" id="contextBar5">DEIN BETRIEB<span>MITARBEITER: NOCH NICHT AUSGEWÄHLT</span></div><h1>DEINE MITARBEITER.</h1><p class="lead"><span id="count">0</span> / <span id="maxSlots">20</span> Plätze belegt. Jeder Mitarbeiter erhält einen eigenen Startpunkt und später einen eigenen Fortschrittsverlauf.</p>
+<div class="note"><b>WICHTIG FÜR DIE EINARBEITUNG.</b><br>Dein neuer Mitarbeiter hat nicht automatisch das Wissen, die Routine und den Blick für den Betrieb, den du nach Jahren im Job hast. Dinge, die für dich selbstverständlich sind, können für neue Kollegen komplett neu sein. Erkläre lieber einmal zu viel, zeige Abläufe konkret und gib Raum für Fragen. Gute Einarbeitung heißt nicht: „Mach einfach mal.“ Gute Einarbeitung heißt: erklären, vormachen, mitmachen lassen und später gemeinsam schauen, was schon sicher sitzt.</div>
+<div class="note" id="employeeLimitNote" style="display:none">⚠️ Lizenzgrenze erreicht: Dieser Tarif erlaubt maximal <span id="limitNoteMax"></span> Mitarbeiter.</div>
+<button class="btn" id="addEmployeeBtn" onclick="openModal('employeeModal')">+ MITARBEITER</button><div class="grid" id="employees"></div></section>
+
+<section class="slide" data-slide="6"><div class="brand">P1</div><div class="num">06</div><div class="contextbar" id="contextBar6">DEIN BETRIEB<span>MITARBEITER: NOCH NICHT AUSGEWÄHLT</span></div><h1>VOR DEM START.</h1><p class="lead">Hier prüfst du, was vor dem ersten Arbeitstag vorliegen oder intern ergänzt werden muss.</p><div class="checks" id="docs"></div><button class="btn alt" onclick="addCustom('docs','Eigenes Dokument / Nachweis')">+ EIGENEN PUNKT HINZUFÜGEN</button><div class="note" id="docsNote" style="display:none"></div></section>
+
+<section class="slide" data-slide="7"><div class="brand">P1</div><div class="num">07</div><div class="contextbar" id="contextBar7">DEIN BETRIEB<span>MITARBEITER: NOCH NICHT AUSGEWÄHLT</span></div><h1 data-copy="areasTitle">ARBEITSBEREICHE.</h1><p class="lead" data-copy="areasLead">Lege fest, wo sich der neue Mitarbeiter bei euch auskennen und arbeiten soll. Wähle nur die Bereiche, die es wirklich gibt – und ergänze eigene.</p><div class="checks" id="areas"></div><button class="btn alt" onclick="addCustom('areas','Eigenen Arbeitsbereich')">+ EIGENEN BEREICH HINZUFÜGEN</button></section>
+
+<section class="slide" data-slide="8"><div class="brand">P1</div><div class="num">08</div><div class="contextbar" id="contextBar8">DEIN BETRIEB<span>MITARBEITER: NOCH NICHT AUSGEWÄHLT</span></div><h1 data-copy="toolsTitle">ARBEITSMITTEL.</h1><p class="lead" data-copy="toolsLead">Hier hinterlegst du Geräte und Arbeitsmittel, die der Mitarbeiter kennen oder sicher bedienen muss. Nur auswählen, was es wirklich gibt.</p><div class="checks" id="tools"></div><button class="btn alt" onclick="addCustom('tools','Eigenes Arbeitsmittel')">+ EIGENES ARBEITSMITTEL HINZUFÜGEN</button></section>
+
+<section class="slide" data-slide="9"><div class="brand">P1</div><div class="num">09</div><div class="contextbar" id="contextBar9">DEIN BETRIEB<span>MITARBEITER: NOCH NICHT AUSGEWÄHLT</span></div><h1 data-copy="knowledgeTitle">FACHWISSEN & PROZESSE.</h1><p class="lead" data-copy="knowledgeLead">Das ist das Fachwissen für diese Rolle. Die Auswahl fließt später in die Kompetenz-Ampeln ein. Ergänze Themen, die bei euch zusätzlich dazugehören.</p><div class="checks" id="knowledge"></div><button class="btn alt" onclick="addCustom('knowledge','Eigenes Fachthema')">+ EIGENES THEMA HINZUFÜGEN</button></section>
+
+<section class="slide" data-slide="10"><div class="brand">P1</div><div class="num">10</div><div class="contextbar" id="contextBar10">DEIN BETRIEB<span>MITARBEITER: NOCH NICHT AUSGEWÄHLT</span></div><h1>BETRIEBLICHE BESONDERHEITEN.</h1><p class="lead">Hier kommt alles hinein, was bei euch speziell anders oder zusätzlich wichtig ist: Öffnungsabläufe, Lieferzeiten, interne Regeln, Zuständigkeiten oder besondere Kundenprozesse.</p><button class="btn" onclick="openModal('specialModal')">+ BESONDERHEIT HINZUFÜGEN</button><div class="grid" id="specials"></div></section>
+
+<section class="slide" data-slide="11"><div class="brand">P1</div><div class="num">11</div><div class="contextbar" id="contextBar11">DEIN BETRIEB<span>MITARBEITER: NOCH NICHT AUSGEWÄHLT</span></div><h1>SO BEWERTEN WIR.</h1><p class="lead">Nicht nur „erledigt oder nicht erledigt“. Entscheidend ist, wie sicher etwas bereits sitzt.</p><div class="grid"><div class="tile"><b>🟢 SICHER</b><small>Der Mitarbeiter beherrscht die Aufgabe zuverlässig und kann sie weitgehend selbstständig ausführen.</small></div><div class="tile"><b>🟠 IN EINARBEITUNG</b><small>Die Grundlagen sind da, aber Wiederholung, Begleitung oder mehr Routine sind noch sinnvoll.</small></div><div class="tile"><b>🔴 NOCH NICHT SICHER</b><small>Die Aufgabe braucht gezielte Erklärung, Übung oder erneute Einarbeitung.</small></div><div class="tile"><b>WICHTIG.</b><small>Die Ampel ist kein Urteil über den Menschen. Sie zeigt nur den aktuellen Einarbeitungsstand.</small></div></div></section>
+
+<section class="slide phaseSlide" data-slide="12"><div class="brand">P1</div><div class="num">12</div><div class="contextbar" id="contextBar12">DEIN BETRIEB<span>MITARBEITER: NOCH NICHT AUSGEWÄHLT</span></div><h1 id="week1Title">WOCHE 1.<br>LOS GEHT'S.</h1><div class="video"><b data-video-key="week1">TEAM ERKLÄRT / START</b><div class="play">▶</div><small>VIDEO-PLATZHALTER · 9:16</small></div><div class="weeklyCheck"><div class="range" data-week-range="1"></div><div class="weeklyCheckIntro"><b id="week1CheckLabel">KURZER WOCHEN-CHECK.</b><h2 id="week1CheckTitle">WAS ERWARTEN WIR IN WOCHE 1?</h2>
+<p id="week1CheckLead">Die erste Woche ist zum Ankommen da.</p>
+<div class="weekFocus" id="week1Focus"></div>
+</div>
+<div class="quote" id="week1Quote"><b>DEIN FOKUS:</b><br>Erklären. Vormachen. Begleiten. Noch nicht zu viel erwarten.</div></div>
+</section>
+
+<section class="slide evaluationSlide"><div class="brand">P1</div><div class="num">13</div><div class="contextbar" id="contextBar13">DEIN BETRIEB<span>MITARBEITER: NOCH NICHT AUSGEWÄHLT</span></div>
+<div class="brand" style="margin-top:48px">PHASE 4 / EINARBEITUNG</div><div class="range" data-week-range></div>
+<h1>HEUTE BEWERTEN.<br><span style="font-size:.55em">WOCHE 1.</span></h1>
+<p class="lead">Beispielhafte Startansicht. Die Ampelwerte sind je Mitarbeiter speicherbar. Bewerte nicht nur, ob etwas erledigt wurde. Entscheidend ist, wie sicher die Aufgabe bereits sitzt.</p>
+<div id="eval-01"></div></section><section class="slide weekSummarySlide" data-week="1">
+<div class="brand">P1 / WOCHENAUSWERTUNG</div><div class="num">14</div>
+<div class="contextbar" id="contextBar14">DEIN BETRIEB<span>MITARBEITER: NOCH NICHT AUSGEWÄHLT</span></div>
+<div class="range" data-week-range="1">STARTDATUM NOCH OFFEN</div>
+<h1>WOCHE 1.<br>DEIN ZWISCHENSTAND.</h1>
+<p class="lead">Hier siehst du die Auswertung der gerade bewerteten Woche. Nicht nur die Anzahl – sondern konkret, was grün, orange oder rot ist.</p>
+<div class="summaryCounts bigCounts">
+<div><strong data-red-count="1">0</strong><small>🔴 NOCH NICHT SICHER</small></div>
+<div><strong data-orange-count="1">0</strong><small>🟠 IN EINARBEITUNG</small></div>
+<div><strong data-green-count="1">0</strong><small>🟢 SICHER</small></div>
+</div>
+<div class="summaryLists">
+<div class="summaryList"><b>🔴 NOCH NICHT SICHER</b><div data-red-list="1"><span>—</span></div></div>
+<div class="summaryList"><b>🟠 IN EINARBEITUNG</b><div data-orange-list="1"><span>—</span></div></div>
+<div class="summaryList"><b>🟢 SICHER</b><div data-green-list="1"><span>—</span></div></div>
+</div>
+<div class="summaryText" data-summary-text="1">Sobald du die Woche bewertest, erscheint hier die Zusammenfassung.</div>
+    <div class="redFollowUp">
+      <h3>🔴 ROTE PUNKTE KLÄREN.</h3>
+      <p>Hier erscheinen automatisch alle Bereiche, die du in dieser Woche rot bewertet hast. Zu jedem Punkt kannst du festhalten: Was ist das Problem? Was wurde beobachtet? Was ist die nächste Lösung oder Maßnahme?</p>
+      <div data-red-followup="1" class="redIssueEmpty">Noch keine roten Punkte bewertet.</div>
+    </div>
+</section>
+
+<section class="slide phaseSlide" data-slide="15"><div class="brand">P1</div><div class="num">15</div><div class="contextbar" id="contextBar15">DEIN BETRIEB<span>MITARBEITER: NOCH NICHT AUSGEWÄHLT</span></div><h1 id="week2Title">WOCHE 2.<br>WIR KOMMEN VORAN.</h1><div class="video"><b data-video-key="week2">TEAM ERKLÄRT / PHASE 2</b><div class="play">▶</div><small>VIDEO-PLATZHALTER · 9:16</small></div><div class="weeklyCheck"><div class="range" data-week-range="2"></div><div class="weeklyCheckIntro"><b>KURZER WOCHEN-CHECK.</b><h2 id="week2CheckTitle">Jetzt wird aus Orientierung langsam Routine.</h2><p id="week2CheckLead">Fokus: Weniger vormachen. Mehr selbst machen lassen.</p></div><p class="lead" id="week2Lead">Der Blick geht jetzt stärker auf Routine und Sicherheit. Was klappt schon ohne ständiges Eingreifen?</p><div class="weeklyCheckGrid"><div class="weeklyCheckCard"><label>WAS LIEF DIESE WOCHE GUT?</label><textarea data-week-check="2" data-field="good" placeholder="Kurze Beobachtung eintragen …"></textarea></div><div class="weeklyCheckCard"><label>WO BRAUCHT DER NEUE MITARBEITER NOCH UNTERSTÜTZUNG?</label><textarea data-week-check="2" data-field="support" placeholder="Was braucht noch Erklärung, Übung oder Begleitung?"></textarea></div><div class="weeklyCheckCard"><label>WAS NEHMEN WIR MIT IN DIE NÄCHSTE WOCHE?</label><textarea data-week-check="2" data-field="next" placeholder="Nächsten Schwerpunkt festhalten …"></textarea></div><div class="weeklyCheckCard"><label>WICHTIGSTE BEOBACHTUNG DER WOCHE.</label><textarea data-week-check="2" data-field="observation" placeholder="Ein Satz, den ihr nicht verlieren wollt …"></textarea><div class="weeklyCheckHint">Dieser Punkt ist bewusst kurz gehalten: Was ist euch diese Woche wirklich aufgefallen?</div></div></div></div></section>
+
+<section class="slide evaluationSlide"><div class="brand">P1</div><div class="num">16</div><div class="contextbar" id="contextBar16">DEIN BETRIEB<span>MITARBEITER: NOCH NICHT AUSGEWÄHLT</span></div><div class="brand" style="margin-top:48px">PHASE 4 / EINARBEITUNG</div><div class="range" data-week-range></div><h1>HEUTE BEWERTEN.<br><span style="font-size:.55em">WOCHE 2.</span></h1><p class="lead">Beispielhafte Startansicht. Die Ampelwerte sind je Mitarbeiter speicherbar. Bewerte nicht nur, ob etwas erledigt wurde. Entscheidend ist, wie sicher die Aufgabe bereits sitzt.</p><div id="eval-07"></div></section><section class="slide weekSummarySlide" data-week="2">
+<div class="brand">P1 / WOCHENAUSWERTUNG</div><div class="num">17</div>
+<div class="contextbar" id="contextBar17">DEIN BETRIEB<span>MITARBEITER: NOCH NICHT AUSGEWÄHLT</span></div>
+<div class="range" data-week-range="2">STARTDATUM NOCH OFFEN</div>
+<h1>WOCHE 2.<br>DEIN ZWISCHENSTAND.</h1>
+<p class="lead">Hier siehst du die Auswertung der gerade bewerteten Woche. Nicht nur die Anzahl – sondern konkret, was grün, orange oder rot ist.</p>
+<div class="summaryCounts bigCounts">
+<div><strong data-red-count="2">0</strong><small>🔴 NOCH NICHT SICHER</small></div>
+<div><strong data-orange-count="2">0</strong><small>🟠 IN EINARBEITUNG</small></div>
+<div><strong data-green-count="2">0</strong><small>🟢 SICHER</small></div>
+</div>
+<div class="summaryLists">
+<div class="summaryList"><b>🔴 NOCH NICHT SICHER</b><div data-red-list="2"><span>—</span></div></div>
+<div class="summaryList"><b>🟠 IN EINARBEITUNG</b><div data-orange-list="2"><span>—</span></div></div>
+<div class="summaryList"><b>🟢 SICHER</b><div data-green-list="2"><span>—</span></div></div>
+</div>
+<div class="summaryText" data-summary-text="2">Sobald du die Woche bewertest, erscheint hier die Zusammenfassung.</div>
+    <div class="redFollowUp">
+      <h3>🔴 ROTE PUNKTE KLÄREN.</h3>
+      <p>Hier erscheinen automatisch alle Bereiche, die du in dieser Woche rot bewertet hast. Zu jedem Punkt kannst du festhalten: Was ist das Problem? Was wurde beobachtet? Was ist die nächste Lösung oder Maßnahme?</p>
+      <div data-red-followup="2" class="redIssueEmpty">Noch keine roten Punkte bewertet.</div>
+    </div>
+</section>
+
+<section class="slide phaseSlide" data-slide="18"><div class="brand">P1</div><div class="num">18</div><div class="contextbar" id="contextBar18">DEIN BETRIEB<span>MITARBEITER: NOCH NICHT AUSGEWÄHLT</span></div><h1 id="week3Title">WOCHE 3.<br>JETZT WIRD'S SELBSTSTÄNDIG.</h1><div class="video"><b data-video-key="week3">TEAM ERKLÄRT / PHASE 3</b><div class="play">▶</div><small>VIDEO-PLATZHALTER · 9:16</small></div><div class="weeklyCheck"><div class="range" data-week-range="3"></div><div class="weeklyCheckIntro"><b>KURZER WOCHEN-CHECK.</b><h2 id="week3CheckTitle">Zeit für den nächsten Schritt: Selbstständigkeit.</h2><p id="week3CheckLead">Fokus: Vertrauen geben. Entwicklung beobachten.</p></div><p class="lead" id="week3Lead">Jetzt zeigt sich, was stabil sitzt. Halte fest, wo du loslassen kannst und wo noch gezielte Unterstützung nötig ist.</p><div class="weeklyCheckGrid"><div class="weeklyCheckCard"><label>WAS LIEF DIESE WOCHE GUT?</label><textarea data-week-check="3" data-field="good" placeholder="Kurze Beobachtung eintragen …"></textarea></div><div class="weeklyCheckCard"><label>WO BRAUCHT DER NEUE MITARBEITER NOCH UNTERSTÜTZUNG?</label><textarea data-week-check="3" data-field="support" placeholder="Was braucht noch Erklärung, Übung oder Begleitung?"></textarea></div><div class="weeklyCheckCard"><label>WAS NEHMEN WIR MIT IN DIE NÄCHSTE WOCHE?</label><textarea data-week-check="3" data-field="next" placeholder="Nächsten Schwerpunkt festhalten …"></textarea></div><div class="weeklyCheckCard"><label>WICHTIGSTE BEOBACHTUNG DER WOCHE.</label><textarea data-week-check="3" data-field="observation" placeholder="Ein Satz, den ihr nicht verlieren wollt …"></textarea><div class="weeklyCheckHint">Dieser Punkt ist bewusst kurz gehalten: Was ist euch diese Woche wirklich aufgefallen?</div></div></div></div></section>
+
+<section class="slide evaluationSlide"><div class="brand">P1</div><div class="num">19</div><div class="contextbar" id="contextBar19">DEIN BETRIEB<span>MITARBEITER: NOCH NICHT AUSGEWÄHLT</span></div><div class="brand" style="margin-top:48px">PHASE 4 / EINARBEITUNG</div><div class="range" data-week-range></div><h1>HEUTE BEWERTEN.<br><span style="font-size:.55em">WOCHE 3.</span></h1><p class="lead">Beispielhafte Startansicht. Die Ampelwerte sind je Mitarbeiter speicherbar. Bewerte nicht nur, ob etwas erledigt wurde. Entscheidend ist, wie sicher die Aufgabe bereits sitzt.</p><div id="eval-14"></div></section><section class="slide weekSummarySlide" data-week="3">
+<div class="brand">P1 / WOCHENAUSWERTUNG</div><div class="num">20</div>
+<div class="contextbar" id="contextBar20">DEIN BETRIEB<span>MITARBEITER: NOCH NICHT AUSGEWÄHLT</span></div>
+<div class="range" data-week-range="3">STARTDATUM NOCH OFFEN</div>
+<h1>WOCHE 3.<br>DEIN ZWISCHENSTAND.</h1>
+<p class="lead">Hier siehst du die Auswertung der gerade bewerteten Woche. Nicht nur die Anzahl – sondern konkret, was grün, orange oder rot ist.</p>
+<div class="summaryCounts bigCounts">
+<div><strong data-red-count="3">0</strong><small>🔴 NOCH NICHT SICHER</small></div>
+<div><strong data-orange-count="3">0</strong><small>🟠 IN EINARBEITUNG</small></div>
+<div><strong data-green-count="3">0</strong><small>🟢 SICHER</small></div>
+</div>
+<div class="summaryLists">
+<div class="summaryList"><b>🔴 NOCH NICHT SICHER</b><div data-red-list="3"><span>—</span></div></div>
+<div class="summaryList"><b>🟠 IN EINARBEITUNG</b><div data-orange-list="3"><span>—</span></div></div>
+<div class="summaryList"><b>🟢 SICHER</b><div data-green-list="3"><span>—</span></div></div>
+</div>
+<div class="summaryText" data-summary-text="3">Sobald du die Woche bewertest, erscheint hier die Zusammenfassung.</div>
+    <div class="redFollowUp">
+      <h3>🔴 ROTE PUNKTE KLÄREN.</h3>
+      <p>Hier erscheinen automatisch alle Bereiche, die du in dieser Woche rot bewertet hast. Zu jedem Punkt kannst du festhalten: Was ist das Problem? Was wurde beobachtet? Was ist die nächste Lösung oder Maßnahme?</p>
+      <div data-red-followup="3" class="redIssueEmpty">Noch keine roten Punkte bewertet.</div>
+    </div>
+</section>
+
+<section class="slide phaseSlide" data-slide="21"><div class="brand">P1</div><div class="num">21</div><div class="contextbar" id="contextBar21">DEIN BETRIEB<span>MITARBEITER: NOCH NICHT AUSGEWÄHLT</span></div><h1 id="week4Title">WOCHE 4.<br>JETZT WIRD'S KLAR.</h1><div class="video"><b data-video-key="week4">TEAM ERKLÄRT / ABSCHLUSS</b><div class="play">▶</div><small>VIDEO-PLATZHALTER · 9:16</small></div><div class="weeklyCheck"><div class="range" data-week-range="4"></div><div class="weeklyCheckIntro"><b>KURZER WOCHEN-CHECK.</b><h2 id="week4CheckTitle">Vier Wochen sind geschafft. Jetzt wird Klartext gesprochen.</h2><p id="week4CheckLead">Fokus: Ehrlich bewerten. Klar weitermachen.</p></div><p class="lead" id="week4Lead">Schau ohne Schönreden auf den aktuellen Stand. Was ist wirklich sicher? Was bleibt der nächste konkrete Schritt?</p><div class="weeklyCheckGrid"><div class="weeklyCheckCard"><label>WAS LIEF DIESE WOCHE GUT?</label><textarea data-week-check="4" data-field="good" placeholder="Kurze Beobachtung eintragen …"></textarea></div><div class="weeklyCheckCard"><label>WO BRAUCHT DER NEUE MITARBEITER NOCH UNTERSTÜTZUNG?</label><textarea data-week-check="4" data-field="support" placeholder="Was braucht noch Erklärung, Übung oder Begleitung?"></textarea></div><div class="weeklyCheckCard"><label>WAS NEHMEN WIR MIT IN DIE NÄCHSTE WOCHE?</label><textarea data-week-check="4" data-field="next" placeholder="Nächsten Schwerpunkt festhalten …"></textarea></div><div class="weeklyCheckCard"><label>WICHTIGSTE BEOBACHTUNG DER WOCHE.</label><textarea data-week-check="4" data-field="observation" placeholder="Ein Satz, den ihr nicht verlieren wollt …"></textarea><div class="weeklyCheckHint">Dieser Punkt ist bewusst kurz gehalten: Was ist euch diese Woche wirklich aufgefallen?</div></div></div></div></section>
+
+<section class="slide evaluationSlide"><div class="brand">P1</div><div class="num">22</div><div class="contextbar" id="contextBar22">DEIN BETRIEB<span>MITARBEITER: NOCH NICHT AUSGEWÄHLT</span></div><div class="brand" style="margin-top:48px">PHASE 4 / EINARBEITUNG</div><div class="range" data-week-range></div><h1>HEUTE BEWERTEN.<br><span style="font-size:.55em">WOCHE 4.</span></h1><p class="lead">Beispielhafte Startansicht. Die Ampelwerte sind je Mitarbeiter speicherbar. Bewerte nicht nur, ob etwas erledigt wurde. Entscheidend ist, wie sicher die Aufgabe bereits sitzt.</p><div id="eval-21"></div>
+</section><section class="slide weekSummarySlide" data-week="4">
+<div class="brand">P1 / WOCHENAUSWERTUNG</div><div class="num">23</div>
+<div class="contextbar" id="contextBar23">DEIN BETRIEB<span>MITARBEITER: NOCH NICHT AUSGEWÄHLT</span></div>
+<div class="range" data-week-range="4">STARTDATUM NOCH OFFEN</div>
+<h1>WOCHE 4.<br>DEIN ZWISCHENSTAND.</h1>
+<p class="lead">Hier siehst du die Auswertung der gerade bewerteten Woche. Nicht nur die Anzahl – sondern konkret, was grün, orange oder rot ist.</p>
+<div class="summaryCounts bigCounts">
+<div><strong data-red-count="4">0</strong><small>🔴 NOCH NICHT SICHER</small></div>
+<div><strong data-orange-count="4">0</strong><small>🟠 IN EINARBEITUNG</small></div>
+<div><strong data-green-count="4">0</strong><small>🟢 SICHER</small></div>
+</div>
+<div class="summaryLists">
+<div class="summaryList"><b>🔴 NOCH NICHT SICHER</b><div data-red-list="4"><span>—</span></div></div>
+<div class="summaryList"><b>🟠 IN EINARBEITUNG</b><div data-orange-list="4"><span>—</span></div></div>
+<div class="summaryList"><b>🟢 SICHER</b><div data-green-list="4"><span>—</span></div></div>
+</div>
+<div class="summaryText" data-summary-text="4">Sobald du die Woche bewertest, erscheint hier die Zusammenfassung.</div>
+    <div class="redFollowUp">
+      <h3>🔴 ROTE PUNKTE KLÄREN.</h3>
+      <p>Hier erscheinen automatisch alle Bereiche, die du in dieser Woche rot bewertet hast. Zu jedem Punkt kannst du festhalten: Was ist das Problem? Was wurde beobachtet? Was ist die nächste Lösung oder Maßnahme?</p>
+      <div data-red-followup="4" class="redIssueEmpty">Noch keine roten Punkte bewertet.</div>
+    </div>
+</section>
+
+<section class="slide" data-slide="24">
+<div class="brand">P1</div><div class="num">24</div>
+<div class="contextbar" id="contextBar24">DEIN BETRIEB<span>MITARBEITER: NOCH NICHT AUSGEWÄHLT</span></div>
+<h1>AMPEL-ZEITREISE.<br>4 WOCHEN AUF EINEN BLICK.</h1>
+<div class="video"><b data-video-key="review">TEAM ERKLÄRT / RÜCKBLICK</b><div class="play">▶</div><small>VIDEO-PLATZHALTER · 9:16</small></div>
+<div class="quote">„Jetzt ist Zeit, einmal bewusst stehen zu bleiben und auf die vergangenen Wochen zu schauen. Was klappt bereits sicher? Wo braucht dein Mitarbeiter noch Übung oder Unterstützung? Die Ampeln zeigen nicht nur den Status – sie zeigen die Entwicklung. Schau deshalb besonders auf rote Punkte, die länger bleiben, und auf orange Punkte, die noch keinen Sprung nach Grün geschafft haben. So wird aus Bauchgefühl ein klarer Überblick und aus einem Problem eine konkrete nächste Maßnahme.“</div>
+<h2 style="margin-top:32px">JE KOMPETENZ, WOCHE FÜR WOCHE.</h2>
+<p class="lead">Jede Kompetenz wird über employeeId + competencyId + Woche verfolgt. So siehst du Entwicklung, Verbesserung oder Stillstand auf einen Blick.</p>
+<div id="competencyTimeline"></div>
+<h2 style="margin-top:32px">WOCHEN IM ÜBERBLICK.</h2>
+<div class="cumulativeWeeks" id="cumulativeWeeks"></div>
+</section>
+
+<section class="slide" data-slide="25"><div class="brand">P1</div><div class="num">25</div><div class="pdfHeaderRow"><button type="button" class="pdfHeaderBtn" onclick="printOnboardingReport()">DIE 4 WOCHEN<br>ALS PDF</button></div><div class="contextbar" id="contextBar25">DEIN BETRIEB<span>MITARBEITER: NOCH NICHT AUSGEWÄHLT</span></div><h1>UNSER EINDRUCK NACH 4 WOCHEN.</h1><p class="lead">Eine interne Entwicklungsbeurteilung in normaler Betriebssprache – kein geschniegelt klingendes Arbeitszeugnis.</p><div class="grid"><div class="tile"><b>DAS KLAPPT BEREITS SICHER.</b><textarea id="impWorks" placeholder="Beobachtungen eintragen …"></textarea></div><div class="tile"><b>HIER WAR EINE GUTE ENTWICKLUNG SICHTBAR.</b><textarea id="impProgress" placeholder="Beobachtungen eintragen …"></textarea></div><div class="tile"><b>HIER BRAUCHT ES NOCH ÜBUNG.</b><textarea id="impPractice" placeholder="Beobachtungen eintragen …"></textarea></div><div class="tile"><b>UNSERE NÄCHSTEN SCHRITTE.</b><textarea id="impNextSteps" placeholder="Vereinbarungen eintragen …"></textarea></div></div>
+<div class="printReport">
+  <h2>EINARBEITUNGS-ZUSAMMENFASSUNG.</h2>
+  <p>Alle vier Wochen auf einen Blick: Betrieb, Mitarbeiter, Jobtitel, Zeitraum, Ampelbewertungen, aufgelaufene Themen und dokumentierter Handlungsbedarf.</p>
+  <div class="reportBox"><b>GESAMTEINDRUCK</b><textarea id="reportOverall" placeholder="Gesamteindruck nach 4 Wochen …"></textarea></div>
+  <div class="reportBox"><b>NÄCHSTE SCHRITTE / VEREINBARTE MASSNAHMEN</b><textarea id="reportNext" placeholder="Was wird konkret weiter verfolgt? Wer macht was? …"></textarea></div>
+  <div class="reportPreview" id="reportPreview">Wähle bzw. bewerte die Wochen – hier wird die Zusammenfassung automatisch aufgebaut.</div>
+  <div class="reportActions">
+
+    <button class="secondary" onclick="emailOnboardingReport()">✉ ZUSAMMENFASSUNG PER E-MAIL VORBEREITEN</button>
+  </div>
+</div>
+</section>
+
+
+
+
+<section class="slide ctaFinal">
+<div class="brand">P1 / DEIN NÄCHSTER SCHRITT</div><div class="num">26</div>
+<div class="contextbar">DEIN BETRIEB<span>MITARBEITER: ABSCHLUSS</span></div>
+<div class="eyebrow">DANKE, DASS DU P1 GENUTZT HAST.</div>
+<h1>PROBLEM GESEHEN.<br>STRUKTUR GEFUNDEN.</h1>
+<p class="lead">Du hast die ersten Wochen nicht einfach „irgendwie gemacht“. Du hast gesehen, was bereits sitzt, wo noch Unterstützung nötig ist und an welcher Stelle deine Einarbeitung besser werden kann. Genau dafür gibt es P1.</p>
+
+<div class="ctaHero">
+  <b>DEIN NÄCHSTER SCHRITT:</b>
+  <h2>WEITERDENKEN.<br>BESSER FÜHREN.</h2>
+  <p>P1 war der erste Schritt. Jetzt geht es darum, weitere typische HR-Baustellen im Betrieb genauso klar und praktisch zu lösen – mit konkreten Ideen aus der Carmen-Serie.</p>
+</div>
+
+<div class="grid grid3">
+  <div class="tile"><b>NEWSLETTER</b><small>Neue HR-Impulse, Vorlagen und Produkt-Updates direkt mitbekommen.</small><button class="miniCta">UPDATES HOLEN →</button></div>
+  <div class="tile"><b>TOP 3 AUS DER CARMEN-SERIE</b><small>Entdecken Sie die nächsten Lösungen aus der Carmen-Serie – für typische HR-Baustellen im Alltag.</small><button class="miniCta">TOP 3 ANSEHEN →</button></div>
+  <div class="tile"><b>MEHR VON CARMEN</b><small>Website, LinkedIn und weitere praktische HR-Inhalte entdecken.</small><button class="miniCta">WEITER ZU CARMEN →</button></div>
+</div>
+
+<div class="problemClose">
+  <b>DU HAST HIER EIN PROBLEM GELÖST.</b>
+  <span>Wenn P1 dir gezeigt hat, wo es bei der Einarbeitung hakt, dann lass die nächste Baustelle nicht wieder im Nebel stehen.</span>
+</div>
+
+<h2 class="thanks">BIS ZUM NÄCHSTEN PROBLEM.<br>WIR BRINGEN STRUKTUR MIT.</h2>
+<div class="patternRadar"><b>MUSTER-RADAR.</b><p>Bleiben bei mehreren Mitarbeitenden dieselben Kompetenzen über Wochen orange oder rot, ist das ein Signal: Vielleicht liegt das Problem nicht nur beim Mitarbeiter, sondern auch im Ablauf, in der Erklärung oder in der Einarbeitung selbst.</p><div class="radarLine"><span>WIEDERHOLT ROT / ORANGE</span><strong>→ GENAUER HINSCHAUEN</strong></div></div>
+<button class="btn" style="margin-top:22px" onclick="show(0)">⌂ ZURÜCK ZUM START</button>
+</section>
+
+<div class="nav"><button class="btn alt homeBtn" id="homeBtn" title="Zum Start" onclick="show(0)">⌂</button><button class="btn alt" id="prev">← ZURÜCK</button><span id="progress" class="meta"></span><button class="btn" id="next">WEITER →</button></div>
+</div>
+
+<div class="modal" id="customModal"><div class="dialog"><h2 id="customModalTitle">EIGENEN PUNKT HINZUFÜGEN.</h2><label>Bezeichnung<input id="customValue" placeholder="Eintrag eingeben …"></label><button class="btn" onclick="saveCustom()">HINZUFÜGEN →</button><button class="btn alt" onclick="closeModal('customModal')">ABBRECHEN</button></div></div>
+<div class="modal" id="employeeModal"><div class="dialog"><h2>NEUEN MITARBEITER ANLEGEN.</h2><label>Vorname & Nachname<input id="empName"></label><label>Startdatum<input id="empStart" type="date"></label><p class="meta">Position: <span id="empPositionLabel">—</span></p><button class="btn" onclick="saveEmployee()">MITARBEITER ANLEGEN →</button><button class="btn alt" onclick="closeModal('employeeModal')">ABBRECHEN</button></div></div>
+<div class="modal" id="specialModal"><div class="dialog"><h2>BESONDERHEIT HINZUFÜGEN.</h2><label>Titel<input id="spTitle"></label><label>Beschreibung<textarea id="spText"></textarea></label><button class="btn" onclick="saveSpecial()">HINZUFÜGEN →</button><button class="btn alt" onclick="closeModal('specialModal')">ABBRECHEN</button></div></div>
+
+<script>
+/* ============================================================================
+   P1 GRUNDSTEINMODUL V1 — UNIVERSELLER ONBOARDING-MOTOR
+   ----------------------------------------------------------------------------
+   Architektur:
+     JOB_CONFIG  -> austauschbarer Job-Content (Bereiche, Arbeitsmittel,
+                    Fachwissen, Kompetenzen, Texte, Videos, Wochen-Fokus)
+     P1_DATA     -> konkrete Nutzerdaten (Betrieb, Mitarbeiter, Bewertungen,
+                    Kommentare, Wochenchecks, Report), persistiert in
+                    localStorage unter einem einzigen Schlüssel.
+     Der Motor (alles unterhalb dieses Kommentarblocks) kennt zu keinem
+     Zeitpunkt "Bäckerei" o.ä. — jeder Jobtitel läuft über dieselbe Logik.
+   ============================================================================ */
+
+/* ---------------------------------------------------------------------------
+   1) JOB_CONFIG — NEUTRALER DEMO-JOB
+   Dies ist austauschbarer Job-Content. Ein neuer Beruf (z. B. Vertriebs-
+   innendienst / Bankwesen) braucht NUR ein neues JOB_CONFIG-Objekt in diesem
+   Format — der Motor darunter bleibt unverändert.
+--------------------------------------------------------------------------- */
+/* ---------------------------------------------------------------------------
+   JOB_CONFIG_BANKWESEN — recherchiert auf Basis von BERUFENET
+   (Bundesagentur für Arbeit, offizielle Berufsbeschreibung Bankkaufmann/-frau).
+   Ersetzt für dieses Produkt den neutralen Demo-Job. Der Motor darunter
+   (P1-Grundsteinmodul) bleibt unverändert — genau wie vorgesehen.
+--------------------------------------------------------------------------- */
+const JOB_CONFIG_BANKWESEN = {
+  job: { id: 'bankkaufmann-bankkauffrau', title: 'Bankkaufmann/Bankkauffrau' },
+
+  copy: {
+    brandLine: 'P1 / {job} ONBOARDING',
+    welcomeTitle: 'WILLKOMMEN IM BANKGESCHÄFT.<br>WIR LEGEN LOS.',
+    welcomeLead: 'Dieses Onboarding-System begleitet dich durch die ersten vier Wochen eines neuen Mitarbeiters in der Rolle „{job}“. Du richtest dein Kreditinstitut individuell ein, legst Arbeitsbereiche, Arbeitsmittel und Fachwissen fest und behältst die Entwicklung mit klaren Kompetenz-Ampeln im Blick. Statt Excel-Sumpf gibt es einen strukturierten Ablauf – von Tag 1 bis zum Abschluss nach 28 Tagen.',
+    welcomeNote: '„Herzlich willkommen zu deinem Onboarding. In den nächsten vier Wochen begleitet dich dieses Tool Schritt für Schritt durch die Einarbeitung neuer Mitarbeiterinnen und Mitarbeiter in der Rolle „{job}“. Du kannst dein Kreditinstitut individuell einrichten, Arbeitsbereiche, Arbeitsmittel und Fachwissen hinterlegen und bis zu {maxMA} Mitarbeitende begleiten. Mit täglichen Aufgaben, klaren Kompetenz-Ampeln und regelmäßigen Checkpoints siehst du jederzeit, was bereits sicher sitzt und wo noch Unterstützung nötig ist – gerade bei einem Beruf, in dem Sorgfalt, Verschwiegenheit und Kundenvertrauen zählen.“',
+    tile3Text: 'Arbeitsmittel, Besonderheiten und Fachwissen individuell einrichten.',
+    businessTitle: 'DEIN KREDITINSTITUT.',
+    businessSubtitle: 'GRUNDDATEN DEINES KREDITINSTITUTS.',
+    businessNamePlaceholder: 'z. B. Sparkasse Musterstadt',
+    areasTitle: 'ARBEITSBEREICHE.',
+    areasLead: 'Lege fest, wo sich der neue Mitarbeiter bei euch auskennen und arbeiten soll. Wähle nur die Bereiche, die es wirklich gibt – und ergänze eigene.',
+    toolsTitle: 'ARBEITSMITTEL.',
+    toolsLead: 'Hier hinterlegst du Systeme und Arbeitsmittel, die der Mitarbeiter kennen oder sicher bedienen muss. Nur auswählen, was es wirklich gibt.',
+    knowledgeTitle: 'FACHWISSEN & PROZESSE.',
+    knowledgeLead: 'Das ist das Fachwissen für „{job}“. Die Auswahl fließt später in die Kompetenz-Ampeln ein. Ergänze Themen, die bei euch zusätzlich dazugehören.',
+    docsNote: '<b>Führungszeugnis / Verschwiegenheitserklärung.</b><br>Im Bankwesen ist ein polizeiliches Führungszeugnis sowie eine Verschwiegenheitserklärung zum Bankgeheimnis und Datenschutz üblich – je nach Position und Zuständigkeit ergänzen.'
+  },
+
+  videos: {
+    welcome: { title: 'TEAM BEGRÜSST DICH' },
+    week1:   { title: 'TEAM ERKLÄRT / START' },
+    week2:   { title: 'TEAM ERKLÄRT / PHASE 2' },
+    week3:   { title: 'TEAM ERKLÄRT / PHASE 3' },
+    week4:   { title: 'TEAM ERKLÄRT / ABSCHLUSS' },
+    review:  { title: 'TEAM ERKLÄRT / RÜCKBLICK' }
+  },
+
+  checklist: {
+    docs: ['Arbeitsvertrag', 'Kopie Personalausweis', 'Steuer-ID / Sozialversicherungsausweis', 'Bankverbindung', 'Polizeiliches Führungszeugnis', 'Verschwiegenheits-/Datenschutzerklärung'],
+    areas: ['Kundenschalter / Empfang', 'Kundenberatung Privatkunden', 'Kundenberatung Firmenkunden', 'Kreditabteilung / Marktfolge', 'Wertpapier- und Anlagegeschäft', 'Backoffice / Rechnungswesen', 'Baufinanzierung / Immobilienfinanzierung', 'Auslandszahlungsverkehr / Devisengeschäft', 'Online-, Telefon- und Direktbanking', 'Revision & Controlling'],
+    tools: ['Kontoführungs-/Kassensystem', 'EC-/Geldautomat, Geldzählapparat', 'Beratungssoftware (ADM/digitale Entscheidungshilfen)', 'Vertrags- und Dokumentenmanagement-System', 'Videoberatungs-/Konferenztool', 'Online- und Mobile-Banking-Backend'],
+    knowledge: ['Zahlungsverkehr (In- und Ausland)', 'Spar- und Anlagegeschäft', 'Kreditgeschäft & Bonitätsprüfung', 'Bauspar- und Versicherungsprodukte', 'Datenschutz & gesetzliche Vorgaben']
+  },
+
+  competencies: [
+    { id: 'competency_01', name: 'KONTOFÜHRUNG & ZAHLUNGSVERKEHR' },
+    { id: 'competency_02', name: 'KUNDENBERATUNG & -BETREUUNG' },
+    { id: 'competency_03', name: 'PRIVATKUNDENGESCHÄFT' },
+    { id: 'competency_04', name: 'FIRMENKUNDENGESCHÄFT' },
+    { id: 'competency_05', name: 'KREDITGESCHÄFT & BONITÄTSPRÜFUNG' },
+    { id: 'competency_06', name: 'SPAR- UND ANLAGEGESCHÄFT' },
+    { id: 'competency_07', name: 'BAUSPAR- UND VERSICHERUNGSPRODUKTE' },
+    { id: 'competency_08', name: 'AUSLANDSGESCHÄFT & ZAHLUNGSVERKEHR' },
+    { id: 'competency_09', name: 'SORGFALT, VERSCHWIEGENHEIT & COMPLIANCE' },
+    { id: 'competency_10', name: 'ARBEITSMITTEL & BANKINTERNE ORGANISATION' }
+  ],
+
+  weekContent: {
+    1: {
+      title: "WOCHE 1.<br>ANKOMMEN IM INSTITUT.",
+      checkLabel: 'KURZER WOCHEN-CHECK.',
+      checkTitle: 'WAS ERWARTEN WIR IN WOCHE 1?',
+      checkLead: 'Die erste Woche ist zum Ankommen da. Noch muss nicht alles perfekt sitzen. Entscheidend ist, dass der neue Mitarbeiter die Systeme, den Schalterbereich und die wichtigsten Ansprechpartner kennenlernt und erste einfache Kundenvorgänge begleitet miterlebt.',
+      focus: [
+        { title: 'SYSTEME & ARBEITSPLATZ', text: 'Kontoführungssystem, Kassensystem und Beratungssoftware kennenlernen und erste Zugänge einrichten.' },
+        { title: 'ERSTE KUNDENKONTAKTE BEGLEITET', text: 'Bei einfachen Schaltervorgängen und Beratungsgesprächen zuschauen und erste Schritte gemeinsam üben.' },
+        { title: 'COMPLIANCE & VERSCHWIEGENHEIT', text: 'Grundregeln zu Datenschutz, Bankgeheimnis und internen Richtlinien besprechen – von Anfang an, nicht erst später.' },
+        { title: 'ENTWICKLUNG BEOBACHTEN', text: 'Noch nicht alles muss sitzen. Wichtig ist zu erkennen, wo weitere Unterstützung sinnvoll ist.' }
+      ],
+      quote: 'DEIN FOKUS: Erklären. Vormachen. Begleiten. Noch nicht zu viel erwarten.'
+    },
+    2: {
+      title: "WOCHE 2.<br>ERSTE VORGÄNGE SELBST.",
+      checkTitle: 'Jetzt wird aus Zuschauen langsam eigenständiges Arbeiten.',
+      checkLead: 'Fokus: Einfache Kontoführungs- und Zahlungsverkehrsvorgänge zunehmend selbst bearbeiten – mit Rückversicherung bei komplexeren Fällen.',
+      lead: 'Der Blick geht jetzt stärker auf Routine und Sicherheit im Tagesgeschäft. Was klappt schon ohne ständiges Nachfragen?'
+    },
+    3: {
+      title: "WOCHE 3.<br>BERATUNG ÜBERNEHMEN.",
+      checkTitle: 'Zeit für den nächsten Schritt: eigenständige Beratungsgespräche.',
+      checkLead: 'Fokus: Vertrauen geben. Der Mitarbeiter soll zunehmend ganze Kundengespräche und Vorgänge selbst übernehmen – bei Kredit- und Anlagethemen weiterhin mit Rückendeckung.',
+      lead: 'Jetzt zeigt sich, was stabil sitzt. Halte fest, wo du loslassen kannst und wo bei sensiblen Themen wie Kredit- oder Anlageberatung noch Begleitung nötig ist.'
+    },
+    4: {
+      title: "WOCHE 4.<br>KLARER STAND.",
+      checkTitle: 'Vier Wochen sind geschafft. Jetzt wird Klartext gesprochen.',
+      checkLead: 'Fokus: Ehrlich bewerten. Klar weitermachen. Nicht alles muss nach vier Wochen perfekt sein – aber der nächste Entwicklungsstand sollte sichtbar sein.',
+      lead: 'Schau ohne Schönreden auf den aktuellen Stand. Was ist wirklich sicher? Was bleibt der nächste konkrete Schritt, besonders bei komplexeren Themen wie Kredit- oder Wertpapiergeschäft?'
+    }
+  }
+};
+
+/* Aktives JOB_CONFIG. Später ersetzbar: loadJobConfig(NEUES_JOB_CONFIG) */
+let JOB_CONFIG = JOB_CONFIG_BANKWESEN;
+
+/* ---------------------------------------------------------------------------
+   P1_LICENSE — Tarif-/Lizenzgrenze dieses Verkaufsexemplars.
+   Für jeden verkauften Tarif (10 / 25 / 50 / 100 MA) wird VOR dem Export
+   NUR diese eine Zahl geändert — der Rest der Datei bleibt identisch.
+   Beispiel-Tarife: 10, 25, 50, 100.
+--------------------------------------------------------------------------- */
+const P1_LICENSE = { maxEmployees: 20 };
+
+/* ---------------------------------------------------------------------------
+   2) P1_DATA — PERSISTIERTE NUTZERDATEN (job-unabhängig)
+   Der Storage-Key ist an die Job-ID gekoppelt: verschiedene P1-Produkte
+   (z. B. Bäckerei vs. Bankwesen) landen so nie im selben localStorage-Topf,
+   auch wenn beide Dateien vom selben Ursprung/Server geöffnet werden.
+--------------------------------------------------------------------------- */
+const P1_STORAGE_KEY = 'p1_data_v1_' + (JOB_CONFIG.job.id || 'default');
+
+function p1DefaultData(){
+  return {
+    schemaVersion: 1,
+    business: {
+      name: '', location: '', contact: '', lead: '', ciColor: '',
+      checklist: { docs: [], areas: [], tools: [], knowledge: [] },
+      specials: []
+    },
+    activeEmployeeId: null,
+    employeeOrder: [],
+    employees: {},   // employeeId -> {id,name,start,jobTitle,status}
+    evaluations: {}, // employeeId -> week -> competencyId -> 'red'|'orange'|'green'
+    comments: {},    // employeeId -> week -> competencyId -> text
+    weekChecks: {},  // employeeId -> week -> {good,support,next,observation}
+    report: {}       // employeeId -> {overall,next,impression:{works,progress,practice,nextSteps}}
+  };
+}
+
+function p1LoadData(){
+  const fallback = p1DefaultData();
+  try{
+    const raw = localStorage.getItem(P1_STORAGE_KEY);
+    if(!raw) return fallback;
+    const parsed = JSON.parse(raw);
+    if(!parsed || typeof parsed !== 'object') return fallback;
+    // sichere, flache Zusammenführung + Absicherung verschachtelter Defaults
+    const merged = Object.assign({}, fallback, parsed);
+    merged.business = Object.assign({}, fallback.business, parsed.business || {});
+    merged.business.checklist = Object.assign({}, fallback.business.checklist, (parsed.business || {}).checklist || {});
+    merged.business.specials = (parsed.business && Array.isArray(parsed.business.specials)) ? parsed.business.specials : [];
+    merged.employeeOrder = Array.isArray(parsed.employeeOrder) ? parsed.employeeOrder : [];
+    merged.employees = parsed.employees || {};
+    merged.evaluations = parsed.evaluations || {};
+    merged.comments = parsed.comments || {};
+    merged.weekChecks = parsed.weekChecks || {};
+    merged.report = parsed.report || {};
+    return merged;
+  }catch(e){ return fallback; }
+}
+
+let P1_DATA = p1LoadData();
+
+function p1SaveData(){
+  localStorage.setItem(P1_STORAGE_KEY, JSON.stringify(P1_DATA));
+}
+
+/* Stabile IDs: Name ist NIEMALS Primärschlüssel. */
+function p1NewEmployeeId(){
+  return 'employee_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+}
+
+function ensureEmployeeBuckets(id){
+  if(!P1_DATA.evaluations[id]) P1_DATA.evaluations[id] = {1:{},2:{},3:{},4:{}};
+  if(!P1_DATA.comments[id]) P1_DATA.comments[id] = {1:{},2:{},3:{},4:{}};
+  if(!P1_DATA.weekChecks[id]) P1_DATA.weekChecks[id] = {1:{},2:{},3:{},4:{}};
+  if(!P1_DATA.report[id]) P1_DATA.report[id] = {overall:'', next:'', impression:{works:'',progress:'',practice:'',nextSteps:''}};
+  [1,2,3,4].forEach(w=>{
+    if(!P1_DATA.evaluations[id][w]) P1_DATA.evaluations[id][w] = {};
+    if(!P1_DATA.comments[id][w]) P1_DATA.comments[id][w] = {};
+    if(!P1_DATA.weekChecks[id][w]) P1_DATA.weekChecks[id][w] = {};
+  });
+}
+
+function getActiveEmployee(){
+  const id = P1_DATA.activeEmployeeId;
+  return id ? P1_DATA.employees[id] : null;
+}
+
+function escapeHtml(str){
+  return String(str == null ? '' : str).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+}
+
+/* Ersetzt {job}- und {maxMA}-Platzhalter in Copy-Texten. */
+function resolveCopy(str){
+  if(str == null) return '';
+  return String(str).replace(/\{job\}/g, JOB_CONFIG.job.title).replace(/\{maxMA\}/g, P1_LICENSE.maxEmployees);
+}
+
+/* ---------------------------------------------------------------------------
+   3) NAVIGATION (unverändert aus V16 übernommen — reine Motor-Mechanik)
+--------------------------------------------------------------------------- */
+const slides = [...document.querySelectorAll('.slide')];
+let cur = 0;
+const progress = document.getElementById('progress');
+
+function show(i){
+  cur = Math.max(0, Math.min(slides.length - 1, i));
+  slides.forEach((s, n) => s.classList.toggle('active', n === cur));
+  progress.textContent = `${String(cur+1).padStart(2,'0')} / ${String(slides.length).padStart(2,'0')}`;
+  document.getElementById('prev').style.visibility = cur ? 'visible' : 'hidden';
+  document.getElementById('next').textContent = cur === slides.length - 1 ? 'FERTIG' : 'WEITER →';
+  updateContext();
+  window.scrollTo(0, 0);
+}
+document.getElementById('prev').onclick = () => show(cur - 1);
+document.getElementById('next').onclick = () => show(cur + 1);
+
+/* ---------------------------------------------------------------------------
+   4) CI-FARBE (Motor, job-unabhängig)
+--------------------------------------------------------------------------- */
+const palettes = ['#4d4b48','#66615b','#817a72','#a89f95','#746d67','#b33a3a','#d65a31','#e39b24','#d2b200','#7f9c2f','#2f8f63','#1d8a8a','#247ba0','#3867b0','#5b4bb7','#7a4b9d','#a5487d','#c05a78','#9a5f3f','#8a7968'];
+const colorsBox = document.getElementById('colors');
+if(colorsBox) palettes.forEach(c=>{
+  const x = document.createElement('button');
+  x.className = 'sw'; x.style.background = c;
+  x.onclick = () => setCiColor(c);
+  colorsBox.appendChild(x);
+});
+const customColorInput = document.getElementById('customColor');
+if(customColorInput) customColorInput.oninput = e => setCiColor(e.target.value);
+
+function setCiColor(c){
+  document.documentElement.style.setProperty('--ci', c);
+  P1_DATA.business.ciColor = c;
+  p1SaveData();
+}
+
+/* ---------------------------------------------------------------------------
+   5) CHECKLISTEN (Vor dem Start / Arbeitsbereiche / Arbeitsmittel / Fachwissen)
+   Item-Quelle: JOB_CONFIG.checklist[cat]  |  Auswahl-Speicher: P1_DATA.business.checklist[cat]
+--------------------------------------------------------------------------- */
+let customTarget = null;
+
+function fillChecklist(cat){
+  const el = document.getElementById(cat);
+  if(!el) return;
+  el.innerHTML = '';
+  const items = (JOB_CONFIG.checklist && JOB_CONFIG.checklist[cat]) || [];
+  if(!P1_DATA.business.checklist[cat]) P1_DATA.business.checklist[cat] = [];
+  const selected = P1_DATA.business.checklist[cat];
+
+  const makeBtn = (label, isCustom) => {
+    const b = document.createElement('button');
+    b.className = 'choice' + (selected.includes(label) ? ' on' : '');
+    b.textContent = label;
+    b.onclick = () => {
+      b.classList.toggle('on');
+      toggleChecklistItem(cat, label, b.classList.contains('on'));
+    };
+    el.appendChild(b);
+  };
+  items.forEach(label => makeBtn(label, false));
+  selected.filter(s => !items.includes(s)).forEach(label => makeBtn(label, true));
+}
+
+function toggleChecklistItem(cat, label, on){
+  const arr = P1_DATA.business.checklist[cat] || (P1_DATA.business.checklist[cat] = []);
+  const idx = arr.indexOf(label);
+  if(on && idx === -1) arr.push(label);
+  if(!on && idx !== -1) arr.splice(idx, 1);
+  p1SaveData();
+}
+
+function openModal(id){ const el = document.getElementById(id); if(el) el.classList.add('open'); }
+function closeModal(id){ const el = document.getElementById(id); if(el) el.classList.remove('open'); }
+
+function addCustom(cat, label){
+  customTarget = cat;
+  const title = document.getElementById('customModalTitle');
+  const value = document.getElementById('customValue');
+  if(title) title.textContent = label.toUpperCase() + '.';
+  if(value) value.value = '';
+  openModal('customModal');
+  setTimeout(() => value && value.focus(), 50);
+}
+
+function saveCustom(){
+  const value = document.getElementById('customValue');
+  const t = value ? value.value.trim() : '';
+  if(!t || !customTarget) return;
+  const arr = P1_DATA.business.checklist[customTarget] || (P1_DATA.business.checklist[customTarget] = []);
+  if(!arr.includes(t)) arr.push(t);
+  p1SaveData();
+  fillChecklist(customTarget);
+  closeModal('customModal');
+}
+
+/* ---------------------------------------------------------------------------
+   6) BETRIEBLICHE BESONDERHEITEN (business-level, job-unabhängig)
+--------------------------------------------------------------------------- */
+function renderSpecials(){
+  const box = document.getElementById('specials');
+  if(!box) return;
+  box.innerHTML = P1_DATA.business.specials.map(s =>
+    `<div class="tile"><b>${escapeHtml(s.title)}</b><small>${escapeHtml(s.text) || 'Keine Beschreibung hinterlegt.'}</small></div>`
+  ).join('');
+}
+function saveSpecial(){
+  const t = document.getElementById('spTitle').value.trim();
+  const d = document.getElementById('spText').value.trim();
+  if(!t) return;
+  P1_DATA.business.specials.push({ title: t, text: d });
+  p1SaveData();
+  document.getElementById('spTitle').value = '';
+  document.getElementById('spText').value = '';
+  closeModal('specialModal');
+  renderSpecials();
+}
+
+/* ---------------------------------------------------------------------------
+   7) MITARBEITER — stabile ID statt Name als Schlüssel
+--------------------------------------------------------------------------- */
+function renderEmployeeList(){
+  const box = document.getElementById('employees');
+  if(!box) return;
+  box.innerHTML = '';
+  P1_DATA.employeeOrder.forEach(id => {
+    const emp = P1_DATA.employees[id];
+    if(!emp) return;
+    const x = document.createElement('div');
+    x.className = 'tile' + (id === P1_DATA.activeEmployeeId ? ' tile-active' : '');
+    x.style.cursor = 'pointer';
+    x.innerHTML = `<b>${escapeHtml(emp.name)}</b><small>Start: ${escapeHtml(emp.start || 'offen')} · ${escapeHtml(emp.jobTitle || JOB_CONFIG.job.title)}</small><br><small>${id === P1_DATA.activeEmployeeId ? 'AKTIV AUSGEWÄHLT' : 'ANTIPPEN = FÜR DIESEN MA BEWERTEN'}</small>`;
+    x.onclick = () => selectEmployee(id);
+    box.appendChild(x);
+  });
+  const count = document.getElementById('count');
+  if(count) count.textContent = P1_DATA.employeeOrder.length;
+  const maxSlots = document.getElementById('maxSlots');
+  if(maxSlots) maxSlots.textContent = P1_LICENSE.maxEmployees;
+  const atLimit = P1_DATA.employeeOrder.length >= P1_LICENSE.maxEmployees;
+  const addBtn = document.getElementById('addEmployeeBtn');
+  if(addBtn) addBtn.style.display = atLimit ? 'none' : '';
+  const limitNote = document.getElementById('employeeLimitNote');
+  if(limitNote){
+    limitNote.style.display = atLimit ? '' : 'none';
+    const limitMax = document.getElementById('limitNoteMax');
+    if(limitMax) limitMax.textContent = P1_LICENSE.maxEmployees;
+  }
+}
+
+function selectEmployee(id){
+  P1_DATA.activeEmployeeId = id;
+  p1SaveData();
+  renderEmployeeList();
+  renderAllEvaluations();
+  updateContext();
+}
+
+function saveEmployee(){
+  const nameEl = document.getElementById('empName');
+  const startEl = document.getElementById('empStart');
+  const n = nameEl.value.trim();
+  const d = startEl.value;
+  if(!n) return;
+  if(P1_DATA.employeeOrder.length >= P1_LICENSE.maxEmployees) return; /* Button ist in diesem Fall bereits ausgeblendet (siehe renderEmployeeList) */
+  const id = p1NewEmployeeId();
+  P1_DATA.employees[id] = { id, name: n, start: d, jobTitle: JOB_CONFIG.job.title, status: 'aktiv' };
+  P1_DATA.employeeOrder.push(id);
+  ensureEmployeeBuckets(id);
+  P1_DATA.activeEmployeeId = id;
+  p1SaveData();
+  nameEl.value = ''; startEl.value = '';
+  closeModal('employeeModal');
+  renderEmployeeList();
+  renderAllEvaluations();
+  updateContext();
+}
+
+/* ---------------------------------------------------------------------------
+   8) KOMPETENZ-BEWERTUNG (Ampel) — gespeichert über employeeId + competencyId + week
+--------------------------------------------------------------------------- */
+const evalMap = {1:'eval-01', 2:'eval-07', 3:'eval-14', 4:'eval-21'};
+
+function renderEvaluationWeek(w){
+  const box = document.getElementById(evalMap[w]);
+  if(!box) return;
+  const activeId = P1_DATA.activeEmployeeId;
+  if(!activeId){
+    box.className = 'evaluationPanel';
+    box.innerHTML = '<div class="note">⚠️ Bitte zuerst auf Slide 05 einen Mitarbeiter anlegen bzw. auswählen — erst danach lassen sich hier Bewertungen abgeben.</div>';
+    return;
+  }
+  const data = P1_DATA.evaluations[activeId][w];
+  box.className = 'evaluationPanel';
+  box.innerHTML = JOB_CONFIG.competencies.map(c => `
+    <div class="evaluationRow">
+      <div class="evaluationTitle">${escapeHtml(c.name)}</div>
+      <div class="evaluationChoices">
+        <button class="choice evalChoice ${data[c.id]==='red'?'on':''}" data-week="${w}" data-competency="${c.id}" data-val="red">🔴 NOCH NICHT SICHER</button>
+        <button class="choice evalChoice ${data[c.id]==='orange'?'on':''}" data-week="${w}" data-competency="${c.id}" data-val="orange">🟠 IN EINARBEITUNG</button>
+        <button class="choice evalChoice ${data[c.id]==='green'?'on':''}" data-week="${w}" data-competency="${c.id}" data-val="green">🟢 SICHER</button>
+      </div>
+    </div>`).join('');
+  updateWeekSummary(w);
+}
+
+function renderAllEvaluations(){
+  [1,2,3,4].forEach(renderEvaluationWeek);
+  renderCumulativeWeeks();
+  renderCompetencyTimeline();
+  renderWeekChecks();
+  renderImpressionNotes();
+}
+
+document.addEventListener('click', e => {
+  const b = e.target.closest('.evalChoice');
+  if(!b) return;
+  const activeId = P1_DATA.activeEmployeeId;
+  if(!activeId) return;
+  const w = Number(b.dataset.week);
+  const compId = b.dataset.competency;
+  P1_DATA.evaluations[activeId][w][compId] = b.dataset.val;
+  p1SaveData();
+  b.closest('.evaluationRow').querySelectorAll('.evalChoice').forEach(x => x.classList.remove('on'));
+  b.classList.add('on');
+  updateWeekSummary(w);
+  refreshOnboardingReport();
+});
+
+function listHtml(items){
+  return items.length ? items.map(c => `<span>${escapeHtml(c.name)}</span>`).join('') : '<span>—</span>';
+}
+
+function updateWeekSummary(w){
+  const activeId = P1_DATA.activeEmployeeId;
+  const data = activeId ? (P1_DATA.evaluations[activeId][w] || {}) : {};
+  const groups = { red: [], orange: [], green: [] };
+  JOB_CONFIG.competencies.forEach(c => {
+    const v = data[c.id];
+    if(groups[v]) groups[v].push(c);
+  });
+  ['red','orange','green'].forEach(color => {
+    const count = document.querySelector(`[data-${color}-count="${w}"]`);
+    const list = document.querySelector(`[data-${color}-list="${w}"]`);
+    if(count) count.textContent = groups[color].length;
+    if(list) list.innerHTML = listHtml(groups[color]);
+  });
+  const text = document.querySelector(`[data-summary-text="${w}"]`);
+  if(text){
+    const total = Object.keys(data).length;
+    if(!total) text.textContent = 'Sobald du die Woche bewertest, erscheint hier die Zusammenfassung.';
+    else if(groups.green.length >= Math.ceil(JOB_CONFIG.competencies.length * 0.7)) text.textContent = 'Starker Stand: Vieles sitzt bereits sicher. Die wenigen offenen Punkte sollten gezielt weiter begleitet werden.';
+    else if(groups.red.length >= Math.ceil(JOB_CONFIG.competencies.length * 0.4)) text.textContent = 'Hier braucht es gezielte Unterstützung: erklären, vormachen, gemeinsam üben und erneut prüfen.';
+    else text.textContent = 'Gemischter Stand: Die Übersicht zeigt konkret, welche Themen in der nächsten Woche im Fokus bleiben sollten.';
+  }
+  renderRedFollowUp(w, groups);
+  renderCumulativeWeeks();
+  renderCompetencyTimeline();
+}
+
+/* ---------------------------------------------------------------------------
+   9) ROTE PUNKTE — Kommentare je employeeId + competencyId + week
+--------------------------------------------------------------------------- */
+function loadComment(w, compId){
+  const activeId = P1_DATA.activeEmployeeId;
+  if(!activeId) return '';
+  return (P1_DATA.comments[activeId][w] && P1_DATA.comments[activeId][w][compId]) || '';
+}
+function saveComment(w, compId, value){
+  const activeId = P1_DATA.activeEmployeeId;
+  if(!activeId) return;
+  P1_DATA.comments[activeId][w][compId] = value;
+  p1SaveData();
+}
+
+function renderRedFollowUp(w, groups){
+  const box = document.querySelector(`[data-red-followup="${w}"]`);
+  if(!box) return;
+  const reds = groups.red || [];
+  if(!reds.length){
+    box.className = 'redIssueEmpty';
+    box.textContent = 'Noch keine roten Punkte bewertet.';
+    return;
+  }
+  box.className = '';
+  box.innerHTML = reds.map(c => `<div class="redIssueCard">
+      <b>🔴 ${escapeHtml(c.name)}</b>
+      <textarea data-red-comment-week="${w}" data-red-comment-competency="${c.id}" placeholder="Problem / Beobachtung / Ursache / vereinbarte Lösung oder nächste Maßnahme …">${escapeHtml(loadComment(w, c.id))}</textarea>
+      <small>Wird automatisch für diesen Mitarbeiter und diese Woche gespeichert.</small>
+    </div>`).join('');
+}
+
+document.addEventListener('input', e => {
+  const t = e.target.closest('[data-red-comment-week]');
+  if(!t) return;
+  saveComment(Number(t.dataset.redCommentWeek), t.dataset.redCommentCompetency, t.value);
+});
+
+/* ---------------------------------------------------------------------------
+   10) WOCHENCHECK (4 freie Felder je Woche — Motor-UX, job-unabhängig)
+--------------------------------------------------------------------------- */
+function renderWeekChecks(){
+  const activeId = P1_DATA.activeEmployeeId;
+  document.querySelectorAll('[data-week-check]').forEach(el => {
+    const w = Number(el.dataset.weekCheck), field = el.dataset.field;
+    const data = activeId ? (P1_DATA.weekChecks[activeId][w] || {}) : {};
+    el.value = data[field] || '';
+    if(!el.dataset.bound){
+      el.addEventListener('input', () => {
+        const id = P1_DATA.activeEmployeeId;
+        if(!id) return;
+        if(!P1_DATA.weekChecks[id][w]) P1_DATA.weekChecks[id][w] = {};
+        P1_DATA.weekChecks[id][w][field] = el.value;
+        p1SaveData();
+      });
+      el.dataset.bound = '1';
+    }
+  });
+}
+
+/* ---------------------------------------------------------------------------
+   11) WOCHEN-ÜBERSICHT + AMPEL-ZEITREISE (employeeId + competencyId + week)
+--------------------------------------------------------------------------- */
+function renderCumulativeWeeks(){
+  const box = document.getElementById('cumulativeWeeks');
+  if(!box) return;
+  const activeId = P1_DATA.activeEmployeeId;
+  box.innerHTML = [1,2,3,4].map(w => {
+    const data = activeId ? (P1_DATA.evaluations[activeId][w] || {}) : {};
+    const groups = { red: [], orange: [], green: [] };
+    JOB_CONFIG.competencies.forEach(c => {
+      const v = data[c.id];
+      if(groups[v]) groups[v].push(c);
+    });
+    const reds = groups.red.map(c => c.name).join(' · ') || 'keine roten Punkte';
+    return `<div class="cumulativeWeek">
+      <h3>WOCHE ${w}</h3>
+      <div class="cumulativeDots">
+        <span>🔴 ${groups.red.length}</span>
+        <span>🟠 ${groups.orange.length}</span>
+        <span>🟢 ${groups.green.length}</span>
+      </div>
+      <div class="cumulativeRed"><b>ROTE PUNKTE:</b> ${escapeHtml(reds)}</div>
+    </div>`;
+  }).join('');
+}
+
+/* Echte Zeitreise: pro Kompetenz die Ampel über alle vier Wochen. */
+function renderCompetencyTimeline(){
+  const box = document.getElementById('competencyTimeline');
+  if(!box) return;
+  const activeId = P1_DATA.activeEmployeeId;
+  if(!activeId){
+    box.innerHTML = '<div class="timelineEmpty">Bitte zuerst einen Mitarbeiter auswählen (Slide 05), um die Zeitreise zu sehen.</div>';
+    return;
+  }
+  const colorClass = v => v === 'red' ? 'red' : v === 'orange' ? 'orange' : v === 'green' ? 'green' : '';
+  box.innerHTML = JOB_CONFIG.competencies.map(c => {
+    const dots = [1,2,3,4].map(w => {
+      const v = P1_DATA.evaluations[activeId][w][c.id];
+      return `<div class="timelineDot"><div class="lampBig ${colorClass(v)}"></div>W${w}</div>`;
+    }).join('');
+    return `<div class="timelineRow"><b>${escapeHtml(c.name)}</b><div class="timelineDots">${dots}</div></div>`;
+  }).join('');
+}
+
+/* ---------------------------------------------------------------------------
+   12) KONTEXTLEISTE & ZEITRAUM
+--------------------------------------------------------------------------- */
+function fmt(d){ return d.toLocaleDateString('de-DE', {day:'2-digit', month:'2-digit', year:'numeric'}); }
+
+function weekRange(w){
+  const emp = getActiveEmployee();
+  if(!emp || !emp.start) return 'STARTDATUM NOCH OFFEN';
+  const start = new Date(emp.start + 'T12:00:00');
+  const a = new Date(start); a.setDate(a.getDate() + (w - 1) * 7);
+  const b = new Date(a); b.setDate(b.getDate() + 6);
+  return fmt(a) + ' – ' + fmt(b);
+}
+
+function currentWeekFromSlide(){
+  const t = slides[cur]?.innerText || '';
+  if(t.includes('WOCHE 4')) return 4;
+  if(t.includes('WOCHE 3')) return 3;
+  if(t.includes('WOCHE 2')) return 2;
+  if(t.includes('WOCHE 1')) return 1;
+  return null;
+}
+
+function updateContext(){
+  const bizName = (P1_DATA.business.name || 'DEIN BETRIEB').toUpperCase();
+  const emp = getActiveEmployee();
+  document.querySelectorAll('.contextbar').forEach(b => {
+    b.innerHTML = bizName + '<span>MITARBEITER: ' + (emp ? escapeHtml(emp.name.toUpperCase()) : 'NOCH NICHT AUSGEWÄHLT') + '</span>';
+  });
+  const currentWeek = currentWeekFromSlide();
+  document.querySelectorAll('[data-week-range]').forEach(el => {
+    const n = Number(el.dataset.weekRange) || currentWeek || 1;
+    el.textContent = weekRange(n);
+  });
+}
+
+/* Betriebs-Grunddaten (Slide 03) laden + binden */
+function bindBusinessInputs(){
+  const map = { bizName: 'name', bizLocation: 'location', bizContact: 'contact', bizLead: 'lead' };
+  Object.entries(map).forEach(([elId, field]) => {
+    const el = document.getElementById(elId);
+    if(!el) return;
+    el.value = P1_DATA.business[field] || '';
+    el.addEventListener('input', () => {
+      P1_DATA.business[field] = el.value;
+      p1SaveData();
+      updateContext();
+    });
+  });
+  if(P1_DATA.business.ciColor){
+    document.documentElement.style.setProperty('--ci', P1_DATA.business.ciColor);
+    if(customColorInput) customColorInput.value = P1_DATA.business.ciColor;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   13) REPORT / PDF / E-MAIL
+--------------------------------------------------------------------------- */
+function p1ReportData(){
+  const activeId = P1_DATA.activeEmployeeId;
+  const weeks = [];
+  for(let w = 1; w <= 4; w++){
+    const d = activeId ? (P1_DATA.evaluations[activeId][w] || {}) : {};
+    const g = { red: [], orange: [], green: [] };
+    JOB_CONFIG.competencies.forEach(c => {
+      const v = d[c.id];
+      if(g[v]) g[v].push(c);
+    });
+    weeks.push({ w, g });
+  }
+  return weeks;
+}
+
+function p1ReportHtml(){
+  const weeks = p1ReportData();
+  const anyData = weeks.some(x => x.g.red.length || x.g.orange.length || x.g.green.length);
+  if(!anyData) return '<div class="reportPreviewEmpty">Wähle bzw. bewerte die Wochen – hier wird die Zusammenfassung automatisch aufgebaut.</div>';
+  return weeks.map(x => {
+    const redItems = x.g.red.map(c => {
+      const cm = loadComment(x.w, c.id);
+      return `<div class="rwItem"><span class="rwName">🔴 ${escapeHtml(c.name)}</span>${cm ? `<div class="rwComment">${escapeHtml(cm)}</div>` : ''}</div>`;
+    }).join('') || '<div class="rwEmpty">Keine roten Punkte in dieser Woche.</div>';
+    return `<div class="reportWeekCard">
+      <div class="rwTop"><b>WOCHE ${x.w}</b><span>${escapeHtml(weekRange(x.w))}</span></div>
+      <div class="rwCounts">
+        <div class="rc-red"><strong>${x.g.red.length}</strong><small>NOCH NICHT SICHER</small></div>
+        <div class="rc-orange"><strong>${x.g.orange.length}</strong><small>IN EINARBEITUNG</small></div>
+        <div class="rc-green"><strong>${x.g.green.length}</strong><small>SICHER</small></div>
+      </div>
+      <div class="rwRedList"><b>OFFENE PUNKTE</b>${redItems}</div>
+    </div>`;
+  }).join('');
+}
+
+function p1ReportKey(){
+  return P1_DATA.activeEmployeeId ? P1_DATA.report[P1_DATA.activeEmployeeId] : null;
+}
+
+function refreshOnboardingReport(){
+  const p = document.getElementById('reportPreview');
+  if(p) p.innerHTML = p1ReportHtml();
+  const rep = p1ReportKey();
+  const a = document.getElementById('reportOverall'), b = document.getElementById('reportNext');
+  if(a && document.activeElement !== a) a.value = rep ? (rep.overall || '') : '';
+  if(b && document.activeElement !== b) b.value = rep ? (rep.next || '') : '';
+}
+
+function renderImpressionNotes(){
+  const rep = p1ReportKey();
+  const fields = { impWorks:'works', impProgress:'progress', impPractice:'practice', impNextSteps:'nextSteps' };
+  Object.entries(fields).forEach(([elId, field]) => {
+    const el = document.getElementById(elId);
+    if(!el) return;
+    el.value = rep ? (rep.impression && rep.impression[field] || '') : '';
+  });
+}
+
+document.addEventListener('input', e => {
+  const activeId = P1_DATA.activeEmployeeId;
+  if(!activeId) return;
+  if(e.target.id === 'reportOverall'){ P1_DATA.report[activeId].overall = e.target.value; p1SaveData(); }
+  if(e.target.id === 'reportNext'){ P1_DATA.report[activeId].next = e.target.value; p1SaveData(); }
+  const impMap = { impWorks:'works', impProgress:'progress', impPractice:'practice', impNextSteps:'nextSteps' };
+  if(impMap[e.target.id]){
+    P1_DATA.report[activeId].impression[impMap[e.target.id]] = e.target.value;
+    p1SaveData();
+  }
+});
+
+function reportDocumentHtml(){
+  const biz = P1_DATA.business.name || '—';
+  const emp = getActiveEmployee();
+  const name = emp ? emp.name : '—';
+  const jobTitle = emp ? (emp.jobTitle || JOB_CONFIG.job.title) : JOB_CONFIG.job.title;
+  const start = emp && emp.start ? emp.start : '—';
+  const rep = p1ReportKey() || {overall:'', next:''};
+  const overall = rep.overall || '—';
+  const next = rep.next || '—';
+  const period = emp && emp.start ? (weekRange(1).split(' – ')[0] + ' – ' + weekRange(4).split(' – ')[1]) : '—';
+  return `<!doctype html><html><head><meta charset="utf-8"><title>Einarbeitungs-Zusammenfassung</title><style>@page{size:A4;margin:16mm}body{font-family:Arial;color:#222;line-height:1.45}h1{font-size:26px}h2{font-size:18px;margin-top:24px}.meta,.box{border:1px solid #bbb;padding:12px;margin:12px 0}.week{border-top:1px solid #ccc;padding:12px 0}.r{color:#b3261e}.o{color:#b76b00}.g{color:#18794e}.comment{margin:4px 0 8px;padding:7px;background:#f5f5f5}</style>
+</head><body><h1>EINARBEITUNGS-ZUSAMMENFASSUNG</h1><div class="meta"><b>Betrieb:</b> ${escapeHtml(biz)}<br><b>Mitarbeiter:</b> ${escapeHtml(name)}<br><b>Jobtitel:</b> ${escapeHtml(jobTitle)}<br><b>Startdatum:</b> ${escapeHtml(start)}<br><b>Zeitraum:</b> ${escapeHtml(period)}<br><b>Erstellt:</b> ${new Date().toLocaleDateString('de-DE')}</div>${p1ReportData().map(x=>{const list=(arr,cls)=>arr.length?arr.map(v=>`<li class="${cls}">${escapeHtml(v.name)}${cls==='r'&&loadComment(x.w,v.id)?`<div class="comment">${escapeHtml(loadComment(x.w,v.id))}</div>`:''}</li>`).join(''):'<li>—</li>';return `<div class="week"><h2>WOCHE ${x.w}</h2><b class="r">🔴 Handlungsbedarf (${x.g.red.length})</b><ul>${list(x.g.red,'r')}</ul><b class="o">🟠 In Entwicklung (${x.g.orange.length})</b><ul>${list(x.g.orange,'o')}</ul><b class="g">🟢 Sicher (${x.g.green.length})</b><ul>${list(x.g.green,'g')}</ul></div>`}).join('')}<div class="box"><h2>Gesamteindruck</h2>${escapeHtml(overall).replace(/\n/g,'<br>')}</div><div class="box"><h2>Nächste Schritte / Maßnahmen</h2>${escapeHtml(next).replace(/\n/g,'<br>')}</div></body></html>`;
+}
+
+function printOnboardingReport(){
+  const html = reportDocumentHtml();
+  let w = null;
+  try { w = window.open('', '_blank'); } catch(e) { w = null; }
+  if(w){
+    try{
+      w.document.write(html); w.document.close(); w.focus();
+      setTimeout(() => w.print(), 300);
+      return;
+    }catch(e){ /* Popup wurde geöffnet, aber blockiert/eingeschränkt — auf Download ausweichen */ }
+  }
+  /* Fallback: funktioniert auch, wenn Popups/window.open() blockiert sind
+     (z. B. in eingebetteten Vorschau-Fenstern). Lädt die fertige
+     Zusammenfassung als eigenständige HTML-Datei herunter — von dort aus
+     lässt sie sich in jedem Browser normal drucken / als PDF speichern. */
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'Einarbeitungs-Zusammenfassung.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
+
+function emailOnboardingReport(){
+  const emp = getActiveEmployee();
+  const rep = p1ReportKey() || {overall:'', next:''};
+  const subject = encodeURIComponent('Einarbeitungs-Zusammenfassung – ' + (emp ? emp.name : 'Mitarbeiter'));
+  const body = encodeURIComponent('Hallo,\n\nanbei die Zusammenfassung der Einarbeitung. Die vollständige PDF kann über „Drucken / Als PDF speichern“ erstellt und dieser E-Mail beigefügt werden.\n\nGesamteindruck:\n' + (rep.overall || '—') + '\n\nNächste Schritte:\n' + (rep.next || '—'));
+  window.location.href = 'mailto:?subject=' + subject + '&body=' + body;
+}
+
+/* ---------------------------------------------------------------------------
+   14) JOB_CONFIG ANWENDEN — bindet allen Job-Content an die Motor-Oberfläche.
+   Ein neuer Job (z. B. Bankwesen) läuft NUR durch loadJobConfig(NEUES_CONFIG).
+--------------------------------------------------------------------------- */
+function applyCopyBindings(){
+  document.getElementById('pageTitle').textContent = 'P1 – ' + JOB_CONFIG.job.title;
+  document.querySelectorAll('[data-copy]').forEach(el => {
+    const key = el.dataset.copy;
+    const val = JOB_CONFIG.copy[key];
+    if(val !== undefined) el.innerHTML = resolveCopy(val);
+  });
+  document.querySelectorAll('[data-video-key]').forEach(el => {
+    const key = el.dataset.videoKey;
+    const v = JOB_CONFIG.videos && JOB_CONFIG.videos[key];
+    if(v && v.title) el.textContent = v.title;
+  });
+  const posLabel = document.getElementById('empPositionLabel');
+  if(posLabel) posLabel.textContent = JOB_CONFIG.job.title;
+  const bizNameInput = document.getElementById('bizName');
+  if(bizNameInput && JOB_CONFIG.copy.businessNamePlaceholder) bizNameInput.placeholder = JOB_CONFIG.copy.businessNamePlaceholder;
+  const docsNote = document.getElementById('docsNote');
+  if(docsNote){
+    if(JOB_CONFIG.copy.docsNote){ docsNote.style.display = ''; docsNote.innerHTML = resolveCopy(JOB_CONFIG.copy.docsNote); }
+    else docsNote.style.display = 'none';
+  }
+  const tileMax = document.getElementById('tileMaxMaLabel');
+  if(tileMax) tileMax.textContent = 'BIS ZU ' + P1_LICENSE.maxEmployees + ' MA.';
+  const maxSlotsInit = document.getElementById('maxSlots');
+  if(maxSlotsInit) maxSlotsInit.textContent = P1_LICENSE.maxEmployees;
+}
+
+function applyWeekContent(){
+  const wc = JOB_CONFIG.weekContent || {};
+  // Woche 1
+  if(wc[1]){
+    setText('week1Title', wc[1].title, true);
+    setText('week1CheckLabel', wc[1].checkLabel);
+    setText('week1CheckTitle', wc[1].checkTitle);
+    setText('week1CheckLead', wc[1].checkLead);
+    setText('week1Quote', wc[1].quote ? `<b>DEIN FOKUS:</b><br>${escapeHtml(wc[1].quote)}` : null, true);
+    const focusBox = document.getElementById('week1Focus');
+    if(focusBox && Array.isArray(wc[1].focus)){
+      focusBox.innerHTML = wc[1].focus.map(f => `<div><b>${escapeHtml(f.title)}</b><br>${escapeHtml(f.text)}</div>`).join('');
+    }
+  }
+  // Woche 2-4
+  [2,3,4].forEach(w => {
+    if(!wc[w]) return;
+    setText(`week${w}Title`, wc[w].title, true);
+    setText(`week${w}CheckTitle`, wc[w].checkTitle);
+    setText(`week${w}CheckLead`, wc[w].checkLead);
+    setText(`week${w}Lead`, wc[w].lead);
+  });
+}
+function setText(id, val, isHtml){
+  if(val == null) return;
+  const el = document.getElementById(id);
+  if(!el) return;
+  if(isHtml) el.innerHTML = val; else el.textContent = val;
+}
+
+function applyJobConfig(){
+  applyCopyBindings();
+  fillChecklist('docs');
+  fillChecklist('areas');
+  fillChecklist('tools');
+  fillChecklist('knowledge');
+  applyWeekContent();
+  renderSpecials();
+  renderEmployeeList();
+  renderAllEvaluations();
+  updateContext();
+}
+
+/* Öffentliche Schnittstelle für einen neuen Job (Motor bleibt unverändert):
+   loadJobConfig(JOB_CONFIG_BANKWESEN) */
+function loadJobConfig(newConfig){
+  JOB_CONFIG = newConfig;
+  applyJobConfig();
+}
+
+/* ---------------------------------------------------------------------------
+   15) TAGES-RASTER (falls im Layout referenziert — reine Motor-Mechanik)
+--------------------------------------------------------------------------- */
+document.querySelectorAll('[data-days]').forEach(el => {
+  const [a, b] = el.dataset.days.split('-').map(Number);
+  for(let d = a; d <= b; d++){
+    const x = document.createElement('div');
+    x.className = 'day';
+    x.innerHTML = `<b>TAG ${String(d).padStart(2,'0')}</b><br><small>Aufgaben & Beobachtung</small><div class="traffic"><span class="lamp r"></span><span class="lamp o"></span><span class="lamp g"></span></div>`;
+    el.appendChild(x);
+  }
+});
+
+/* ---------------------------------------------------------------------------
+   16) BOOTSTRAP
+--------------------------------------------------------------------------- */
+bindBusinessInputs();
+applyJobConfig();
+refreshOnboardingReport();
+show(0);
+setTimeout(refreshOnboardingReport, 500);
+
+</script>
+</body></html>
