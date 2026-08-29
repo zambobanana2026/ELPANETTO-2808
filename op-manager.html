@@ -376,6 +376,100 @@ function generateMonths(start, count) {
   }
   return list;
 }
+const CSV_DATE_KEYS = ["date", "datum", "boekdatum", "valutadatum", "interest date", "transactiondate", "transaction date"];
+const CSV_AMOUNT_KEYS = ["amount", "bedrag", "betrag", "amount (eur)", "bedrag (eur)"];
+const CSV_BALANCE_KEYS = ["balance", "saldo", "balance after mutation", "saldo na mutatie", "balance after transaction", "endsaldo"];
+function parseCsvLine(line, delimiter) {
+  const cells = [];
+  let cur = "";
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (ch === '"') {
+      if (inQuotes && line[i + 1] === '"') {
+        cur += '"';
+        i++;
+      } else inQuotes = !inQuotes;
+    } else if (ch === delimiter && !inQuotes) {
+      cells.push(cur);
+      cur = "";
+    } else {
+      cur += ch;
+    }
+  }
+  cells.push(cur);
+  return cells.map((c) => c.trim());
+}
+function parseCsvAmount(raw) {
+  if (raw === void 0 || raw === null) return NaN;
+  let s = String(raw).trim().replace(/[€\s]/g, "");
+  if (!s) return NaN;
+  const hasComma = s.includes(",");
+  const hasDot = s.includes(".");
+  if (hasComma && hasDot) {
+    s = s.lastIndexOf(",") > s.lastIndexOf(".") ? s.replace(/\./g, "").replace(",", ".") : s.replace(/,/g, "");
+  } else if (hasComma) {
+    s = s.replace(",", ".");
+  }
+  return parseFloat(s);
+}
+function parseCsvDate(raw) {
+  if (!raw) return null;
+  const s = String(raw).trim();
+  let m = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (m) return { iso: `${m[1]}-${m[2]}-${m[3]}`, month: `${m[1]}-${m[2]}` };
+  m = s.match(/^(\d{1,2})[.\/-](\d{1,2})[.\/-](\d{4})/);
+  if (m) {
+    const dd = m[1].padStart(2, "0"), mm = m[2].padStart(2, "0"), yyyy = m[3];
+    return { iso: `${yyyy}-${mm}-${dd}`, month: `${yyyy}-${mm}` };
+  }
+  return null;
+}
+function findColumn(headers, candidates) {
+  const lower = headers.map((h) => h.toLowerCase().trim());
+  for (const cand of candidates) {
+    const idx = lower.indexOf(cand);
+    if (idx !== -1) return idx;
+  }
+  for (let i = 0; i < lower.length; i++) {
+    if (candidates.some((cand) => lower[i].includes(cand))) return i;
+  }
+  return -1;
+}
+function parseBunqCsv(text) {
+  const lines = text.split(/\r?\n/).filter((l) => l.trim().length > 0);
+  if (lines.length < 2) return { error: "Die Datei enth\xE4lt keine erkennbaren Zeilen." };
+  const delimiter = lines[0].split(";").length > lines[0].split(",").length ? ";" : ",";
+  const headers = parseCsvLine(lines[0], delimiter);
+  const dateIdx = findColumn(headers, CSV_DATE_KEYS);
+  const amountIdx = findColumn(headers, CSV_AMOUNT_KEYS);
+  const balanceIdx = findColumn(headers, CSV_BALANCE_KEYS);
+  if (dateIdx === -1 || amountIdx === -1) {
+    return { error: 'Spalten "Datum" und "Betrag" wurden in der CSV nicht gefunden. Bitte einen Bunq-Kontoauszug-Export (CSV) verwenden.' };
+  }
+  const rows = [];
+  for (let i = 1; i < lines.length; i++) {
+    const cells = parseCsvLine(lines[i], delimiter);
+    const date = parseCsvDate(cells[dateIdx]);
+    const amount = parseCsvAmount(cells[amountIdx]);
+    const balance = balanceIdx !== -1 ? parseCsvAmount(cells[balanceIdx]) : null;
+    if (date && !Number.isNaN(amount)) rows.push({ date, amount, balance: balance !== null && !Number.isNaN(balance) ? balance : null });
+  }
+  if (rows.length === 0) return { error: "Es konnten keine g\xFCltigen Buchungszeilen aus der Datei gelesen werden." };
+  rows.sort((a, b) => a.date.iso.localeCompare(b.date.iso));
+  const sum = round2(rows.reduce((s, r) => s + r.amount, 0));
+  const withBalance = rows.filter((r) => r.balance !== null);
+  const latest = withBalance.length > 0 ? withBalance[withBalance.length - 1] : null;
+  return {
+    rowCount: rows.length,
+    fromDate: rows[0].date.iso,
+    toDate: rows[rows.length - 1].date.iso,
+    sum,
+    latestBalance: latest ? latest.balance : null,
+    latestDate: latest ? latest.date.iso : null,
+    defaultMonth: rows[rows.length - 1].date.month
+  };
+}
 let sharedAudioCtx = null;
 function getAudioCtx() {
   if (!sharedAudioCtx) {
@@ -588,6 +682,7 @@ function App() {
   const [checkModal, setCheckModal] = useState(false);
   const [colorEditorOpen, setColorEditorOpen] = useState(false);
   const [newOpOpen, setNewOpOpen] = useState(false);
+  const [bunqImportOpen, setBunqImportOpen] = useState(false);
   const [newCostOpen, setNewCostOpen] = useState(false);
   const [calendarMonth, setCalendarMonth] = useState(SCHEDULE_START);
   useEffect(() => saveLS(LS_KEYS.ops, ops), [ops]);
@@ -696,6 +791,22 @@ function App() {
   function setKontoStart(value) {
     setKonto((prev) => ({ ...prev, startBalance: Number(value) }));
   }
+  function applyBunqReconciliation(parsed, targetMonth) {
+    if (targetMonth === konto.startMonth) {
+      const actual = parsed.latestBalance !== null ? parsed.latestBalance : round2(konto.startBalance + parsed.sum);
+      setKonto((prev) => ({ ...prev, startBalance: actual }));
+      setBunqImportOpen(false);
+      playClick();
+      return;
+    }
+    const row = sim.rows.find((r) => r.month === targetMonth);
+    if (!row) return;
+    const diff = parsed.latestBalance !== null ? round2(parsed.latestBalance - row.closing) : round2(parsed.sum);
+    const newIncome = round2(row.income + diff);
+    setIncome((prev) => ({ ...prev, [targetMonth]: newIncome }));
+    setBunqImportOpen(false);
+    playClick();
+  }
   function openMonthDrawer(row) {
     setDrawer({ type: "month", row });
   }
@@ -716,7 +827,8 @@ function App() {
       onUpdateColor: updateColor,
       colorEditorOpen,
       setColorEditorOpen,
-      onExportBackup: handleExportBackup
+      onExportBackup: handleExportBackup,
+      onOpenBunqImport: () => setBunqImportOpen(true)
     }
   ), /* @__PURE__ */ React.createElement("nav", { className: "tabs" }, [
     ["zeitplan", "Zeitplan"],
@@ -750,15 +862,15 @@ function App() {
       onUpdateCostField: updateCostField,
       onUpdateOpRate: updateOpRate
     }
-  )), /* @__PURE__ */ React.createElement(Drawer, { open: drawer && drawer.type === "op", onClose: () => setDrawer(null), title: drawer && drawer.op ? drawer.op.name : "" }, drawer && drawer.type === "op" && /* @__PURE__ */ React.createElement(OpDetailDrawer, { op: ops.find((o) => o.id === drawer.op.id) || drawer.op, simRows: sim.rows, onUpdateField: updateOpField, onUpdateRate: updateOpRate })), /* @__PURE__ */ React.createElement(Modal, { open: !!pauseAsk, onClose: () => setPauseAsk(null) }, /* @__PURE__ */ React.createElement("h3", null, "Rate auf 0 gesetzt"), /* @__PURE__ */ React.createElement("p", null, "Soll dieser offene Posten pausiert oder komplett gel\xF6scht werden?"), /* @__PURE__ */ React.createElement("div", { className: "modal-actions" }, /* @__PURE__ */ React.createElement("button", { className: "btn", onClick: () => resolvePauseAsk("pause") }, "Pausieren"), /* @__PURE__ */ React.createElement("button", { className: "btn btn-danger", onClick: () => resolvePauseAsk("delete") }, "L\xF6schen"), /* @__PURE__ */ React.createElement("button", { className: "btn btn-ghost", onClick: () => setPauseAsk(null) }, "Abbrechen"))), /* @__PURE__ */ React.createElement(Modal, { open: checkModal, onClose: () => setCheckModal(false), tone: "success" }, /* @__PURE__ */ React.createElement("div", { className: "check-modal" }, /* @__PURE__ */ React.createElement("div", { className: "check-icon" }, "\u2713"), /* @__PURE__ */ React.createElement("h2", null, "Schuldenfrei-Prognose"), sim.payoffMonth && !sim.blockedByPause ? /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("p", { className: "big" }, monthLabel(sim.payoffMonth)), /* @__PURE__ */ React.createElement("p", null, "Noch ", daysToPayoff, " Tage \xB7 dann werden ", fmtEUR(sim.freedAmount), " pro Monat frei.")) : /* @__PURE__ */ React.createElement("p", null, "Mit den aktuellen Einstellungen ist kein Schuldenfrei-Datum berechenbar (mindestens ein Posten ist pausiert und offen)."), /* @__PURE__ */ React.createElement("button", { className: "btn", onClick: () => setCheckModal(false) }, "Schlie\xDFen"))), /* @__PURE__ */ React.createElement(NewOpModal, { open: newOpOpen, onClose: () => setNewOpOpen(false), onSave: addOp }), /* @__PURE__ */ React.createElement(NewCostModal, { open: newCostOpen, onClose: () => setNewCostOpen(false), onSave: addCost }), /* @__PURE__ */ React.createElement("footer", { className: "footer" }, "OP MANAGER \xB7 Schuldenabbau-Planer \xB7 lokal gespeichert im Browser"));
+  )), /* @__PURE__ */ React.createElement(Drawer, { open: drawer && drawer.type === "op", onClose: () => setDrawer(null), title: drawer && drawer.op ? drawer.op.name : "" }, drawer && drawer.type === "op" && /* @__PURE__ */ React.createElement(OpDetailDrawer, { op: ops.find((o) => o.id === drawer.op.id) || drawer.op, simRows: sim.rows, onUpdateField: updateOpField, onUpdateRate: updateOpRate })), /* @__PURE__ */ React.createElement(Modal, { open: !!pauseAsk, onClose: () => setPauseAsk(null) }, /* @__PURE__ */ React.createElement("h3", null, "Rate auf 0 gesetzt"), /* @__PURE__ */ React.createElement("p", null, "Soll dieser offene Posten pausiert oder komplett gel\xF6scht werden?"), /* @__PURE__ */ React.createElement("div", { className: "modal-actions" }, /* @__PURE__ */ React.createElement("button", { className: "btn", onClick: () => resolvePauseAsk("pause") }, "Pausieren"), /* @__PURE__ */ React.createElement("button", { className: "btn btn-danger", onClick: () => resolvePauseAsk("delete") }, "L\xF6schen"), /* @__PURE__ */ React.createElement("button", { className: "btn btn-ghost", onClick: () => setPauseAsk(null) }, "Abbrechen"))), /* @__PURE__ */ React.createElement(Modal, { open: checkModal, onClose: () => setCheckModal(false), tone: "success" }, /* @__PURE__ */ React.createElement("div", { className: "check-modal" }, /* @__PURE__ */ React.createElement("div", { className: "check-icon" }, "\u2713"), /* @__PURE__ */ React.createElement("h2", null, "Schuldenfrei-Prognose"), sim.payoffMonth && !sim.blockedByPause ? /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("p", { className: "big" }, monthLabel(sim.payoffMonth)), /* @__PURE__ */ React.createElement("p", null, "Noch ", daysToPayoff, " Tage \xB7 dann werden ", fmtEUR(sim.freedAmount), " pro Monat frei.")) : /* @__PURE__ */ React.createElement("p", null, "Mit den aktuellen Einstellungen ist kein Schuldenfrei-Datum berechenbar (mindestens ein Posten ist pausiert und offen)."), /* @__PURE__ */ React.createElement("button", { className: "btn", onClick: () => setCheckModal(false) }, "Schlie\xDFen"))), /* @__PURE__ */ React.createElement(NewOpModal, { open: newOpOpen, onClose: () => setNewOpOpen(false), onSave: addOp }), /* @__PURE__ */ React.createElement(NewCostModal, { open: newCostOpen, onClose: () => setNewCostOpen(false), onSave: addCost }), /* @__PURE__ */ React.createElement(BunqImportModal, { open: bunqImportOpen, onClose: () => setBunqImportOpen(false), months, onApply: applyBunqReconciliation }), /* @__PURE__ */ React.createElement("footer", { className: "footer" }, "OP MANAGER \xB7 Schuldenabbau-Planer \xB7 lokal gespeichert im Browser"));
 }
 function TickerBanner({ payoffMonth, daysToPayoff, freedAmount, blockedByPause }) {
   const text = payoffMonth && !blockedByPause ? `Noch ${daysToPayoff} Tage bis Schuldenfrei \xB7 ${fmtEUR(freedAmount)} werden dann frei \xB7 Schuldenfrei ab ${monthLabel(payoffMonth)}` : "Schuldenfrei-Datum aktuell nicht berechenbar \xB7 bitte pausierte Posten pr\xFCfen";
   const full = text + "   \xB7   " + text + "   \xB7   " + text;
   return /* @__PURE__ */ React.createElement("div", { className: "ticker" }, /* @__PURE__ */ React.createElement("div", { className: "ticker-track" }, full));
 }
-function Header({ payoffComputed, onReset, onCheck, theme, colors, onApplyTheme, onUpdateColor, colorEditorOpen, setColorEditorOpen, onExportBackup }) {
-  return /* @__PURE__ */ React.createElement("header", { className: "header" }, /* @__PURE__ */ React.createElement("div", { className: "header-row" }, /* @__PURE__ */ React.createElement("div", { className: "brand" }, /* @__PURE__ */ React.createElement(IconDot, { color: payoffComputed ? "#2e9e4d" : "#8a8a86" }), /* @__PURE__ */ React.createElement("h1", null, "OP MANAGER")), /* @__PURE__ */ React.createElement("div", { className: "header-actions" }, /* @__PURE__ */ React.createElement("button", { className: "btn btn-outline", onClick: onExportBackup }, "Backup exportieren"), /* @__PURE__ */ React.createElement("button", { className: "btn btn-outline", onClick: () => setColorEditorOpen(!colorEditorOpen) }, "Farbeditor"), /* @__PURE__ */ React.createElement("button", { className: "btn btn-danger-outline", onClick: onReset }, "RESET"))), /* @__PURE__ */ React.createElement("p", { className: "subtitle" }, "Schuldenabbau-Planer \xB7 Sep 2026 \u2013 Aug 2028"), /* @__PURE__ */ React.createElement("div", { className: "theme-row" }, Object.keys(THEMES).map((key) => /* @__PURE__ */ React.createElement("button", { key, className: "theme-chip" + (theme === key ? " active" : ""), onClick: () => onApplyTheme(key) }, /* @__PURE__ */ React.createElement("span", { className: "theme-swatch", style: { background: THEMES[key].colors.bg, borderColor: THEMES[key].colors.accent } }), THEMES[key].label))), colorEditorOpen && /* @__PURE__ */ React.createElement("div", { className: "color-editor" }, ["bg", "surface", "text", "accent", "border", "muted"].map((key) => /* @__PURE__ */ React.createElement("label", { key, className: "color-field" }, /* @__PURE__ */ React.createElement("span", null, key), /* @__PURE__ */ React.createElement("input", { type: "color", value: colors[key], onChange: (e) => onUpdateColor(key, e.target.value) })))), /* @__PURE__ */ React.createElement("button", { className: "btn btn-check", onClick: onCheck }, "Check mal wann ich Schuldenfrei bin"));
+function Header({ payoffComputed, onReset, onCheck, theme, colors, onApplyTheme, onUpdateColor, colorEditorOpen, setColorEditorOpen, onExportBackup, onOpenBunqImport }) {
+  return /* @__PURE__ */ React.createElement("header", { className: "header" }, /* @__PURE__ */ React.createElement("div", { className: "header-row" }, /* @__PURE__ */ React.createElement("div", { className: "brand" }, /* @__PURE__ */ React.createElement(IconDot, { color: payoffComputed ? "#2e9e4d" : "#8a8a86" }), /* @__PURE__ */ React.createElement("h1", null, "OP MANAGER")), /* @__PURE__ */ React.createElement("div", { className: "header-actions" }, /* @__PURE__ */ React.createElement("button", { className: "btn btn-outline", onClick: onOpenBunqImport }, "Konto abgleichen (Bunq CSV)"), /* @__PURE__ */ React.createElement("button", { className: "btn btn-outline", onClick: onExportBackup }, "Backup exportieren"), /* @__PURE__ */ React.createElement("button", { className: "btn btn-outline", onClick: () => setColorEditorOpen(!colorEditorOpen) }, "Farbeditor"), /* @__PURE__ */ React.createElement("button", { className: "btn btn-danger-outline", onClick: onReset }, "RESET"))), /* @__PURE__ */ React.createElement("p", { className: "subtitle" }, "Schuldenabbau-Planer \xB7 Sep 2026 \u2013 Aug 2028"), /* @__PURE__ */ React.createElement("div", { className: "theme-row" }, Object.keys(THEMES).map((key) => /* @__PURE__ */ React.createElement("button", { key, className: "theme-chip" + (theme === key ? " active" : ""), onClick: () => onApplyTheme(key) }, /* @__PURE__ */ React.createElement("span", { className: "theme-swatch", style: { background: THEMES[key].colors.bg, borderColor: THEMES[key].colors.accent } }), THEMES[key].label))), colorEditorOpen && /* @__PURE__ */ React.createElement("div", { className: "color-editor" }, ["bg", "surface", "text", "accent", "border", "muted"].map((key) => /* @__PURE__ */ React.createElement("label", { key, className: "color-field" }, /* @__PURE__ */ React.createElement("span", null, key), /* @__PURE__ */ React.createElement("input", { type: "color", value: colors[key], onChange: (e) => onUpdateColor(key, e.target.value) })))), /* @__PURE__ */ React.createElement("button", { className: "btn btn-check", onClick: onCheck }, "Check mal wann ich Schuldenfrei bin"));
 }
 function ScheduleTab({ rows, onOpenMonth, payoffMonth }) {
   return /* @__PURE__ */ React.createElement("section", { className: "section" }, /* @__PURE__ */ React.createElement("h2", null, "Zeitplan"), /* @__PURE__ */ React.createElement("div", { className: "table-wrap" }, /* @__PURE__ */ React.createElement("table", { className: "schedule-table" }, /* @__PURE__ */ React.createElement("thead", null, /* @__PURE__ */ React.createElement("tr", null, /* @__PURE__ */ React.createElement("th", null, "Monat"), /* @__PURE__ */ React.createElement("th", null, "Anfangsbestand"), /* @__PURE__ */ React.createElement("th", null, "Einnahmen"), /* @__PURE__ */ React.createElement("th", null, "Fixkosten"), /* @__PURE__ */ React.createElement("th", null, "OP-Raten"), /* @__PURE__ */ React.createElement("th", null, "Endsaldo"), /* @__PURE__ */ React.createElement("th", null))), /* @__PURE__ */ React.createElement("tbody", null, rows.map((row) => /* @__PURE__ */ React.createElement("tr", { key: row.month, className: row.month === payoffMonth ? "row-payoff" : "" }, /* @__PURE__ */ React.createElement("td", { className: "cell-month" }, monthLabel(row.month)), /* @__PURE__ */ React.createElement("td", { className: "tappable", onClick: () => onOpenMonth(row) }, fmtEUR(row.opening)), /* @__PURE__ */ React.createElement("td", { className: "tappable", onClick: () => onOpenMonth(row) }, fmtEUR(row.income)), /* @__PURE__ */ React.createElement("td", { className: "tappable", onClick: () => onOpenMonth(row) }, fmtEUR(row.fixedSum)), /* @__PURE__ */ React.createElement("td", { className: "tappable", onClick: () => onOpenMonth(row) }, fmtEUR(row.opSum)), /* @__PURE__ */ React.createElement("td", { className: "tappable strong", onClick: () => onOpenMonth(row) }, fmtEUR(row.closing)), /* @__PURE__ */ React.createElement("td", null, /* @__PURE__ */ React.createElement(Ampel, { closing: row.closing }))))))));
@@ -884,6 +996,41 @@ function NewOpModal({ open, onClose, onSave }) {
     });
   }
   return /* @__PURE__ */ React.createElement(Modal, { open, onClose }, /* @__PURE__ */ React.createElement("h3", null, "Neuer offener Posten"), /* @__PURE__ */ React.createElement("div", { className: "form-grid" }, /* @__PURE__ */ React.createElement("label", null, "Name", /* @__PURE__ */ React.createElement("input", { type: "text", value: form.name, onChange: (e) => set("name", e.target.value) })), /* @__PURE__ */ React.createElement("label", null, "Kategorie", /* @__PURE__ */ React.createElement("select", { value: form.category, onChange: (e) => set("category", e.target.value) }, CATEGORIES.map((cat) => /* @__PURE__ */ React.createElement("option", { key: cat, value: cat }, cat)))), /* @__PURE__ */ React.createElement("label", null, "Gesamtbetrag", /* @__PURE__ */ React.createElement("input", { type: "number", step: "0.01", value: form.totalAmount, onChange: (e) => set("totalAmount", e.target.value) })), /* @__PURE__ */ React.createElement("label", null, "Rate/Monat", /* @__PURE__ */ React.createElement("input", { type: "number", step: "0.01", value: form.monthlyRate, onChange: (e) => set("monthlyRate", e.target.value) })), /* @__PURE__ */ React.createElement("label", null, "Bereits gezahlt", /* @__PURE__ */ React.createElement("input", { type: "number", step: "0.01", value: form.paidSoFar, onChange: (e) => set("paidSoFar", e.target.value) })), /* @__PURE__ */ React.createElement("label", null, "IBAN", /* @__PURE__ */ React.createElement("input", { type: "text", value: form.iban, onChange: (e) => set("iban", e.target.value) })), /* @__PURE__ */ React.createElement("label", null, "Verwendungszweck", /* @__PURE__ */ React.createElement("input", { type: "text", value: form.purpose, onChange: (e) => set("purpose", e.target.value) })), /* @__PURE__ */ React.createElement("label", null, "Startmonat", /* @__PURE__ */ React.createElement("input", { type: "month", value: form.startMonth, onChange: (e) => set("startMonth", e.target.value) })), /* @__PURE__ */ React.createElement("label", { className: "full" }, "Notiz", /* @__PURE__ */ React.createElement("textarea", { value: form.notes, onChange: (e) => set("notes", e.target.value) }))), /* @__PURE__ */ React.createElement("div", { className: "modal-actions" }, /* @__PURE__ */ React.createElement("button", { className: "btn", onClick: submit }, "Speichern"), /* @__PURE__ */ React.createElement("button", { className: "btn btn-ghost", onClick: onClose }, "Abbrechen")));
+}
+function BunqImportModal({ open, onClose, months, onApply }) {
+  const [parsed, setParsed] = useState(null);
+  const [error, setError] = useState(null);
+  const [targetMonth, setTargetMonth] = useState(SCHEDULE_START);
+  const fileRef = useRef(null);
+  if (!open) return null;
+  function handleFile(e) {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    setError(null);
+    setParsed(null);
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = parseBunqCsv(String(reader.result || ""));
+      if (result.error) {
+        setError(result.error);
+        return;
+      }
+      setParsed(result);
+      setTargetMonth(months.includes(result.defaultMonth) ? result.defaultMonth : SCHEDULE_START);
+    };
+    reader.onerror = () => setError("Datei konnte nicht gelesen werden.");
+    reader.readAsText(file);
+  }
+  function reset() {
+    setParsed(null);
+    setError(null);
+    if (fileRef.current) fileRef.current.value = "";
+  }
+  function handleClose() {
+    reset();
+    onClose();
+  }
+  return /* @__PURE__ */ React.createElement(Modal, { open, onClose: handleClose }, /* @__PURE__ */ React.createElement("h3", null, "Konto abgleichen (Bunq CSV)"), /* @__PURE__ */ React.createElement("p", { className: "muted" }, "Eine echte Live-Verbindung zu Bunq ist hier bewusst nicht eingebaut (daf\xFCr br\xE4uchte es einen Server mit deinem Bunq-API-Key). Stattdessen: Export den Kontoauszug in der Bunq-App als CSV (Konto \u2192 Men\xFC \u2192 Exportieren) und lade die Datei hier hoch. Datum, Betrag und \u2013 falls vorhanden \u2013 Saldo werden automatisch erkannt."), /* @__PURE__ */ React.createElement("div", { className: "field-row" }, /* @__PURE__ */ React.createElement("label", null, "CSV-Datei"), /* @__PURE__ */ React.createElement("input", { ref: fileRef, type: "file", accept: ".csv,text/csv", onChange: handleFile })), error && /* @__PURE__ */ React.createElement("p", { style: { color: "#c23b3b" } }, error), parsed && /* @__PURE__ */ React.createElement("div", { className: "summary-box" }, /* @__PURE__ */ React.createElement("div", null, "Buchungen gefunden: ", parsed.rowCount), /* @__PURE__ */ React.createElement("div", null, "Zeitraum: ", parsed.fromDate, " \u2013 ", parsed.toDate), /* @__PURE__ */ React.createElement("div", null, "Summe der Ums\xE4tze: ", fmtEUR(parsed.sum)), parsed.latestBalance !== null ? /* @__PURE__ */ React.createElement("div", { className: "strong" }, "Saldo laut CSV am ", parsed.latestDate, ": ", fmtEUR(parsed.latestBalance)) : /* @__PURE__ */ React.createElement("div", { className: "muted" }, "Keine Saldo-Spalte gefunden \u2013 es wird die Summe der Ums\xE4tze als Korrektur verwendet."), /* @__PURE__ */ React.createElement("div", { className: "field-row", style: { marginTop: 10 } }, /* @__PURE__ */ React.createElement("label", null, "F\xFCr Monat \xFCbernehmen"), /* @__PURE__ */ React.createElement("select", { value: targetMonth, onChange: (e) => setTargetMonth(e.target.value) }, months.map((m) => /* @__PURE__ */ React.createElement("option", { key: m, value: m }, monthLabel(m)))))), /* @__PURE__ */ React.createElement("div", { className: "modal-actions" }, parsed && /* @__PURE__ */ React.createElement("button", { className: "btn", onClick: () => onApply(parsed, targetMonth) }, "\xDCbernehmen"), /* @__PURE__ */ React.createElement("button", { className: "btn btn-ghost", onClick: handleClose }, parsed ? "Abbrechen" : "Schlie\xDFen")));
 }
 function NewCostModal({ open, onClose, onSave }) {
   const [form, setForm] = useState({ name: "", category: CATEGORIES[0], amount: "", startMonth: SCHEDULE_START, endMonth: "" });
