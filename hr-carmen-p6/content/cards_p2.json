@@ -1,0 +1,202 @@
+{
+  "phases": [
+    {
+      "n": 1,
+      "zeitraum": "Tage 1–30",
+      "phase": "Orientieren & Verstehen",
+      "fokus": "Systemzugänge, Prozesse kennenlernen, Teamkultur aufsaugen",
+      "buddyTaktung": "Erste zwei Wochen täglicher 10-Minuten-Check-in",
+      "meilenstein": "30-Tage-Check-in mit Erwartungsabgleich und Beseitigung technischer/sozialer Hürden"
+    },
+    {
+      "n": 2,
+      "zeitraum": "Tage 31–60",
+      "phase": "Anwenden & Beitragen",
+      "fokus": "Erste eigenverantwortliche Aufgaben und Kunden-/Projektfälle",
+      "buddyTaktung": "1–2 feste Check-ins pro Woche",
+      "meilenstein": "60-Tage-Review mit Fehleranalyse, Schnittstellenkooperation und Selbstständigkeit"
+    },
+    {
+      "n": 3,
+      "zeitraum": "Tage 61–90",
+      "phase": "Optimieren & Verankern",
+      "fokus": "Volle Prozessautonomie",
+      "buddyTaktung": "Buddy-Phase spätestens nach 6 Wochen offiziell beendet",
+      "meilenstein": "90-Tage-Standortbestimmung mit Leistungsbeurteilung und erster Übernahmeprognose"
+    },
+    {
+      "n": 4,
+      "zeitraum": "Tage 150–170",
+      "phase": "Entscheidungs-Korridor",
+      "fokus": "Finale Weichenstellung",
+      "buddyTaktung": "—",
+      "meilenstein": "Probezeit-Abschlussgespräch"
+    }
+  ],
+  "milestones": [
+    {
+      "n": 1,
+      "id": "tag30",
+      "title": "Tag 30 – Check-in",
+      "zeitpunkt": "Tag 30",
+      "fokus": "Onboarding-Zufriedenheit, Werkzeuge und Teamintegration.",
+      "frageLabel": "Frage",
+      "frage": "Wo hakt es technisch oder organisatorisch noch?",
+      "ziel": "Onboarding-Zufriedenheit, Werkzeuge und Teamintegration besprechen.",
+      "fields": [
+        ["TEILNEHMER", "teilnehmer", "Name(n) eintragen …"],
+        ["DOKUMENTATION", "dok", "Kurz eintragen …"],
+        ["NÄCHSTE SCHRITTE", "next", "Kurz eintragen …"]
+      ],
+      "docFieldId": "dok"
+    },
+    {
+      "n": 2,
+      "id": "tag60",
+      "title": "Tag 60 – Review",
+      "zeitpunkt": "Tag 60",
+      "fokus": "Fachliche Fehlerquote und Selbstständigkeit.",
+      "frageLabel": "Frage",
+      "frage": "Wo fühlst du dich schon sicher, und wo brauchst du noch Unterstützung?",
+      "ziel": "Fachliche Fehlerquote und Selbstständigkeit besprechen.",
+      "fields": [
+        ["TEILNEHMER", "teilnehmer", "Name(n) eintragen …"],
+        ["DOKUMENTATION", "dok", "Kurz eintragen …"],
+        ["NÄCHSTE SCHRITTE", "next", "Kurz eintragen …"]
+      ],
+      "docFieldId": "dok"
+    },
+    {
+      "n": 3,
+      "id": "tag90",
+      "title": "Tag 90 – Standortbestimmung",
+      "zeitpunkt": "Tag 90",
+      "fokus": "Strukturierte Bewertung von Fachlichkeit, Selbststeuerung, Teamfit und Kultur sowie Spiegelung der vorläufigen Übernahmeperspektive.",
+      "frageLabel": null,
+      "frage": null,
+      "ziel": "Strukturierte Bewertung von Fachlichkeit, Selbststeuerung, Teamfit und Kultur sowie Spiegelung der vorläufigen Übernahmeperspektive.",
+      "fields": [
+        ["FACHLICHKEIT", "fach", "Kurz eintragen …"],
+        ["SELBSTSTEUERUNG", "selbst", "Kurz eintragen …"],
+        ["TEAMFIT", "teamfit", "Kurz eintragen …"],
+        ["KULTUR", "kultur", "Kurz eintragen …"],
+        ["VORLÄUFIGE ÜBERNAHMEPERSPEKTIVE", "perspektive", "Kurz eintragen …"],
+        ["TEILNEHMER", "teilnehmer", "Name(n) eintragen …"],
+        ["NÄCHSTE SCHRITTE", "next", "Kurz eintragen …"]
+      ],
+      "docFieldId": "perspektive"
+    },
+    {
+      "n": 4,
+      "id": "tag150",
+      "title": "Tag 150–170 – Probezeit-Abschlussgespräch",
+      "zeitpunkt": "Tag 150–170",
+      "fokus": null,
+      "frageLabel": "Goldene Abschlussfrage",
+      "frage": "Wenn du auf die letzten sechs Monate zurückblickst: An welchem Punkt dachtest du ‚Genau hier will ich die nächsten drei Jahre arbeiten‘ – und was war die Situation, in der du dich am meisten gefragt hast, worauf du dich hier eigentlich eingelassen hast?",
+      "zweck": "Schönrednerei erkennen und zeigen, ob der Mitarbeiter auch unvermeidbare Reibungspunkte der Firmenkultur mittragen kann.",
+      "ziel": "Finale Weichenstellung im Entscheidungs-Korridor.",
+      "fields": [
+        ["TEILNEHMER", "teilnehmer", "Name(n) eintragen …"],
+        ["DOKUMENTATION", "dok", "Kurz eintragen …"],
+        ["NÄCHSTE SCHRITTE", "next", "Kurz eintragen …"]
+      ],
+      "docFieldId": "dok"
+    }
+  ],
+  "buddy": {
+    "title": "KMU-Buddy-Framework",
+    "rolle": "Der Buddy ist kultureller Wegweiser und kein Co-Chef oder Notnagel. Der Buddy begleitet die neue Person im vorgesehenen Zeitraum und unterstützt Orientierung, Vernetzung und Arbeitsorganisation.",
+    "dauer": "4 bis maximal 6 Wochen",
+    "taktung": [
+      ["Woche 1–2", "täglich"],
+      ["Woche 3–6", "punktuell 1–2x pro Woche"]
+    ],
+    "checks": [
+      "Tools gezeigt",
+      "Ungeschriebene Regeln erklärt",
+      "Im Team vernetzt",
+      "Kollegiale Tipps zur Arbeitsorganisation gegeben",
+      "Weg zu HR-Fragen erklärt",
+      "Keine Leistungsbeurteilung oder Bewertung fachlicher Defizite",
+      "Keine HR-/Vertragsthemen übernommen (Urlaub, Überstunden, Gehalt, Krankmeldungen)",
+      "Keine Arbeit stellvertretend übernommen"
+    ],
+    "tabus": [
+      "Keine Leistungsbeurteilung oder fachliche Defizite bewerten.",
+      "Keine HR-/Vertragsthemen übernehmen, insbesondere Urlaub, Überstunden, Gehalt und Krankmeldungen.",
+      "Keine Arbeit stellvertretend übernehmen."
+    ],
+    "fields": [
+      ["NAME BUDDY", "name", "Name eintragen …"],
+      ["NOTIZEN ZUR BUDDY-PHASE", "notizen", "Kurz eintragen …"]
+    ]
+  },
+  "eskalation": {
+    "title": "Wenn es hakt – 14-Tage-Eskalationsprotokoll",
+    "intro": "Das 14-Tage-Eskalationsprotokoll ist ein Führungsinstrument für eine sichtbare Leistungslücke.",
+    "grundsatz": "Kein Vorwurf und keine emotionalen Phrasen.",
+    "schluesselfrage": "Welche Unterstützung oder Schulung fehlt dir genau dafür?",
+    "steps": [
+      "Sichtbare Leistungslücke",
+      "Faktenabgleich im 1:1-Gespräch innerhalb Tag 1–14",
+      "Kein Vorwurf / keine emotionalen Phrasen",
+      "Sachlicher Abgleich mit Zielerwartung",
+      "Verbindliches Zwischenziel",
+      "„Welche Unterstützung oder Schulung fehlt dir genau dafür?“",
+      "Tag 15–28 Lernkurven-Prüfung",
+      "Bei fehlender sichtbarer Verbesserung: Eskalation an HR",
+      "Entscheidung: schriftliche Zielvereinbarung mit 14-tägiger Bewährungsfrist oder Einleitung des Trennungsprozesses",
+      "Kein Mitschleppen bis kurz vor Probezeitende"
+    ],
+    "fields": [
+      ["SICHTBARE LEISTUNGSLÜCKE", "luecke", "Kurz eintragen …"],
+      ["FAKTENABGLEICH IM 1:1-GESPRÄCH (TAG 1–14)", "fakten", "Kurz eintragen …"],
+      ["SACHLICHER ABGLEICH MIT DER ZIELERWARTUNG", "abgleich", "Kurz eintragen …"],
+      ["VERBINDLICHES ZWISCHENZIEL FÜR DIE FOLGENDE WOCHE", "zwischenziel", "Kurz eintragen …"],
+      ["ANTWORT AUF DIE SCHLÜSSELFRAGE", "antwort", "Kurz eintragen …"],
+      ["LERNKURVEN-PRÜFUNG (TAG 15–28)", "lernkurve", "Kurz eintragen …"],
+      ["ENTSCHEIDUNG (ZIELVEREINBARUNG ODER TRENNUNGSPROZESS)", "entscheidung", "Kurz eintragen …"]
+    ],
+    "rechtshinweis": "Kein Mitschleppen bis kurz vor Probezeitende."
+  },
+  "trennung": {
+    "title": "Trennungs-Leitfaden & 10-Minuten-Protokoll",
+    "rechtlicheLeitplanke": "Innerhalb der Probezeit (§ 622 Abs. 3 BGB) bedarf die ordentliche Kündigung keiner Begründung. Diese Aussage wird hier ausschließlich als Bestandteil des bereitgestellten Fachwissens-Archivs wiedergegeben und nicht eigenständig erweitert.",
+    "vierAugen": "Die Führungskraft führt das Gespräch nicht allein, sondern mit HR oder einer zweiten Führungskraft als Zeuge.",
+    "dauer": "Die Gesprächsdauer beträgt maximal 10–15 Minuten.",
+    "ablauf": [
+      {
+        "titel": "1. Klarheit im ersten Satz",
+        "formulierung": "Wir haben die Entscheidung getroffen, das Arbeitsverhältnis innerhalb der Probezeit zu beenden."
+      },
+      {
+        "titel": "2. Keine Debatte über das „Warum“",
+        "hinweis": "Nicht rechtfertigen, nicht diskutieren, keine Leistungsbeispiele zerreden.",
+        "formulierung": "Die Entscheidung steht fest."
+      },
+      {
+        "titel": "3. Sachlicher Übergang",
+        "punkte": [
+          "Kündigungsschreiben im Original.",
+          "Freistellung.",
+          "Rückgabe von Hardware und Schlüsseln.",
+          "Übergabe offener Aufgaben."
+        ]
+      }
+    ],
+    "checks": [
+      "Führungskraft führt das Gespräch nicht allein",
+      "HR oder zweite Führungskraft als Zeuge beteiligt",
+      "Gesprächsdauer auf maximal 10–15 Minuten ausgerichtet",
+      "Kündigungsschreiben im Original vorhanden",
+      "Freistellung geklärt",
+      "Rückgabe von Hardware und Schlüsseln vorbereitet",
+      "Übergabe offener Aufgaben vorbereitet"
+    ],
+    "fields": [
+      ["NOTIZEN ZUM PROTOKOLL", "notizen", "Kurz eintragen …"]
+    ]
+  },
+  "rechtlicherHinweisAllgemein": "Die arbeitsrechtlichen Hinweise in diesem Produkt stammen aus dem bereitgestellten Carmen-Fachwissen-Archiv. Sie wurden nicht erweitert oder eigenständig interpretiert. Die arbeitsrechtlichen Hinweise dienen der allgemeinen Orientierung und ersetzen keine individuelle Rechtsberatung. Bei konkreten Einzelfällen sollte fachkundige arbeitsrechtliche Beratung eingeholt werden."
+}

@@ -45,9 +45,9 @@ function buildProduct(id) {
     '</html>\n';
 
   // The first slide must start active — the intro fragment's slide 1 already
-  // carries class="slide active" verbatim from the reference prototype.
+  // carries class="slide active".
   fs.mkdirSync(path.join(ROOT, 'release'), { recursive: true });
-  const outPath = path.join(ROOT, 'release', 'P6_Schwierige_Mitarbeitergespraeche.html');
+  const outPath = path.join(ROOT, 'release', config.outputFile);
   fs.writeFileSync(outPath, html, 'utf8');
   console.log('Built ' + outPath + ' (' + (Buffer.byteLength(html, 'utf8') / 1024).toFixed(1) + ' KB)');
   return outPath;

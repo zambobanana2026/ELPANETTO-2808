@@ -240,6 +240,7 @@ const initScript = function (cards) {
 module.exports = {
   id: 'p6',
   title: 'P6 – Schwierige Mitarbeitergespräche',
+  outputFile: 'P6_Schwierige_Mitarbeitergespraeche.html',
   cardsFile: '../content/cards_p6.json',
   introFile: './p6/intro.slides.html',
   outroFile: './p6/outro.slides.html',
