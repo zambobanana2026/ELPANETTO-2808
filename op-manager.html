@@ -230,6 +230,7 @@ tbody input, tbody select { width: 100%; min-width: 90px; font-family: var(--fon
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
 <script>
 const { useState, useEffect, useMemo, useRef, useCallback } = React;
 const LS_KEYS = { ops: "ops8", costs: "costs8", konto: "konto8", income: "income8", theme: "theme8" };
@@ -469,6 +470,106 @@ function parseBunqCsv(text) {
     latestDate: latest ? latest.date.iso : null,
     defaultMonth: rows[rows.length - 1].date.month
   };
+}
+function normalizeIban(s) {
+  return (s || "").replace(/\s+/g, "").toUpperCase();
+}
+function tokenOverlapScore(a, b) {
+  const clean = (s) => (s || "").toLowerCase().replace(/[^a-zäöüß0-9 ]/g, " ").split(/\s+/).filter((w) => w.length > 2);
+  const ta = clean(a), tb = clean(b);
+  if (!ta.length || !tb.length) return 0;
+  const setB = new Set(tb);
+  const common = ta.filter((w) => setB.has(w)).length;
+  return common / Math.max(ta.length, tb.length);
+}
+function extractIban(text) {
+  const matches = text.match(/\b[A-Z]{2}\d{2}(?:[ ]?[A-Z0-9]{2,4}){3,8}\b/g) || [];
+  for (const m of matches) {
+    const clean = m.replace(/\s+/g, "").toUpperCase();
+    if (clean.length >= 15 && clean.length <= 34 && /^[A-Z]{2}\d{2}[A-Z0-9]+$/.test(clean)) return clean;
+  }
+  return null;
+}
+const FORDERUNG_AMOUNT_KEYWORDS = ["gesamtbetrag", "gesamtforderung", "zu zahlen", "zahlbetrag", "restbetrag", "forderungsbetrag", "rechnungsbetrag", "offener betrag", "f\xE4lliger betrag", "endbetrag", "summe"];
+function extractAmount(text) {
+  const lines = text.split(/\r?\n/);
+  const amountRe = /(\d{1,3}(?:\.\d{3})*,\d{2})\s*(?:€|eur)?|(?:€|eur)\s*(\d{1,3}(?:\.\d{3})*,\d{2})/gi;
+  const candidates = [];
+  for (const line of lines) {
+    let m;
+    amountRe.lastIndex = 0;
+    while ((m = amountRe.exec(line)) !== null) {
+      const raw = m[1] || m[2];
+      const val = parseCsvAmount(raw);
+      if (!Number.isNaN(val) && val > 0) candidates.push({ val, line: line.toLowerCase() });
+    }
+  }
+  if (candidates.length === 0) return null;
+  for (const kw of FORDERUNG_AMOUNT_KEYWORDS) {
+    const hit = candidates.find((c) => c.line.includes(kw));
+    if (hit) return round2(hit.val);
+  }
+  return round2(Math.max(...candidates.map((c) => c.val)));
+}
+const FORDERUNG_REF_KEYWORDS = ["aktenzeichen", "kundennummer", "vertragsnummer", "rechnungsnummer", "kassenzeichen", "vorgangsnummer", "referenznummer", "forderungsnummer", "mandantennummer", "gesch\xE4ftszeichen"];
+function extractReference(text) {
+  const lines = text.split(/\r?\n/);
+  for (const line of lines) {
+    const lower = line.toLowerCase();
+    for (const kw of FORDERUNG_REF_KEYWORDS) {
+      const idx = lower.indexOf(kw);
+      if (idx !== -1) {
+        const after = line.slice(idx + kw.length).replace(/^[:\s.\-]+/, "");
+        const m = after.match(/[A-Za-z0-9\-\/.]{3,}/);
+        if (m) return m[0];
+      }
+    }
+  }
+  return null;
+}
+const FORDERUNG_NAME_KEYWORDS = ["gmbh", "ag", "kg", "e.v.", "inkasso", "hauptzollamt", "finanzamt", "amt", "kasse", "beh\xF6rde", "rechtsanwalt", "rechtsanw\xE4lte", "versicherung", "sparkasse", "bank"];
+function extractNameGuess(text) {
+  const lines = text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+  for (const line of lines.slice(0, 15)) {
+    const lower = line.toLowerCase();
+    if (line.length < 60 && FORDERUNG_NAME_KEYWORDS.some((kw) => lower.includes(kw))) return line;
+  }
+  return lines.length > 0 ? lines[0].slice(0, 60) : null;
+}
+function parseForderungText(text) {
+  return {
+    iban: extractIban(text),
+    amount: extractAmount(text),
+    reference: extractReference(text),
+    nameGuess: extractNameGuess(text)
+  };
+}
+function matchAgainstOps(ops, extracted) {
+  const activeOps = ops.filter((o) => o.status !== "deleted");
+  const scored = activeOps.map((op) => {
+    let score = 0;
+    const reasons = [];
+    if (extracted.iban && op.iban && normalizeIban(op.iban) === normalizeIban(extracted.iban)) {
+      score += 100;
+      reasons.push("IBAN");
+    }
+    if (extracted.reference) {
+      const ref = extracted.reference.toLowerCase();
+      if ((op.purpose || "").toLowerCase().includes(ref) || (op.notes || "").toLowerCase().includes(ref)) {
+        score += 60;
+        reasons.push("Referenz");
+      }
+    }
+    if (extracted.nameGuess) {
+      const sim = tokenOverlapScore(op.name, extracted.nameGuess);
+      if (sim > 0.3) {
+        score += Math.round(sim * 40);
+        reasons.push("Name");
+      }
+    }
+    return { op, score, reasons };
+  }).filter((m) => m.score > 0).sort((a, b) => b.score - a.score);
+  return scored.slice(0, 3);
 }
 let sharedAudioCtx = null;
 function getAudioCtx() {
@@ -780,6 +881,22 @@ function App() {
     setNewOpOpen(false);
     playClick();
   }
+  function createOpFromScan(data) {
+    setOps((prev) => [...prev, { ...data, id: makeId("o"), status: "active", isSnowballTarget: false }]);
+    playClick();
+  }
+  function updateOpFromScan(opId, fields, applyFlags, noteToAppend) {
+    setOps((prev) => prev.map((o) => {
+      if (o.id !== opId) return o;
+      const next = { ...o };
+      if (applyFlags.totalAmount && fields.totalAmount !== "") next.totalAmount = Number(fields.totalAmount);
+      if (applyFlags.iban) next.iban = fields.iban;
+      if (applyFlags.purpose) next.purpose = fields.purpose;
+      if (noteToAppend) next.notes = (o.notes ? o.notes + "\n\n" : "") + noteToAppend;
+      return next;
+    }));
+    playClick();
+  }
   function addCost(data) {
     setCosts((prev) => [...prev, { ...data, id: makeId("c") }]);
     setNewCostOpen(false);
@@ -833,6 +950,7 @@ function App() {
   ), /* @__PURE__ */ React.createElement("nav", { className: "tabs" }, [
     ["zeitplan", "Zeitplan"],
     ["ops", "Offene Posten"],
+    ["scan", "Forderung scannen"],
     ["fixkosten", "Fixkosten"],
     ["kalender", "Kalender"],
     ["statistik", "Statistik"]
@@ -849,7 +967,7 @@ function App() {
       onNew: () => setNewOpOpen(true),
       onOpenPay: (op) => setDrawer({ type: "op", op })
     }
-  ), tab === "fixkosten" && /* @__PURE__ */ React.createElement(FixkostenTab, { costs, onUpdateField: updateCostField, onDelete: deleteCost, onNew: () => setNewCostOpen(true) }), tab === "kalender" && /* @__PURE__ */ React.createElement(CalendarTab, { months, costs, ops, calendarMonth, setCalendarMonth }), tab === "statistik" && /* @__PURE__ */ React.createElement(StatistikTab, { progressPct, totalDebtAll, totalPaidAll, rows: visibleRows, months })), /* @__PURE__ */ React.createElement(Drawer, { open: drawer && drawer.type === "month", onClose: () => setDrawer(null), title: drawer && drawer.row ? monthLabel(drawer.row.month) : "" }, drawer && drawer.type === "month" && /* @__PURE__ */ React.createElement(
+  ), tab === "scan" && /* @__PURE__ */ React.createElement(ScanTab, { ops, onCreateFromScan: createOpFromScan, onUpdateFromScan: updateOpFromScan }), tab === "fixkosten" && /* @__PURE__ */ React.createElement(FixkostenTab, { costs, onUpdateField: updateCostField, onDelete: deleteCost, onNew: () => setNewCostOpen(true) }), tab === "kalender" && /* @__PURE__ */ React.createElement(CalendarTab, { months, costs, ops, calendarMonth, setCalendarMonth }), tab === "statistik" && /* @__PURE__ */ React.createElement(StatistikTab, { progressPct, totalDebtAll, totalPaidAll, rows: visibleRows, months })), /* @__PURE__ */ React.createElement(Drawer, { open: drawer && drawer.type === "month", onClose: () => setDrawer(null), title: drawer && drawer.row ? monthLabel(drawer.row.month) : "" }, drawer && drawer.type === "month" && /* @__PURE__ */ React.createElement(
     MonthDrawerContent,
     {
       row: drawer.row,
@@ -974,6 +1092,88 @@ function StatistikTab({ progressPct, totalDebtAll, totalPaidAll, rows, months })
   const [selMonth, setSelMonth] = useState(SCHEDULE_START);
   const row = rows.find((r) => r.month === selMonth) || rows[0];
   return /* @__PURE__ */ React.createElement("section", { className: "section" }, /* @__PURE__ */ React.createElement("h2", null, "Statistik"), /* @__PURE__ */ React.createElement("div", { className: "stat-block" }, /* @__PURE__ */ React.createElement("h4", null, "Schulden-Thermometer"), /* @__PURE__ */ React.createElement("div", { className: "thermometer" }, /* @__PURE__ */ React.createElement("div", { className: "thermometer-fill", style: { width: progressPct + "%" } })), /* @__PURE__ */ React.createElement("p", null, fmtEUR(totalPaidAll), " von ", fmtEUR(totalDebtAll), " bereits getilgt (", progressPct, "%)")), /* @__PURE__ */ React.createElement("div", { className: "stat-block" }, /* @__PURE__ */ React.createElement("h4", null, "Ausgaben-Split (OPs vs. Fixkosten)"), /* @__PURE__ */ React.createElement("div", { className: "field-row" }, /* @__PURE__ */ React.createElement("label", null, "Monat"), /* @__PURE__ */ React.createElement("select", { value: selMonth, onChange: (e) => setSelMonth(e.target.value) }, months.map((m) => /* @__PURE__ */ React.createElement("option", { key: m, value: m }, monthLabel(m))))), row && /* @__PURE__ */ React.createElement("div", { className: "donut-row" }, /* @__PURE__ */ React.createElement(DonutChart, { a: row.opSum, b: row.fixedSum }), /* @__PURE__ */ React.createElement("div", { className: "donut-legend" }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement(IconDot, { color: "var(--accent)" }), " OP-Raten: ", fmtEUR(row.opSum)), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement(IconDot, { color: "var(--border)" }), " Fixkosten: ", fmtEUR(row.fixedSum))))), /* @__PURE__ */ React.createElement("div", { className: "stat-block" }, /* @__PURE__ */ React.createElement("h4", null, "Monats-Ampel \xDCbersicht"), /* @__PURE__ */ React.createElement("div", { className: "ampel-grid" }, rows.map((r) => /* @__PURE__ */ React.createElement("div", { key: r.month, className: "ampel-cell", title: monthLabel(r.month) + ": " + fmtEUR(r.closing) }, /* @__PURE__ */ React.createElement(Ampel, { closing: r.closing }), /* @__PURE__ */ React.createElement("span", null, monthLabel(r.month)))))));
+}
+function ScanTab({ ops, onCreateFromScan, onUpdateFromScan }) {
+  const [status, setStatus] = useState("idle");
+  const [progress, setProgress] = useState(0);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [rawText, setRawText] = useState("");
+  const [matches, setMatches] = useState([]);
+  const [selected, setSelected] = useState("new");
+  const [form, setForm] = useState({ name: "", category: CATEGORIES[0], totalAmount: "", iban: "", purpose: "", monthlyRate: "" });
+  const [applyFlags, setApplyFlags] = useState({ totalAmount: true, iban: false, purpose: false });
+  const fileRef = useRef(null);
+  function applyRawText(text) {
+    setRawText(text);
+    const ext = parseForderungText(text);
+    const found = matchAgainstOps(ops, ext);
+    setMatches(found);
+    setForm({
+      name: ext.nameGuess || "",
+      category: CATEGORIES[0],
+      totalAmount: ext.amount !== null ? ext.amount : "",
+      iban: ext.iban || "",
+      purpose: ext.reference || "",
+      monthlyRate: ""
+    });
+    setSelected(found.length > 0 ? found[0].op.id : "new");
+    setStatus("done");
+  }
+  async function handleFile(e) {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    setStatus("loading");
+    setProgress(0);
+    setErrorMsg("");
+    try {
+      if (!window.Tesseract) throw new Error("Texterkennung konnte nicht geladen werden (keine Internetverbindung?).");
+      const { data } = await window.Tesseract.recognize(file, "deu", {
+        logger: (m) => {
+          if (m.status === "recognizing text" && typeof m.progress === "number") setProgress(Math.round(m.progress * 100));
+        }
+      });
+      applyRawText(data.text || "");
+    } catch (err) {
+      setErrorMsg(err.message || "Texterkennung fehlgeschlagen.");
+      setStatus("error");
+    }
+  }
+  function set(k, v) {
+    setForm((prev) => ({ ...prev, [k]: v }));
+  }
+  function toggleFlag(k) {
+    setApplyFlags((prev) => ({ ...prev, [k]: !prev[k] }));
+  }
+  function reset() {
+    setStatus("idle");
+    setRawText("");
+    setMatches([]);
+    setSelected("new");
+    setErrorMsg("");
+    setForm({ name: "", category: CATEGORIES[0], totalAmount: "", iban: "", purpose: "", monthlyRate: "" });
+    if (fileRef.current) fileRef.current.value = "";
+  }
+  function submit() {
+    const note = "Per Foto-Scan aktualisiert am " + (/* @__PURE__ */ new Date()).toLocaleDateString("de-DE") + ":\n" + rawText.slice(0, 400);
+    if (selected === "new") {
+      if (!form.name || form.totalAmount === "" || form.monthlyRate === "") return;
+      onCreateFromScan({
+        name: form.name,
+        category: form.category,
+        totalAmount: Number(form.totalAmount),
+        monthlyRate: Number(form.monthlyRate),
+        paidSoFar: 0,
+        iban: form.iban,
+        purpose: form.purpose || form.name,
+        startMonth: SCHEDULE_START,
+        notes: note
+      });
+    } else {
+      onUpdateFromScan(selected, form, applyFlags, note);
+    }
+    reset();
+  }
+  return /* @__PURE__ */ React.createElement("section", { className: "section" }, /* @__PURE__ */ React.createElement("h2", null, "Forderung scannen"), /* @__PURE__ */ React.createElement("p", { className: "muted" }, "Foto eines Forderungs-/Mahnschreibens hochladen (oder direkt mit der Handykamera aufnehmen). Die Texterkennung l\xE4uft komplett im Browser (Tesseract.js, kein Server, kein API-Key). Anschlie\xDFend werden Betrag, IBAN und Referenznummer automatisch gesucht und mit deinen bestehenden offenen Posten abgeglichen \u2014 bitte die Vorschl\xE4ge vor dem \xDCbernehmen immer pr\xFCfen, OCR ist nicht perfekt."), /* @__PURE__ */ React.createElement("div", { className: "field-row" }, /* @__PURE__ */ React.createElement("label", null, "Foto"), /* @__PURE__ */ React.createElement("input", { ref: fileRef, type: "file", accept: "image/*", capture: "environment", onChange: handleFile })), status === "loading" && /* @__PURE__ */ React.createElement("p", null, "Texterkennung l\xE4uft \u2026 ", progress, "%"), status === "error" && /* @__PURE__ */ React.createElement("p", { style: { color: "#c23b3b" } }, errorMsg), status === "done" && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("h4", null, "Erkannter Text (bei Bedarf korrigieren und neu auswerten)"), /* @__PURE__ */ React.createElement("textarea", { className: "notes", style: { minHeight: 140 }, value: rawText, onChange: (e) => setRawText(e.target.value) }), /* @__PURE__ */ React.createElement("div", { className: "modal-actions", style: { marginTop: 8 } }, /* @__PURE__ */ React.createElement("button", { className: "btn-mini", onClick: () => applyRawText(rawText) }, "Neu auswerten")), /* @__PURE__ */ React.createElement("h4", { style: { marginTop: 18 } }, "Zuordnung"), /* @__PURE__ */ React.createElement("div", { className: "breakdown-list" }, /* @__PURE__ */ React.createElement("label", { className: "field-row", style: { cursor: "pointer" } }, /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("input", { type: "radio", name: "scanmatch", checked: selected === "new", onChange: () => setSelected("new") }), " Neuen offenen Posten anlegen")), matches.map((m) => /* @__PURE__ */ React.createElement("label", { key: m.op.id, className: "field-row", style: { cursor: "pointer" } }, /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("input", { type: "radio", name: "scanmatch", checked: selected === m.op.id, onChange: () => setSelected(m.op.id) }), " ", m.op.name, " ", /* @__PURE__ */ React.createElement("span", { className: "muted" }, "(Rest ", fmtEUR(round2(Math.max(0, m.op.totalAmount - m.op.paidSoFar))), ", Treffer: ", m.reasons.join(", "), ")"))))), /* @__PURE__ */ React.createElement("h4", { style: { marginTop: 18 } }, selected === "new" ? "Neuer Posten" : "Werte f\xFCr \xDCbernahme"), /* @__PURE__ */ React.createElement("div", { className: "form-grid" }, selected === "new" && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("label", null, "Name", /* @__PURE__ */ React.createElement("input", { type: "text", value: form.name, onChange: (e) => set("name", e.target.value) })), /* @__PURE__ */ React.createElement("label", null, "Kategorie", /* @__PURE__ */ React.createElement("select", { value: form.category, onChange: (e) => set("category", e.target.value) }, CATEGORIES.map((cat) => /* @__PURE__ */ React.createElement("option", { key: cat, value: cat }, cat)))), /* @__PURE__ */ React.createElement("label", null, "Rate/Monat", /* @__PURE__ */ React.createElement("input", { type: "number", step: "0.01", value: form.monthlyRate, onChange: (e) => set("monthlyRate", e.target.value) }))), /* @__PURE__ */ React.createElement("label", null, "Gesamtbetrag", /* @__PURE__ */ React.createElement("input", { type: "number", step: "0.01", value: form.totalAmount, onChange: (e) => set("totalAmount", e.target.value) })), /* @__PURE__ */ React.createElement("label", null, "IBAN", /* @__PURE__ */ React.createElement("input", { type: "text", value: form.iban, onChange: (e) => set("iban", e.target.value) })), /* @__PURE__ */ React.createElement("label", { className: "full" }, "Verwendungszweck/Referenz", /* @__PURE__ */ React.createElement("input", { type: "text", value: form.purpose, onChange: (e) => set("purpose", e.target.value) }))), selected !== "new" && /* @__PURE__ */ React.createElement("div", { className: "breakdown-list", style: { marginTop: 10 } }, /* @__PURE__ */ React.createElement("label", { className: "field-row" }, /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("input", { type: "checkbox", checked: applyFlags.totalAmount, onChange: () => toggleFlag("totalAmount") }), " Gesamtbetrag \xFCbernehmen")), /* @__PURE__ */ React.createElement("label", { className: "field-row" }, /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("input", { type: "checkbox", checked: applyFlags.iban, onChange: () => toggleFlag("iban") }), " IBAN \xFCbernehmen")), /* @__PURE__ */ React.createElement("label", { className: "field-row" }, /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("input", { type: "checkbox", checked: applyFlags.purpose, onChange: () => toggleFlag("purpose") }), " Verwendungszweck \xFCbernehmen"))), /* @__PURE__ */ React.createElement("div", { className: "modal-actions", style: { marginTop: 16 } }, /* @__PURE__ */ React.createElement("button", { className: "btn", onClick: submit }, selected === "new" ? "Als neuen OP anlegen" : "Ausgew\xE4hlten OP aktualisieren"), /* @__PURE__ */ React.createElement("button", { className: "btn btn-ghost", onClick: reset }, "Abbrechen"))));
 }
 function NewOpModal({ open, onClose, onSave }) {
   const [form, setForm] = useState({ name: "", category: CATEGORIES[0], totalAmount: "", monthlyRate: "", paidSoFar: "", iban: "", purpose: "", startMonth: SCHEDULE_START, notes: "" });
