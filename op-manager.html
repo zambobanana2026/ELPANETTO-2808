@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>OP Manager · Schuldenabbau</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --bg: #ffffff;
+  --surface: #f7f7f5;
+  --text: #111111;
+  --accent: #111111;
+  --border: #dcdcd8;
+  --muted: #767672;
+  --font-serif: 'Cormorant Garamond', serif;
+  --font-sans: 'Jost', sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  transition: background 0.25s ease, color 0.25s ease;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  margin: 0;
+}
+
+.app { min-height: 100vh; display: flex; flex-direction: column; }
+
+/* ---- Ticker ---- */
+.ticker {
+  background: var(--text);
+  color: var(--bg);
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 8px 0;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.ticker-track {
+  display: inline-block;
+  padding-left: 100%;
+  animation: ticker-scroll 28s linear infinite;
+}
+@keyframes ticker-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
+
+/* ---- Header ---- */
+.header {
+  padding: 28px 32px 18px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+}
+.header-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand h1 { font-size: 34px; letter-spacing: 0.14em; text-transform: uppercase; }
+.subtitle { color: var(--muted); font-size: 13px; letter-spacing: 0.05em; margin: 6px 0 18px; text-transform: uppercase; }
+.header-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+.dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; flex: none; }
+
+.theme-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+.theme-chip {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 12px; border: 1px solid var(--border); background: transparent; color: var(--text);
+  border-radius: 999px; cursor: pointer; font-family: var(--font-sans); font-size: 12px; letter-spacing: 0.04em;
+}
+.theme-chip.active { border-color: var(--accent); background: var(--surface); font-weight: 600; }
+.theme-swatch { width: 14px; height: 14px; border-radius: 50%; border: 2px solid; display: inline-block; }
+
+.color-editor {
+  display: flex; flex-wrap: wrap; gap: 16px; padding: 14px; margin-bottom: 14px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+}
+.color-field { display: flex; flex-direction: column; gap: 4px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+.color-field input { width: 48px; height: 32px; border: 1px solid var(--border); background: none; cursor: pointer; }
+
+.btn-check {
+  width: 100%; padding: 14px; margin-top: 4px; background: var(--text); color: var(--bg);
+  border: none; font-family: var(--font-sans); text-transform: uppercase; letter-spacing: 0.1em; font-size: 13px;
+  cursor: pointer; border-radius: 4px;
+}
+.btn-check:hover { opacity: 0.85; }
+
+/* ---- Tabs ---- */
+.tabs { display: flex; gap: 4px; padding: 0 32px; border-bottom: 1px solid var(--border); overflow-x: auto; background: var(--bg); }
+.tab-btn {
+  background: none; border: none; padding: 14px 16px; font-family: var(--font-sans); font-size: 13px;
+  text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap;
+}
+.tab-btn.active { color: var(--text); border-bottom-color: var(--accent); font-weight: 600; }
+
+.main { flex: 1; padding: 28px 32px 60px; background: var(--bg); }
+
+.section { max-width: 1200px; margin: 0 auto; }
+.section h2 { font-size: 26px; margin-bottom: 18px; }
+.section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; flex-wrap: wrap; gap: 10px; }
+
+/* ---- Buttons ---- */
+.btn {
+  padding: 9px 18px; background: var(--text); color: var(--bg); border: 1px solid var(--text);
+  font-family: var(--font-sans); font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em;
+  cursor: pointer; border-radius: 4px;
+}
+.btn:hover { opacity: 0.85; }
+.btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
+.btn-ghost { background: transparent; color: var(--muted); border: 1px solid transparent; }
+.btn-danger { background: #c23b3b; border-color: #c23b3b; color: #fff; }
+.btn-danger-outline { background: transparent; color: #c23b3b; border: 1px solid #c23b3b; }
+.btn-mini { padding: 5px 10px; font-size: 11px; background: transparent; border: 1px solid var(--border); color: var(--text); border-radius: 4px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.04em; }
+.btn-x { background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text); line-height: 1; }
+
+/* ---- Tables ---- */
+.table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 6px; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead th {
+  text-align: left; padding: 12px 14px; background: var(--surface); text-transform: uppercase;
+  font-size: 11px; letter-spacing: 0.06em; color: var(--muted); border-bottom: 1px solid var(--border); white-space: nowrap;
+}
+tbody td { padding: 10px 14px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+tbody tr:last-child td { border-bottom: none; }
+.cell-month { font-family: var(--font-serif); font-size: 15px; }
+.tappable { cursor: pointer; }
+.tappable:hover { background: var(--surface); }
+.strong { font-weight: 600; }
+.row-payoff { background: color-mix(in srgb, var(--accent) 8%, transparent); }
+tbody input, tbody select { width: 100%; min-width: 90px; font-family: var(--font-sans); font-size: 13px; padding: 5px 7px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg); color: var(--text); }
+
+/* ---- Op cards ---- */
+.op-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px; }
+.op-card { border: 1px solid var(--border); border-radius: 8px; padding: 16px; background: var(--surface); display: flex; flex-direction: column; gap: 10px; }
+.op-card.paused { opacity: 0.6; }
+.op-card.done { border-color: #2e9e4d; }
+.op-card-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.op-card-head h3 { font-size: 18px; }
+.badge { font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); border: 1px solid var(--border); border-radius: 999px; padding: 3px 8px; white-space: nowrap; }
+.op-progress { height: 6px; background: var(--border); border-radius: 999px; overflow: hidden; }
+.op-progress-bar { height: 100%; background: var(--accent); }
+.op-numbers { display: flex; gap: 14px; font-size: 12px; color: var(--muted); flex-wrap: wrap; }
+.iban-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 6px 8px; }
+.iban-row code { font-size: 11px; overflow: hidden; text-overflow: ellipsis; }
+.notes { width: 100%; min-height: 44px; font-family: var(--font-sans); font-size: 12px; padding: 6px 8px; border: 1px solid var(--border); border-radius: 4px; resize: vertical; background: var(--bg); color: var(--text); }
+.op-card-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; font-size: 11px; }
+.status-pill { padding: 3px 9px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.04em; font-size: 10px; }
+.status-active { background: #dff2e2; color: #1c6b32; }
+.status-paused { background: #f4e6c8; color: #8a6a12; }
+.countdown { color: var(--muted); }
+
+/* ---- Field rows ---- */
+.field-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; font-size: 13px; }
+.field-row label { color: var(--muted); text-transform: uppercase; font-size: 11px; letter-spacing: 0.05em; }
+.field-row input, .field-row select { padding: 7px 9px; border: 1px solid var(--border); border-radius: 4px; font-family: var(--font-sans); max-width: 55%; background: var(--bg); color: var(--text); }
+
+/* ---- Drawer ---- */
+.drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.35); opacity: 0; pointer-events: none; transition: opacity 0.2s; z-index: 100; }
+.drawer-overlay.open { opacity: 1; pointer-events: auto; }
+.drawer { position: absolute; right: 0; top: 0; bottom: 0; width: min(420px, 92vw); background: var(--bg); color: var(--text); box-shadow: -6px 0 24px rgba(0,0,0,0.15); transform: translateX(100%); transition: transform 0.25s; padding: 22px; overflow-y: auto; }
+.drawer-overlay.open .drawer { transform: translateX(0); }
+.drawer-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+.breakdown-list { list-style: none; padding: 0; margin: 0 0 14px; display: flex; flex-direction: column; gap: 8px; }
+.breakdown-list li { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 13px; }
+.breakdown-list input { width: 90px; padding: 5px 7px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg); color: var(--text); }
+.summary-box { margin-top: 16px; padding: 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; font-size: 13px; display: flex; flex-direction: column; gap: 4px; }
+.qr-block { margin-top: 18px; text-align: center; }
+.qr-canvas { display: flex; justify-content: center; margin: 12px 0; }
+
+/* ---- Modal ---- */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); display: flex; align-items: center; justify-content: center; z-index: 200; padding: 20px; }
+.modal-box { background: var(--bg); color: var(--text); border-radius: 10px; padding: 26px; max-width: 480px; width: 100%; max-height: 88vh; overflow-y: auto; }
+.modal-box.tone-success { text-align: center; border: 2px solid #2e9e4d; }
+.modal-actions { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+.form-grid label { display: flex; flex-direction: column; gap: 4px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+.form-grid label.full { grid-column: 1 / -1; }
+.form-grid input, .form-grid select, .form-grid textarea { padding: 8px 9px; border: 1px solid var(--border); border-radius: 4px; font-family: var(--font-sans); font-size: 13px; background: var(--bg); color: var(--text); }
+
+.check-modal .check-icon { width: 56px; height: 56px; border-radius: 50%; background: #2e9e4d; color: #fff; font-size: 28px; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; }
+.check-modal .big { font-family: var(--font-serif); font-size: 28px; margin: 6px 0; }
+
+/* ---- Calendar ---- */
+.calendar-list { list-style: none; padding: 0; margin: 0 0 16px; display: flex; flex-direction: column; gap: 8px; }
+.calendar-list li { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); font-size: 13px; }
+.cal-name { flex: 1; }
+.cal-amount { font-weight: 600; }
+.badge.type-Fixkosten { background: var(--surface); }
+.badge.type-OP { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+
+/* ---- Statistik ---- */
+.stat-block { border: 1px solid var(--border); border-radius: 8px; padding: 18px; margin-bottom: 20px; background: var(--surface); }
+.stat-block h4 { margin-bottom: 12px; font-size: 15px; }
+.thermometer { height: 22px; background: var(--border); border-radius: 999px; overflow: hidden; margin-bottom: 8px; }
+.thermometer-fill { height: 100%; background: linear-gradient(90deg, var(--accent), #2e9e4d); transition: width 0.3s; }
+.donut-row { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+.donut-legend { display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
+.donut-label { font-family: var(--font-sans); font-size: 16px; fill: var(--text); }
+.ampel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 10px; }
+.ampel-cell { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 10px; color: var(--muted); }
+
+.muted { color: var(--muted); }
+
+.footer { text-align: center; padding: 18px; font-size: 11px; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; border-top: 1px solid var(--border); }
+
+@media (max-width: 640px) {
+  .header { padding: 20px 16px 14px; }
+  .main { padding: 20px 16px 40px; }
+  .tabs { padding: 0 16px; }
+  .brand h1 { font-size: 24px; }
+  .form-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+const { useState, useEffect, useMemo, useRef, useCallback } = React;
+const LS_KEYS = { ops: "ops8", costs: "costs8", konto: "konto8", income: "income8", theme: "theme8" };
+const CATEGORIES = [
+  "Inkasso",
+  "Finanzamt",
+  "Bank/Kredit",
+  "Versicherung",
+  "Miete/Wohnen",
+  "Telekommunikation",
+  "Internet/Hosting",
+  "Software/Abo",
+  "Familie/Unterst\xFCtzung",
+  "Auto/Verkehr",
+  "Bu\xDFgeld",
+  "Krankenkasse",
+  "Energie/Strom",
+  "Lebensmittel",
+  "Gesundheit",
+  "Bildung",
+  "Freizeit",
+  "Kleidung",
+  "Sonstiges",
+  "Online-Shopping",
+  "Steuer",
+  "Rechtsanwalt",
+  "Sparen/R\xFCcklage"
+];
+const MONATE_DE = ["Jan", "Feb", "M\xE4r", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
+const SCHEDULE_START = "2026-09";
+const SCHEDULE_MONTHS = 24;
+const SIM_CAP_MONTHS = 240;
+const THEMES = {
+  light: {
+    label: "Light",
+    colors: { bg: "#ffffff", surface: "#f7f7f5", text: "#111111", accent: "#111111", border: "#dcdcd8", muted: "#767672" }
+  },
+  dark: {
+    label: "Dark",
+    colors: { bg: "#0b0b0c", surface: "#161617", text: "#f2f2f0", accent: "#ffffff", border: "#2c2c2e", muted: "#9a9a97" }
+  },
+  mallorca: {
+    label: "Mallorca",
+    colors: { bg: "#f6efe2", surface: "#fffaf0", text: "#2c2420", accent: "#c96f43", border: "#e2cdab", muted: "#8a7a63" }
+  },
+  gold: {
+    label: "Gold",
+    colors: { bg: "#0d0d0d", surface: "#1a1712", text: "#f2ead6", accent: "#cba135", border: "#3a331f", muted: "#a8975f" }
+  },
+  rolfbenz: {
+    label: "Rolf Benz",
+    colors: { bg: "#e9e6e1", surface: "#f5f3ef", text: "#2b2926", accent: "#7a5c46", border: "#cfc9be", muted: "#837c70" }
+  },
+  ikea: {
+    label: "IKEA",
+    colors: { bg: "#ffffff", surface: "#f5f7fb", text: "#111111", accent: "#0058a3", border: "#d8dee8", muted: "#5a6472" }
+  }
+};
+function makeId(prefix) {
+  return prefix + "_" + Math.random().toString(36).slice(2, 10);
+}
+const DEFAULT_KONTO = { startBalance: 820, startMonth: SCHEDULE_START };
+const DEFAULT_INCOME = { "2026-09": 0 };
+const DEFAULT_COSTS = [
+  { id: makeId("c"), name: "Lebenshaltung", category: "Lebensmittel", amount: 200, startMonth: "2026-09", endMonth: null },
+  { id: makeId("c"), name: "Laptop", category: "Sonstiges", amount: 50, startMonth: "2026-09", endMonth: "2026-11" },
+  { id: makeId("c"), name: "Handy", category: "Telekommunikation", amount: 50, startMonth: "2026-09", endMonth: "2026-11" },
+  { id: makeId("c"), name: "Claude Pro", category: "Software/Abo", amount: 22, startMonth: "2026-09", endMonth: null },
+  { id: makeId("c"), name: "Deutschland Ticket", category: "Auto/Verkehr", amount: 63, startMonth: "2026-09", endMonth: null },
+  { id: makeId("c"), name: "Schwester Carmen o2", category: "Familie/Unterst\xFCtzung", amount: 73, startMonth: "2026-09", endMonth: null },
+  { id: makeId("c"), name: "Schwester Unterst\xFCtzung", category: "Familie/Unterst\xFCtzung", amount: 50, startMonth: "2026-09", endMonth: "2026-09" },
+  { id: makeId("c"), name: "Signal Iduna", category: "Versicherung", amount: 98, startMonth: "2026-09", endMonth: "2026-09" },
+  { id: makeId("c"), name: "VHV Versicherung", category: "Versicherung", amount: 69.56, startMonth: "2026-09", endMonth: "2026-09" },
+  { id: makeId("c"), name: "Shopify+DSers", category: "Online-Shopping", amount: 45.15, startMonth: "2026-09", endMonth: null },
+  { id: makeId("c"), name: "Lexware", category: "Software/Abo", amount: 35, startMonth: "2026-09", endMonth: null },
+  { id: makeId("c"), name: "IONOS", category: "Internet/Hosting", amount: 30, startMonth: "2026-09", endMonth: null },
+  { id: makeId("c"), name: "Miete", category: "Miete/Wohnen", amount: 300, startMonth: "2026-10", endMonth: null },
+  { id: makeId("c"), name: "o2 Telefon", category: "Telekommunikation", amount: 49.9, startMonth: "2026-10", endMonth: null },
+  { id: makeId("c"), name: "Schwester (einmalig)", category: "Familie/Unterst\xFCtzung", amount: 120, startMonth: "2026-10", endMonth: "2026-10" }
+];
+const DEFAULT_OPS = [
+  { id: makeId("o"), name: "Klarna/Digistore24", category: "Online-Shopping", totalAmount: 1587, monthlyRate: 87, paidSoFar: 0, iban: "", purpose: "Klarna Digistore24", startMonth: "2026-10", status: "active", notes: "", isSnowballTarget: true },
+  { id: makeId("o"), name: "miamono/ARAG", category: "Versicherung", totalAmount: 183, monthlyRate: 20, paidSoFar: 20, iban: "", purpose: "miamono ARAG", startMonth: "2026-10", status: "active", notes: "", isSnowballTarget: false },
+  { id: makeId("o"), name: "Telekom/KSP", category: "Telekommunikation", totalAmount: 65.59, monthlyRate: 20, paidSoFar: 20, iban: "DE23200700240090263513", purpose: "Telekom KSP", startMonth: "2026-10", status: "active", notes: "", isSnowballTarget: false },
+  { id: makeId("o"), name: "Hauptzollamt/TK", category: "Finanzamt", totalAmount: 285.4, monthlyRate: 25, paidSoFar: 50, iban: "DE88480000000480010000", purpose: "Hauptzollamt TK", startMonth: "2026-10", status: "active", notes: "", isSnowballTarget: false },
+  { id: makeId("o"), name: "solvendi/Buhl", category: "Software/Abo", totalAmount: 79.89, monthlyRate: 20, paidSoFar: 20, iban: "DE55265501051551192840", purpose: "solvendi Buhl", startMonth: "2026-10", status: "active", notes: "", isSnowballTarget: false },
+  { id: makeId("o"), name: "Bu\xDFgelder Bayern", category: "Bu\xDFgeld", totalAmount: 219, monthlyRate: 99, paidSoFar: 60, iban: "DE73700202700020073850", purpose: "Bu\xDFgelder Bayern", startMonth: "2026-10", status: "active", notes: "", isSnowballTarget: false },
+  { id: makeId("o"), name: "Finanzamt Rosenheim USt", category: "Finanzamt", totalAmount: 552, monthlyRate: 100, paidSoFar: 0, iban: "", purpose: "Finanzamt Rosenheim USt", startMonth: "2026-10", status: "active", notes: "", isSnowballTarget: false },
+  { id: makeId("o"), name: "BID Inkasso/GMX", category: "Inkasso", totalAmount: 81.2, monthlyRate: 20, paidSoFar: 40, iban: "DE70783200760001420755", purpose: "BID Inkasso GMX", startMonth: "2026-10", status: "active", notes: "", isSnowballTarget: false },
+  { id: makeId("o"), name: "Sparkassen DirektVers.", category: "Versicherung", totalAmount: 117, monthlyRate: 20, paidSoFar: 0, iban: "", purpose: "Sparkassen DirektVers.", startMonth: "2026-10", status: "active", notes: "", isSnowballTarget: false },
+  { id: makeId("o"), name: "Hostinger", category: "Internet/Hosting", totalAmount: 22.7, monthlyRate: 22.7, paidSoFar: 0, iban: "", purpose: "Hostinger", startMonth: "2026-10", status: "active", notes: "Einmalzahlung", isSnowballTarget: false },
+  { id: makeId("o"), name: "Sparkasse Wasserburg", category: "Bank/Kredit", totalAmount: 40, monthlyRate: 20, paidSoFar: 20, iban: "", purpose: "Sparkasse Wasserburg", startMonth: "2026-10", status: "active", notes: "", isSnowballTarget: false },
+  { id: makeId("o"), name: "Ertan", category: "Sonstiges", totalAmount: 1500, monthlyRate: 50, paidSoFar: 0, iban: "", purpose: "Ertan", startMonth: "2026-10", status: "active", notes: "", isSnowballTarget: false }
+];
+function round2(n) {
+  return Math.round((n + Number.EPSILON) * 100) / 100;
+}
+function fmtEUR(n) {
+  const v = round2(n || 0);
+  return v.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " \u20AC";
+}
+function monthLabel(m) {
+  const [y, mm] = m.split("-").map(Number);
+  return MONATE_DE[mm - 1] + " " + y;
+}
+function addMonthsStr(base, n) {
+  let [y, m] = base.split("-").map(Number);
+  m += n;
+  y += Math.floor((m - 1) / 12);
+  m = (m - 1) % 12 + 1;
+  return y + "-" + String(m).padStart(2, "0");
+}
+function diffMonthsStr(a, b) {
+  const [ay, am] = a.split("-").map(Number);
+  const [by, bm] = b.split("-").map(Number);
+  return (by - ay) * 12 + (bm - am);
+}
+function todayMonthStr() {
+  const d = /* @__PURE__ */ new Date();
+  return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+}
+function loadLS(key, fallback) {
+  try {
+    const raw = window.localStorage.getItem(key);
+    if (!raw) return fallback;
+    const parsed = JSON.parse(raw);
+    return parsed;
+  } catch (e) {
+    return fallback;
+  }
+}
+function saveLS(key, value) {
+  try {
+    window.localStorage.setItem(key, JSON.stringify(value));
+  } catch (e) {
+  }
+}
+function generateMonths(start, count) {
+  const list = [];
+  let cur = start;
+  for (let i = 0; i < count; i++) {
+    list.push(cur);
+    cur = addMonthsStr(cur, 1);
+  }
+  return list;
+}
+let sharedAudioCtx = null;
+function getAudioCtx() {
+  if (!sharedAudioCtx) {
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (Ctx) sharedAudioCtx = new Ctx();
+  }
+  return sharedAudioCtx;
+}
+function playTone(freq, duration, type, gainStart, delay) {
+  const ctx = getAudioCtx();
+  if (!ctx) return;
+  const t0 = ctx.currentTime + (delay || 0);
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = type || "sine";
+  osc.frequency.setValueAtTime(freq, t0);
+  gain.gain.setValueAtTime(gainStart || 0.15, t0);
+  gain.gain.exponentialRampToValueAtTime(1e-4, t0 + duration);
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start(t0);
+  osc.stop(t0 + duration + 0.02);
+}
+function playClick() {
+  playTone(880, 0.06, "square", 0.08, 0);
+}
+function playExplosion() {
+  const ctx = getAudioCtx();
+  if (!ctx) return;
+  const bufferSize = ctx.sampleRate * 0.5;
+  const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++) {
+    data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 2);
+  }
+  const noise = ctx.createBufferSource();
+  noise.buffer = buffer;
+  const filter = ctx.createBiquadFilter();
+  filter.type = "lowpass";
+  filter.frequency.setValueAtTime(1200, ctx.currentTime);
+  filter.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 0.5);
+  const gain = ctx.createGain();
+  gain.gain.setValueAtTime(0.5, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(1e-3, ctx.currentTime + 0.5);
+  noise.connect(filter);
+  filter.connect(gain);
+  gain.connect(ctx.destination);
+  noise.start();
+  playTone(90, 0.4, "sine", 0.3, 0);
+}
+function playFanfare() {
+  const notes = [523.25, 659.25, 783.99, 1046.5];
+  notes.forEach((f, i) => playTone(f, 0.35, "triangle", 0.14, i * 0.14));
+}
+function fireConfetti(container) {
+  const canvas = document.createElement("canvas");
+  canvas.style.position = "fixed";
+  canvas.style.inset = "0";
+  canvas.style.width = "100vw";
+  canvas.style.height = "100vh";
+  canvas.style.pointerEvents = "none";
+  canvas.style.zIndex = "9999";
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext("2d");
+  const colors = ["#111111", "#ffffff", "#cba135", "#c96f43", "#0058a3", "#ffda1a"];
+  const pieces = [];
+  for (let i = 0; i < 160; i++) {
+    pieces.push({
+      x: Math.random() * canvas.width,
+      y: -20 - Math.random() * canvas.height * 0.5,
+      w: 6 + Math.random() * 6,
+      h: 8 + Math.random() * 10,
+      vx: -2 + Math.random() * 4,
+      vy: 2 + Math.random() * 3,
+      rot: Math.random() * Math.PI,
+      vr: -0.2 + Math.random() * 0.4,
+      color: colors[Math.floor(Math.random() * colors.length)]
+    });
+  }
+  let frame = 0;
+  const maxFrames = 220;
+  function step() {
+    frame++;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    pieces.forEach((p) => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.rot += p.vr;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      ctx.restore();
+    });
+    if (frame < maxFrames) {
+      requestAnimationFrame(step);
+    } else {
+      canvas.remove();
+    }
+  }
+  step();
+}
+function isCostActive(cost, month) {
+  if (month < cost.startMonth) return false;
+  if (cost.endMonth && month > cost.endMonth) return false;
+  return true;
+}
+function simulate(ops, costs, konto, income, monthsCount) {
+  const activeOps = ops.filter((o) => o.status !== "deleted");
+  const state = activeOps.map((o) => ({
+    id: o.id,
+    name: o.name,
+    isSnowballTarget: !!o.isSnowballTarget,
+    startMonth: o.startMonth,
+    status: o.status,
+    remaining: round2(Math.max(0, o.totalAmount - o.paidSoFar)),
+    rate: o.status === "paused" ? 0 : o.monthlyRate,
+    baseRate: o.monthlyRate,
+    done: Math.max(0, o.totalAmount - o.paidSoFar) <= 0,
+    doneMonth: null
+  }));
+  const target = state.find((o) => o.isSnowballTarget) || null;
+  const rows = [];
+  let opening = konto.startBalance;
+  let cur = konto.startMonth;
+  let payoffMonth = null;
+  let freedAmount = 0;
+  let lastFullOpSum = 0;
+  let blockedByPause = false;
+  for (let i = 0; i < monthsCount; i++) {
+    const month = cur;
+    const inc = income[month] !== void 0 ? income[month] : month >= "2026-10" ? 1700 : 0;
+    const activeCosts = costs.filter((c) => isCostActive(c, month));
+    const fixedSum = round2(activeCosts.reduce((s, c) => s + c.amount, 0));
+    let opSum = 0;
+    const justFinished = [];
+    const opRows = state.map((o) => {
+      let payment = 0;
+      if (o.status === "paused") {
+        if (o.remaining > 0) blockedByPause = true;
+      } else if (month >= o.startMonth && o.remaining > 0) {
+        payment = Math.min(o.rate, o.remaining);
+        o.remaining = round2(o.remaining - payment);
+        opSum += payment;
+        if (o.remaining <= 0 && !o.done) {
+          o.done = true;
+          o.doneMonth = month;
+          justFinished.push(o);
+        }
+      }
+      return { id: o.id, name: o.name, payment, remaining: o.remaining, rate: o.rate, done: o.done, doneMonth: o.doneMonth, status: o.status };
+    });
+    opSum = round2(opSum);
+    justFinished.forEach((o) => {
+      if (target && o.id !== target.id && !target.done) {
+        target.rate = round2(target.rate + o.baseRate);
+      }
+    });
+    const closing = round2(opening + inc - fixedSum - opSum);
+    rows.push({
+      month,
+      opening,
+      income: inc,
+      fixedSum,
+      opSum,
+      closing,
+      costsBreakdown: activeCosts.map((c) => ({ id: c.id, name: c.name, amount: c.amount })),
+      opsBreakdown: opRows
+    });
+    if (opSum > 0) lastFullOpSum = opSum;
+    const allDone = state.every((o) => o.remaining <= 0);
+    if (allDone && payoffMonth === null) {
+      payoffMonth = month;
+      freedAmount = lastFullOpSum;
+    }
+    opening = closing;
+    cur = addMonthsStr(cur, 1);
+    if (payoffMonth !== null && i >= SCHEDULE_MONTHS - 1) break;
+  }
+  return { rows, payoffMonth, freedAmount, blockedByPause, opsFinal: state };
+}
+function IconDot({ color }) {
+  return /* @__PURE__ */ React.createElement("span", { className: "dot", style: { background: color } });
+}
+function Ampel({ closing }) {
+  let color = "#2e9e4d";
+  if (closing < 0) color = "#c23b3b";
+  else if (closing < 150) color = "#d1a521";
+  return /* @__PURE__ */ React.createElement(IconDot, { color });
+}
+function Modal({ open, onClose, children, tone }) {
+  if (!open) return null;
+  return /* @__PURE__ */ React.createElement("div", { className: "modal-overlay", onClick: onClose }, /* @__PURE__ */ React.createElement("div", { className: "modal-box" + (tone ? " tone-" + tone : ""), onClick: (e) => e.stopPropagation() }, children));
+}
+function Drawer({ open, onClose, title, children }) {
+  return /* @__PURE__ */ React.createElement("div", { className: "drawer-overlay" + (open ? " open" : ""), onClick: onClose }, /* @__PURE__ */ React.createElement("div", { className: "drawer", onClick: (e) => e.stopPropagation() }, /* @__PURE__ */ React.createElement("div", { className: "drawer-head" }, /* @__PURE__ */ React.createElement("h3", null, title), /* @__PURE__ */ React.createElement("button", { className: "btn-x", onClick: onClose }, "\xD7")), /* @__PURE__ */ React.createElement("div", { className: "drawer-body" }, children)));
+}
+function App() {
+  const [ops, setOps] = useState(() => loadLS(LS_KEYS.ops, DEFAULT_OPS));
+  const [costs, setCosts] = useState(() => loadLS(LS_KEYS.costs, DEFAULT_COSTS));
+  const [konto, setKonto] = useState(() => loadLS(LS_KEYS.konto, DEFAULT_KONTO));
+  const [income, setIncome] = useState(() => loadLS(LS_KEYS.income, DEFAULT_INCOME));
+  const [themeState, setThemeState] = useState(() => loadLS(LS_KEYS.theme, { theme: "light", colors: THEMES.light.colors }));
+  const [tab, setTab] = useState("zeitplan");
+  const [drawer, setDrawer] = useState(null);
+  const [pauseAsk, setPauseAsk] = useState(null);
+  const [checkModal, setCheckModal] = useState(false);
+  const [colorEditorOpen, setColorEditorOpen] = useState(false);
+  const [newOpOpen, setNewOpOpen] = useState(false);
+  const [newCostOpen, setNewCostOpen] = useState(false);
+  const [calendarMonth, setCalendarMonth] = useState(SCHEDULE_START);
+  useEffect(() => saveLS(LS_KEYS.ops, ops), [ops]);
+  useEffect(() => saveLS(LS_KEYS.costs, costs), [costs]);
+  useEffect(() => saveLS(LS_KEYS.konto, konto), [konto]);
+  useEffect(() => saveLS(LS_KEYS.income, income), [income]);
+  useEffect(() => saveLS(LS_KEYS.theme, themeState), [themeState]);
+  useEffect(() => {
+    const c = themeState.colors || THEMES[themeState.theme].colors;
+    const root2 = document.documentElement;
+    root2.style.setProperty("--bg", c.bg);
+    root2.style.setProperty("--surface", c.surface);
+    root2.style.setProperty("--text", c.text);
+    root2.style.setProperty("--accent", c.accent);
+    root2.style.setProperty("--border", c.border);
+    root2.style.setProperty("--muted", c.muted);
+    root2.setAttribute("data-theme", themeState.theme);
+  }, [themeState]);
+  const months = useMemo(() => generateMonths(SCHEDULE_START, SCHEDULE_MONTHS), []);
+  const sim = useMemo(() => simulate(ops, costs, konto, income, SIM_CAP_MONTHS), [ops, costs, konto, income]);
+  const visibleRows = sim.rows.slice(0, SCHEDULE_MONTHS);
+  const totalDebtAll = useMemo(() => ops.filter((o) => o.status !== "deleted").reduce((s, o) => s + o.totalAmount, 0), [ops]);
+  const totalPaidAll = useMemo(() => ops.filter((o) => o.status !== "deleted").reduce((s, o) => s + o.paidSoFar, 0), [ops]);
+  const progressPct = totalDebtAll > 0 ? Math.min(100, round2(totalPaidAll / totalDebtAll * 100)) : 0;
+  const daysToPayoff = useMemo(() => {
+    if (!sim.payoffMonth) return null;
+    const [py, pm] = sim.payoffMonth.split("-").map(Number);
+    const target = new Date(py, pm, 0);
+    const now = /* @__PURE__ */ new Date();
+    const diffMs = target.getTime() - now.getTime();
+    return Math.max(0, Math.ceil(diffMs / (1e3 * 60 * 60 * 24)));
+  }, [sim.payoffMonth]);
+  function applyTheme(name) {
+    setThemeState({ theme: name, colors: THEMES[name].colors });
+    playClick();
+  }
+  function updateColor(key, value) {
+    setThemeState((prev) => ({ ...prev, colors: { ...prev.colors, [key]: value } }));
+  }
+  function handleReset() {
+    if (!window.confirm("Wirklich alle Daten zur\xFCcksetzen? Das kann nicht r\xFCckg\xE4ngig gemacht werden.")) return;
+    setOps(DEFAULT_OPS);
+    setCosts(DEFAULT_COSTS);
+    setKonto(DEFAULT_KONTO);
+    setIncome(DEFAULT_INCOME);
+    setThemeState({ theme: "light", colors: THEMES.light.colors });
+    playClick();
+  }
+  function handleExportBackup() {
+    const backup = { ops8: ops, costs8: costs, konto8: konto, income8: income, theme8: themeState, exportedAt: (/* @__PURE__ */ new Date()).toISOString() };
+    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "op-manager-backup-" + todayMonthStr() + ".json";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    playClick();
+  }
+  function updateOpRate(id, newRate) {
+    const op = ops.find((o) => o.id === id);
+    if (!op) return;
+    if (Number(newRate) <= 0) {
+      setPauseAsk(id);
+      return;
+    }
+    setOps((prev) => prev.map((o) => o.id === id ? { ...o, monthlyRate: Number(newRate), status: o.status === "paused" ? "active" : o.status } : o));
+  }
+  function resolvePauseAsk(action) {
+    const id = pauseAsk;
+    if (!id) return;
+    if (action === "pause") {
+      setOps((prev) => prev.map((o) => o.id === id ? { ...o, monthlyRate: 0, status: "paused" } : o));
+    } else if (action === "delete") {
+      setOps((prev) => prev.filter((o) => o.id !== id));
+    }
+    setPauseAsk(null);
+    playClick();
+  }
+  function updateOpField(id, field, value) {
+    setOps((prev) => prev.map((o) => o.id === id ? { ...o, [field]: value } : o));
+  }
+  function updateCostField(id, field, value) {
+    setCosts((prev) => prev.map((c) => c.id === id ? { ...c, [field]: value } : c));
+  }
+  function deleteCost(id) {
+    if (!window.confirm("Diese Fixkosten-Position l\xF6schen?")) return;
+    setCosts((prev) => prev.filter((c) => c.id !== id));
+    playClick();
+  }
+  function addOp(data) {
+    setOps((prev) => [...prev, { ...data, id: makeId("o"), status: "active", paidSoFar: Number(data.paidSoFar) || 0, isSnowballTarget: false }]);
+    setNewOpOpen(false);
+    playClick();
+  }
+  function addCost(data) {
+    setCosts((prev) => [...prev, { ...data, id: makeId("c") }]);
+    setNewCostOpen(false);
+    playClick();
+  }
+  function setIncomeForMonth(month, value) {
+    setIncome((prev) => ({ ...prev, [month]: Number(value) }));
+  }
+  function setKontoStart(value) {
+    setKonto((prev) => ({ ...prev, startBalance: Number(value) }));
+  }
+  function openMonthDrawer(row) {
+    setDrawer({ type: "month", row });
+  }
+  function runCheck() {
+    playFanfare();
+    setTimeout(() => fireConfetti(), 80);
+    setCheckModal(true);
+  }
+  return /* @__PURE__ */ React.createElement("div", { className: "app" }, /* @__PURE__ */ React.createElement(TickerBanner, { payoffMonth: sim.payoffMonth, daysToPayoff, freedAmount: sim.freedAmount, blockedByPause: sim.blockedByPause }), /* @__PURE__ */ React.createElement(
+    Header,
+    {
+      payoffComputed: !!sim.payoffMonth && !sim.blockedByPause,
+      onReset: handleReset,
+      onCheck: runCheck,
+      theme: themeState.theme,
+      colors: themeState.colors,
+      onApplyTheme: applyTheme,
+      onUpdateColor: updateColor,
+      colorEditorOpen,
+      setColorEditorOpen,
+      onExportBackup: handleExportBackup
+    }
+  ), /* @__PURE__ */ React.createElement("nav", { className: "tabs" }, [
+    ["zeitplan", "Zeitplan"],
+    ["ops", "Offene Posten"],
+    ["fixkosten", "Fixkosten"],
+    ["kalender", "Kalender"],
+    ["statistik", "Statistik"]
+  ].map(([key, label]) => /* @__PURE__ */ React.createElement("button", { key, className: "tab-btn" + (tab === key ? " active" : ""), onClick: () => {
+    setTab(key);
+    playClick();
+  } }, label))), /* @__PURE__ */ React.createElement("main", { className: "main" }, tab === "zeitplan" && /* @__PURE__ */ React.createElement(ScheduleTab, { rows: visibleRows, onOpenMonth: openMonthDrawer, payoffMonth: sim.payoffMonth }), tab === "ops" && /* @__PURE__ */ React.createElement(
+    OpsTab,
+    {
+      ops,
+      simRows: sim.rows,
+      onUpdateField: updateOpField,
+      onUpdateRate: updateOpRate,
+      onNew: () => setNewOpOpen(true),
+      onOpenPay: (op) => setDrawer({ type: "op", op })
+    }
+  ), tab === "fixkosten" && /* @__PURE__ */ React.createElement(FixkostenTab, { costs, onUpdateField: updateCostField, onDelete: deleteCost, onNew: () => setNewCostOpen(true) }), tab === "kalender" && /* @__PURE__ */ React.createElement(CalendarTab, { months, costs, ops, calendarMonth, setCalendarMonth }), tab === "statistik" && /* @__PURE__ */ React.createElement(StatistikTab, { progressPct, totalDebtAll, totalPaidAll, rows: visibleRows, months })), /* @__PURE__ */ React.createElement(Drawer, { open: drawer && drawer.type === "month", onClose: () => setDrawer(null), title: drawer && drawer.row ? monthLabel(drawer.row.month) : "" }, drawer && drawer.type === "month" && /* @__PURE__ */ React.createElement(
+    MonthDrawerContent,
+    {
+      row: drawer.row,
+      income,
+      konto,
+      costs,
+      ops,
+      onSetIncome: setIncomeForMonth,
+      onSetKontoStart: setKontoStart,
+      onUpdateCostField: updateCostField,
+      onUpdateOpRate: updateOpRate
+    }
+  )), /* @__PURE__ */ React.createElement(Drawer, { open: drawer && drawer.type === "op", onClose: () => setDrawer(null), title: drawer && drawer.op ? drawer.op.name : "" }, drawer && drawer.type === "op" && /* @__PURE__ */ React.createElement(OpDetailDrawer, { op: ops.find((o) => o.id === drawer.op.id) || drawer.op, simRows: sim.rows, onUpdateField: updateOpField, onUpdateRate: updateOpRate })), /* @__PURE__ */ React.createElement(Modal, { open: !!pauseAsk, onClose: () => setPauseAsk(null) }, /* @__PURE__ */ React.createElement("h3", null, "Rate auf 0 gesetzt"), /* @__PURE__ */ React.createElement("p", null, "Soll dieser offene Posten pausiert oder komplett gel\xF6scht werden?"), /* @__PURE__ */ React.createElement("div", { className: "modal-actions" }, /* @__PURE__ */ React.createElement("button", { className: "btn", onClick: () => resolvePauseAsk("pause") }, "Pausieren"), /* @__PURE__ */ React.createElement("button", { className: "btn btn-danger", onClick: () => resolvePauseAsk("delete") }, "L\xF6schen"), /* @__PURE__ */ React.createElement("button", { className: "btn btn-ghost", onClick: () => setPauseAsk(null) }, "Abbrechen"))), /* @__PURE__ */ React.createElement(Modal, { open: checkModal, onClose: () => setCheckModal(false), tone: "success" }, /* @__PURE__ */ React.createElement("div", { className: "check-modal" }, /* @__PURE__ */ React.createElement("div", { className: "check-icon" }, "\u2713"), /* @__PURE__ */ React.createElement("h2", null, "Schuldenfrei-Prognose"), sim.payoffMonth && !sim.blockedByPause ? /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("p", { className: "big" }, monthLabel(sim.payoffMonth)), /* @__PURE__ */ React.createElement("p", null, "Noch ", daysToPayoff, " Tage \xB7 dann werden ", fmtEUR(sim.freedAmount), " pro Monat frei.")) : /* @__PURE__ */ React.createElement("p", null, "Mit den aktuellen Einstellungen ist kein Schuldenfrei-Datum berechenbar (mindestens ein Posten ist pausiert und offen)."), /* @__PURE__ */ React.createElement("button", { className: "btn", onClick: () => setCheckModal(false) }, "Schlie\xDFen"))), /* @__PURE__ */ React.createElement(NewOpModal, { open: newOpOpen, onClose: () => setNewOpOpen(false), onSave: addOp }), /* @__PURE__ */ React.createElement(NewCostModal, { open: newCostOpen, onClose: () => setNewCostOpen(false), onSave: addCost }), /* @__PURE__ */ React.createElement("footer", { className: "footer" }, "OP MANAGER \xB7 Schuldenabbau-Planer \xB7 lokal gespeichert im Browser"));
+}
+function TickerBanner({ payoffMonth, daysToPayoff, freedAmount, blockedByPause }) {
+  const text = payoffMonth && !blockedByPause ? `Noch ${daysToPayoff} Tage bis Schuldenfrei \xB7 ${fmtEUR(freedAmount)} werden dann frei \xB7 Schuldenfrei ab ${monthLabel(payoffMonth)}` : "Schuldenfrei-Datum aktuell nicht berechenbar \xB7 bitte pausierte Posten pr\xFCfen";
+  const full = text + "   \xB7   " + text + "   \xB7   " + text;
+  return /* @__PURE__ */ React.createElement("div", { className: "ticker" }, /* @__PURE__ */ React.createElement("div", { className: "ticker-track" }, full));
+}
+function Header({ payoffComputed, onReset, onCheck, theme, colors, onApplyTheme, onUpdateColor, colorEditorOpen, setColorEditorOpen, onExportBackup }) {
+  return /* @__PURE__ */ React.createElement("header", { className: "header" }, /* @__PURE__ */ React.createElement("div", { className: "header-row" }, /* @__PURE__ */ React.createElement("div", { className: "brand" }, /* @__PURE__ */ React.createElement(IconDot, { color: payoffComputed ? "#2e9e4d" : "#8a8a86" }), /* @__PURE__ */ React.createElement("h1", null, "OP MANAGER")), /* @__PURE__ */ React.createElement("div", { className: "header-actions" }, /* @__PURE__ */ React.createElement("button", { className: "btn btn-outline", onClick: onExportBackup }, "Backup exportieren"), /* @__PURE__ */ React.createElement("button", { className: "btn btn-outline", onClick: () => setColorEditorOpen(!colorEditorOpen) }, "Farbeditor"), /* @__PURE__ */ React.createElement("button", { className: "btn btn-danger-outline", onClick: onReset }, "RESET"))), /* @__PURE__ */ React.createElement("p", { className: "subtitle" }, "Schuldenabbau-Planer \xB7 Sep 2026 \u2013 Aug 2028"), /* @__PURE__ */ React.createElement("div", { className: "theme-row" }, Object.keys(THEMES).map((key) => /* @__PURE__ */ React.createElement("button", { key, className: "theme-chip" + (theme === key ? " active" : ""), onClick: () => onApplyTheme(key) }, /* @__PURE__ */ React.createElement("span", { className: "theme-swatch", style: { background: THEMES[key].colors.bg, borderColor: THEMES[key].colors.accent } }), THEMES[key].label))), colorEditorOpen && /* @__PURE__ */ React.createElement("div", { className: "color-editor" }, ["bg", "surface", "text", "accent", "border", "muted"].map((key) => /* @__PURE__ */ React.createElement("label", { key, className: "color-field" }, /* @__PURE__ */ React.createElement("span", null, key), /* @__PURE__ */ React.createElement("input", { type: "color", value: colors[key], onChange: (e) => onUpdateColor(key, e.target.value) })))), /* @__PURE__ */ React.createElement("button", { className: "btn btn-check", onClick: onCheck }, "Check mal wann ich Schuldenfrei bin"));
+}
+function ScheduleTab({ rows, onOpenMonth, payoffMonth }) {
+  return /* @__PURE__ */ React.createElement("section", { className: "section" }, /* @__PURE__ */ React.createElement("h2", null, "Zeitplan"), /* @__PURE__ */ React.createElement("div", { className: "table-wrap" }, /* @__PURE__ */ React.createElement("table", { className: "schedule-table" }, /* @__PURE__ */ React.createElement("thead", null, /* @__PURE__ */ React.createElement("tr", null, /* @__PURE__ */ React.createElement("th", null, "Monat"), /* @__PURE__ */ React.createElement("th", null, "Anfangsbestand"), /* @__PURE__ */ React.createElement("th", null, "Einnahmen"), /* @__PURE__ */ React.createElement("th", null, "Fixkosten"), /* @__PURE__ */ React.createElement("th", null, "OP-Raten"), /* @__PURE__ */ React.createElement("th", null, "Endsaldo"), /* @__PURE__ */ React.createElement("th", null))), /* @__PURE__ */ React.createElement("tbody", null, rows.map((row) => /* @__PURE__ */ React.createElement("tr", { key: row.month, className: row.month === payoffMonth ? "row-payoff" : "" }, /* @__PURE__ */ React.createElement("td", { className: "cell-month" }, monthLabel(row.month)), /* @__PURE__ */ React.createElement("td", { className: "tappable", onClick: () => onOpenMonth(row) }, fmtEUR(row.opening)), /* @__PURE__ */ React.createElement("td", { className: "tappable", onClick: () => onOpenMonth(row) }, fmtEUR(row.income)), /* @__PURE__ */ React.createElement("td", { className: "tappable", onClick: () => onOpenMonth(row) }, fmtEUR(row.fixedSum)), /* @__PURE__ */ React.createElement("td", { className: "tappable", onClick: () => onOpenMonth(row) }, fmtEUR(row.opSum)), /* @__PURE__ */ React.createElement("td", { className: "tappable strong", onClick: () => onOpenMonth(row) }, fmtEUR(row.closing)), /* @__PURE__ */ React.createElement("td", null, /* @__PURE__ */ React.createElement(Ampel, { closing: row.closing }))))))));
+}
+function MonthDrawerContent({ row, income, konto, costs, ops, onSetIncome, onSetKontoStart, onUpdateCostField, onUpdateOpRate }) {
+  const isFirstMonth = row.month === konto.startMonth;
+  return /* @__PURE__ */ React.createElement("div", { className: "month-drawer" }, isFirstMonth && /* @__PURE__ */ React.createElement("div", { className: "field-row" }, /* @__PURE__ */ React.createElement("label", null, "Anfangsbestand (", monthLabel(row.month), ")"), /* @__PURE__ */ React.createElement("input", { type: "number", step: "0.01", defaultValue: konto.startBalance, onBlur: (e) => onSetKontoStart(e.target.value) })), /* @__PURE__ */ React.createElement("div", { className: "field-row" }, /* @__PURE__ */ React.createElement("label", null, "Einnahmen"), /* @__PURE__ */ React.createElement("input", { type: "number", step: "0.01", defaultValue: row.income, onBlur: (e) => onSetIncome(row.month, e.target.value) })), /* @__PURE__ */ React.createElement("h4", null, "Fixkosten diesen Monat"), /* @__PURE__ */ React.createElement("ul", { className: "breakdown-list" }, row.costsBreakdown.map((c) => {
+    const full = costs.find((x) => x.id === c.id);
+    return /* @__PURE__ */ React.createElement("li", { key: c.id }, /* @__PURE__ */ React.createElement("span", null, c.name), /* @__PURE__ */ React.createElement("input", { type: "number", step: "0.01", defaultValue: c.amount, onBlur: (e) => onUpdateCostField(c.id, "amount", Number(e.target.value)) }));
+  }), row.costsBreakdown.length === 0 && /* @__PURE__ */ React.createElement("li", { className: "muted" }, "Keine Fixkosten in diesem Monat.")), /* @__PURE__ */ React.createElement("h4", null, "Offene Posten diesen Monat"), /* @__PURE__ */ React.createElement("ul", { className: "breakdown-list" }, row.opsBreakdown.filter((o) => o.payment > 0 || o.status === "paused").map((o) => /* @__PURE__ */ React.createElement("li", { key: o.id }, /* @__PURE__ */ React.createElement("span", null, o.name, " ", o.done ? "(erledigt)" : ""), /* @__PURE__ */ React.createElement("input", { type: "number", step: "0.01", defaultValue: o.rate, onBlur: (e) => onUpdateOpRate(o.id, Number(e.target.value)) }))), row.opsBreakdown.every((o) => o.payment <= 0 && o.status !== "paused") && /* @__PURE__ */ React.createElement("li", { className: "muted" }, "Keine OP-Rate in diesem Monat.")), /* @__PURE__ */ React.createElement("div", { className: "summary-box" }, /* @__PURE__ */ React.createElement("div", null, "Anfangsbestand: ", fmtEUR(row.opening)), /* @__PURE__ */ React.createElement("div", null, "+ Einnahmen: ", fmtEUR(row.income)), /* @__PURE__ */ React.createElement("div", null, "- Fixkosten: ", fmtEUR(row.fixedSum)), /* @__PURE__ */ React.createElement("div", null, "- OP-Raten: ", fmtEUR(row.opSum)), /* @__PURE__ */ React.createElement("div", { className: "strong" }, "= Endsaldo: ", fmtEUR(row.closing))));
+}
+function OpsTab({ ops, simRows, onUpdateField, onUpdateRate, onNew, onOpenPay }) {
+  return /* @__PURE__ */ React.createElement("section", { className: "section" }, /* @__PURE__ */ React.createElement("div", { className: "section-head" }, /* @__PURE__ */ React.createElement("h2", null, "Offene Posten"), /* @__PURE__ */ React.createElement("button", { className: "btn", onClick: onNew }, "+ Neuer OP")), /* @__PURE__ */ React.createElement("div", { className: "op-grid" }, ops.map((op) => /* @__PURE__ */ React.createElement(OpCard, { key: op.id, op, simRows, onUpdateField, onUpdateRate, onOpen: () => onOpenPay(op) }))));
+}
+function findDoneMonth(simRows, opId) {
+  for (const row of simRows) {
+    const entry = row.opsBreakdown.find((o) => o.id === opId);
+    if (entry && entry.done) return row.month;
+  }
+  return null;
+}
+function OpCard({ op, simRows, onUpdateField, onUpdateRate, onOpen }) {
+  const remaining = round2(Math.max(0, op.totalAmount - op.paidSoFar));
+  const doneMonth = useMemo(() => findDoneMonth(simRows, op.id), [simRows, op.id]);
+  const monthsLeft = useMemo(() => {
+    if (!doneMonth) return null;
+    const now = todayMonthStr();
+    const from = now < SCHEDULE_START ? SCHEDULE_START : now;
+    return Math.max(0, diffMonthsStr(from, doneMonth));
+  }, [doneMonth]);
+  const [copied, setCopied] = useState(false);
+  function copyIban() {
+    if (!op.iban) return;
+    navigator.clipboard && navigator.clipboard.writeText(op.iban).then(() => {
+      setCopied(true);
+      playClick();
+      setTimeout(() => setCopied(false), 1500);
+    });
+  }
+  return /* @__PURE__ */ React.createElement("div", { className: "op-card" + (op.status === "paused" ? " paused" : "") + (remaining <= 0 ? " done" : "") }, /* @__PURE__ */ React.createElement("div", { className: "op-card-head" }, /* @__PURE__ */ React.createElement("h3", null, op.name, op.isSnowballTarget ? " \u2605" : ""), /* @__PURE__ */ React.createElement("span", { className: "badge" }, op.category)), /* @__PURE__ */ React.createElement("div", { className: "op-progress" }, /* @__PURE__ */ React.createElement("div", { className: "op-progress-bar", style: { width: Math.min(100, round2(op.paidSoFar / op.totalAmount * 100)) + "%" } })), /* @__PURE__ */ React.createElement("div", { className: "op-numbers" }, /* @__PURE__ */ React.createElement("div", null, "Gesamt: ", fmtEUR(op.totalAmount)), /* @__PURE__ */ React.createElement("div", null, "Bezahlt: ", fmtEUR(op.paidSoFar)), /* @__PURE__ */ React.createElement("div", null, "Rest: ", fmtEUR(remaining))), /* @__PURE__ */ React.createElement("div", { className: "field-row" }, /* @__PURE__ */ React.createElement("label", null, "Rate/Monat"), /* @__PURE__ */ React.createElement("input", { type: "number", step: "0.01", value: op.monthlyRate, onChange: (e) => onUpdateField(op.id, "monthlyRate", Number(e.target.value)), onBlur: (e) => onUpdateRate(op.id, e.target.value) })), /* @__PURE__ */ React.createElement("div", { className: "field-row" }, /* @__PURE__ */ React.createElement("label", null, "Startmonat"), /* @__PURE__ */ React.createElement("input", { type: "month", value: op.startMonth, onChange: (e) => onUpdateField(op.id, "startMonth", e.target.value) })), op.iban && /* @__PURE__ */ React.createElement("div", { className: "iban-row" }, /* @__PURE__ */ React.createElement("code", null, op.iban), /* @__PURE__ */ React.createElement("button", { className: "btn-mini", onClick: copyIban }, copied ? "Kopiert!" : "IBAN kopieren")), /* @__PURE__ */ React.createElement("textarea", { className: "notes", placeholder: "Notiz...", value: op.notes || "", onChange: (e) => onUpdateField(op.id, "notes", e.target.value) }), /* @__PURE__ */ React.createElement("div", { className: "op-card-foot" }, /* @__PURE__ */ React.createElement("span", { className: "status-pill status-" + op.status }, op.status === "paused" ? "pausiert" : remaining <= 0 ? "erledigt" : "aktiv"), /* @__PURE__ */ React.createElement("span", { className: "countdown" }, remaining <= 0 ? "Erledigt" : monthsLeft !== null ? `Erledigt in ${monthsLeft} Monaten` : "nicht berechenbar"), /* @__PURE__ */ React.createElement("button", { className: "btn-mini", onClick: onOpen }, "Details / QR")));
+}
+function OpDetailDrawer({ op, simRows, onUpdateField, onUpdateRate }) {
+  const qrRef = useRef(null);
+  const remaining = round2(Math.max(0, op.totalAmount - op.paidSoFar));
+  useEffect(() => {
+    if (!qrRef.current || !op.iban) return;
+    qrRef.current.innerHTML = "";
+    const payload = [
+      "BCD",
+      "002",
+      "1",
+      "SCT",
+      "",
+      op.name.slice(0, 70),
+      op.iban.replace(/\s/g, ""),
+      "EUR" + remaining.toFixed(2),
+      "",
+      "",
+      (op.purpose || op.name).slice(0, 140)
+    ].join("\n");
+    if (window.QRCode) {
+      new window.QRCode(qrRef.current, { text: payload, width: 180, height: 180 });
+    }
+  }, [op.iban, op.name, op.purpose, remaining]);
+  return /* @__PURE__ */ React.createElement("div", { className: "op-detail" }, /* @__PURE__ */ React.createElement("div", { className: "field-row" }, /* @__PURE__ */ React.createElement("label", null, "Verwendungszweck"), /* @__PURE__ */ React.createElement("input", { type: "text", value: op.purpose || "", onChange: (e) => onUpdateField(op.id, "purpose", e.target.value) })), /* @__PURE__ */ React.createElement("div", { className: "field-row" }, /* @__PURE__ */ React.createElement("label", null, "IBAN"), /* @__PURE__ */ React.createElement("input", { type: "text", value: op.iban || "", onChange: (e) => onUpdateField(op.id, "iban", e.target.value) })), /* @__PURE__ */ React.createElement("div", { className: "field-row" }, /* @__PURE__ */ React.createElement("label", null, "Bereits gezahlt"), /* @__PURE__ */ React.createElement("input", { type: "number", step: "0.01", value: op.paidSoFar, onChange: (e) => onUpdateField(op.id, "paidSoFar", Number(e.target.value)) })), /* @__PURE__ */ React.createElement("div", { className: "field-row" }, /* @__PURE__ */ React.createElement("label", null, "Rate/Monat"), /* @__PURE__ */ React.createElement("input", { type: "number", step: "0.01", value: op.monthlyRate, onBlur: (e) => onUpdateRate(op.id, e.target.value), onChange: (e) => onUpdateField(op.id, "monthlyRate", Number(e.target.value)) })), op.iban && /* @__PURE__ */ React.createElement("div", { className: "qr-block" }, /* @__PURE__ */ React.createElement("h4", null, "SEPA-\xDCberweisungs-QR (Girocode)"), /* @__PURE__ */ React.createElement("div", { ref: qrRef, className: "qr-canvas" }), /* @__PURE__ */ React.createElement("p", { className: "muted" }, "Restbetrag ", fmtEUR(remaining), " \xB7 scannbar mit den meisten Banking-Apps.")));
+}
+function FixkostenTab({ costs, onUpdateField, onDelete, onNew }) {
+  return /* @__PURE__ */ React.createElement("section", { className: "section" }, /* @__PURE__ */ React.createElement("div", { className: "section-head" }, /* @__PURE__ */ React.createElement("h2", null, "Fixkosten"), /* @__PURE__ */ React.createElement("button", { className: "btn", onClick: onNew }, "+ Neue Kategorie")), /* @__PURE__ */ React.createElement("div", { className: "table-wrap" }, /* @__PURE__ */ React.createElement("table", { className: "cost-table" }, /* @__PURE__ */ React.createElement("thead", null, /* @__PURE__ */ React.createElement("tr", null, /* @__PURE__ */ React.createElement("th", null, "Name"), /* @__PURE__ */ React.createElement("th", null, "Kategorie"), /* @__PURE__ */ React.createElement("th", null, "Betrag"), /* @__PURE__ */ React.createElement("th", null, "Start"), /* @__PURE__ */ React.createElement("th", null, "Ende"), /* @__PURE__ */ React.createElement("th", null))), /* @__PURE__ */ React.createElement("tbody", null, costs.map((c) => /* @__PURE__ */ React.createElement("tr", { key: c.id }, /* @__PURE__ */ React.createElement("td", null, /* @__PURE__ */ React.createElement("input", { type: "text", value: c.name, onChange: (e) => onUpdateField(c.id, "name", e.target.value) })), /* @__PURE__ */ React.createElement("td", null, /* @__PURE__ */ React.createElement("select", { value: c.category, onChange: (e) => onUpdateField(c.id, "category", e.target.value) }, CATEGORIES.map((cat) => /* @__PURE__ */ React.createElement("option", { key: cat, value: cat }, cat)))), /* @__PURE__ */ React.createElement("td", null, /* @__PURE__ */ React.createElement("input", { type: "number", step: "0.01", value: c.amount, onChange: (e) => onUpdateField(c.id, "amount", Number(e.target.value)) })), /* @__PURE__ */ React.createElement("td", null, /* @__PURE__ */ React.createElement("input", { type: "month", value: c.startMonth, onChange: (e) => onUpdateField(c.id, "startMonth", e.target.value) })), /* @__PURE__ */ React.createElement("td", null, /* @__PURE__ */ React.createElement("input", { type: "month", value: c.endMonth || "", onChange: (e) => onUpdateField(c.id, "endMonth", e.target.value || null) })), /* @__PURE__ */ React.createElement("td", null, /* @__PURE__ */ React.createElement("button", { className: "btn-mini btn-danger-outline", onClick: () => onDelete(c.id) }, "L\xF6schen"))))))));
+}
+function CalendarTab({ months, costs, ops, calendarMonth, setCalendarMonth }) {
+  const items = useMemo(() => {
+    const list = [];
+    costs.filter((c) => isCostActive(c, calendarMonth)).forEach((c) => list.push({ name: c.name, category: c.category, amount: c.amount, type: "Fixkosten" }));
+    ops.filter((o) => o.status !== "deleted" && o.status !== "paused" && o.startMonth <= calendarMonth && o.totalAmount - o.paidSoFar > 0).forEach((o) => list.push({ name: o.name, category: o.category, amount: o.monthlyRate, type: "OP", iban: o.iban }));
+    return list.sort((a, b) => b.amount - a.amount);
+  }, [costs, ops, calendarMonth]);
+  const total = round2(items.reduce((s, i) => s + i.amount, 0));
+  return /* @__PURE__ */ React.createElement("section", { className: "section" }, /* @__PURE__ */ React.createElement("h2", null, "Kalender \xB7 F\xE4lligkeiten"), /* @__PURE__ */ React.createElement("div", { className: "field-row" }, /* @__PURE__ */ React.createElement("label", null, "Monat"), /* @__PURE__ */ React.createElement("select", { value: calendarMonth, onChange: (e) => setCalendarMonth(e.target.value) }, months.map((m) => /* @__PURE__ */ React.createElement("option", { key: m, value: m }, monthLabel(m))))), /* @__PURE__ */ React.createElement("ul", { className: "calendar-list" }, items.map((it, idx) => /* @__PURE__ */ React.createElement("li", { key: idx }, /* @__PURE__ */ React.createElement("span", { className: "badge type-" + it.type }, it.type), /* @__PURE__ */ React.createElement("span", { className: "cal-name" }, it.name), /* @__PURE__ */ React.createElement("span", { className: "cal-cat muted" }, it.category), /* @__PURE__ */ React.createElement("span", { className: "cal-amount" }, fmtEUR(it.amount)))), items.length === 0 && /* @__PURE__ */ React.createElement("li", { className: "muted" }, "Keine F\xE4lligkeiten in diesem Monat.")), /* @__PURE__ */ React.createElement("div", { className: "summary-box" }, /* @__PURE__ */ React.createElement("span", { className: "strong" }, "Gesamt f\xE4llig: ", fmtEUR(total))));
+}
+function DonutChart({ a, b, labelA, labelB }) {
+  const total = a + b;
+  const pctA = total > 0 ? a / total : 0;
+  const r = 60, cx = 70, cy = 70, circumference = 2 * Math.PI * r;
+  const dashA = circumference * pctA;
+  return /* @__PURE__ */ React.createElement("svg", { width: "140", height: "140", viewBox: "0 0 140 140" }, /* @__PURE__ */ React.createElement("circle", { cx, cy, r, fill: "none", stroke: "var(--border)", strokeWidth: "18" }), /* @__PURE__ */ React.createElement(
+    "circle",
+    {
+      cx,
+      cy,
+      r,
+      fill: "none",
+      stroke: "var(--accent)",
+      strokeWidth: "18",
+      strokeDasharray: `${dashA} ${circumference - dashA}`,
+      strokeDashoffset: circumference * 0.25,
+      transform: `rotate(-90 ${cx} ${cy})`
+    }
+  ), /* @__PURE__ */ React.createElement("text", { x: cx, y: cy, textAnchor: "middle", dominantBaseline: "middle", className: "donut-label" }, total > 0 ? Math.round(pctA * 100) + "%" : "\u2013"));
+}
+function StatistikTab({ progressPct, totalDebtAll, totalPaidAll, rows, months }) {
+  const [selMonth, setSelMonth] = useState(SCHEDULE_START);
+  const row = rows.find((r) => r.month === selMonth) || rows[0];
+  return /* @__PURE__ */ React.createElement("section", { className: "section" }, /* @__PURE__ */ React.createElement("h2", null, "Statistik"), /* @__PURE__ */ React.createElement("div", { className: "stat-block" }, /* @__PURE__ */ React.createElement("h4", null, "Schulden-Thermometer"), /* @__PURE__ */ React.createElement("div", { className: "thermometer" }, /* @__PURE__ */ React.createElement("div", { className: "thermometer-fill", style: { width: progressPct + "%" } })), /* @__PURE__ */ React.createElement("p", null, fmtEUR(totalPaidAll), " von ", fmtEUR(totalDebtAll), " bereits getilgt (", progressPct, "%)")), /* @__PURE__ */ React.createElement("div", { className: "stat-block" }, /* @__PURE__ */ React.createElement("h4", null, "Ausgaben-Split (OPs vs. Fixkosten)"), /* @__PURE__ */ React.createElement("div", { className: "field-row" }, /* @__PURE__ */ React.createElement("label", null, "Monat"), /* @__PURE__ */ React.createElement("select", { value: selMonth, onChange: (e) => setSelMonth(e.target.value) }, months.map((m) => /* @__PURE__ */ React.createElement("option", { key: m, value: m }, monthLabel(m))))), row && /* @__PURE__ */ React.createElement("div", { className: "donut-row" }, /* @__PURE__ */ React.createElement(DonutChart, { a: row.opSum, b: row.fixedSum }), /* @__PURE__ */ React.createElement("div", { className: "donut-legend" }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement(IconDot, { color: "var(--accent)" }), " OP-Raten: ", fmtEUR(row.opSum)), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement(IconDot, { color: "var(--border)" }), " Fixkosten: ", fmtEUR(row.fixedSum))))), /* @__PURE__ */ React.createElement("div", { className: "stat-block" }, /* @__PURE__ */ React.createElement("h4", null, "Monats-Ampel \xDCbersicht"), /* @__PURE__ */ React.createElement("div", { className: "ampel-grid" }, rows.map((r) => /* @__PURE__ */ React.createElement("div", { key: r.month, className: "ampel-cell", title: monthLabel(r.month) + ": " + fmtEUR(r.closing) }, /* @__PURE__ */ React.createElement(Ampel, { closing: r.closing }), /* @__PURE__ */ React.createElement("span", null, monthLabel(r.month)))))));
+}
+function NewOpModal({ open, onClose, onSave }) {
+  const [form, setForm] = useState({ name: "", category: CATEGORIES[0], totalAmount: "", monthlyRate: "", paidSoFar: "", iban: "", purpose: "", startMonth: SCHEDULE_START, notes: "" });
+  if (!open) return null;
+  function set(k, v) {
+    setForm((prev) => ({ ...prev, [k]: v }));
+  }
+  function submit() {
+    if (!form.name || !form.totalAmount || !form.monthlyRate) return;
+    onSave({
+      name: form.name,
+      category: form.category,
+      totalAmount: Number(form.totalAmount),
+      monthlyRate: Number(form.monthlyRate),
+      paidSoFar: Number(form.paidSoFar) || 0,
+      iban: form.iban,
+      purpose: form.purpose || form.name,
+      startMonth: form.startMonth,
+      notes: form.notes
+    });
+  }
+  return /* @__PURE__ */ React.createElement(Modal, { open, onClose }, /* @__PURE__ */ React.createElement("h3", null, "Neuer offener Posten"), /* @__PURE__ */ React.createElement("div", { className: "form-grid" }, /* @__PURE__ */ React.createElement("label", null, "Name", /* @__PURE__ */ React.createElement("input", { type: "text", value: form.name, onChange: (e) => set("name", e.target.value) })), /* @__PURE__ */ React.createElement("label", null, "Kategorie", /* @__PURE__ */ React.createElement("select", { value: form.category, onChange: (e) => set("category", e.target.value) }, CATEGORIES.map((cat) => /* @__PURE__ */ React.createElement("option", { key: cat, value: cat }, cat)))), /* @__PURE__ */ React.createElement("label", null, "Gesamtbetrag", /* @__PURE__ */ React.createElement("input", { type: "number", step: "0.01", value: form.totalAmount, onChange: (e) => set("totalAmount", e.target.value) })), /* @__PURE__ */ React.createElement("label", null, "Rate/Monat", /* @__PURE__ */ React.createElement("input", { type: "number", step: "0.01", value: form.monthlyRate, onChange: (e) => set("monthlyRate", e.target.value) })), /* @__PURE__ */ React.createElement("label", null, "Bereits gezahlt", /* @__PURE__ */ React.createElement("input", { type: "number", step: "0.01", value: form.paidSoFar, onChange: (e) => set("paidSoFar", e.target.value) })), /* @__PURE__ */ React.createElement("label", null, "IBAN", /* @__PURE__ */ React.createElement("input", { type: "text", value: form.iban, onChange: (e) => set("iban", e.target.value) })), /* @__PURE__ */ React.createElement("label", null, "Verwendungszweck", /* @__PURE__ */ React.createElement("input", { type: "text", value: form.purpose, onChange: (e) => set("purpose", e.target.value) })), /* @__PURE__ */ React.createElement("label", null, "Startmonat", /* @__PURE__ */ React.createElement("input", { type: "month", value: form.startMonth, onChange: (e) => set("startMonth", e.target.value) })), /* @__PURE__ */ React.createElement("label", { className: "full" }, "Notiz", /* @__PURE__ */ React.createElement("textarea", { value: form.notes, onChange: (e) => set("notes", e.target.value) }))), /* @__PURE__ */ React.createElement("div", { className: "modal-actions" }, /* @__PURE__ */ React.createElement("button", { className: "btn", onClick: submit }, "Speichern"), /* @__PURE__ */ React.createElement("button", { className: "btn btn-ghost", onClick: onClose }, "Abbrechen")));
+}
+function NewCostModal({ open, onClose, onSave }) {
+  const [form, setForm] = useState({ name: "", category: CATEGORIES[0], amount: "", startMonth: SCHEDULE_START, endMonth: "" });
+  if (!open) return null;
+  function set(k, v) {
+    setForm((prev) => ({ ...prev, [k]: v }));
+  }
+  function submit() {
+    if (!form.name || !form.amount) return;
+    onSave({ name: form.name, category: form.category, amount: Number(form.amount), startMonth: form.startMonth, endMonth: form.endMonth || null });
+  }
+  return /* @__PURE__ */ React.createElement(Modal, { open, onClose }, /* @__PURE__ */ React.createElement("h3", null, "Neue Fixkosten-Kategorie"), /* @__PURE__ */ React.createElement("div", { className: "form-grid" }, /* @__PURE__ */ React.createElement("label", null, "Name", /* @__PURE__ */ React.createElement("input", { type: "text", value: form.name, onChange: (e) => set("name", e.target.value) })), /* @__PURE__ */ React.createElement("label", null, "Kategorie", /* @__PURE__ */ React.createElement("select", { value: form.category, onChange: (e) => set("category", e.target.value) }, CATEGORIES.map((cat) => /* @__PURE__ */ React.createElement("option", { key: cat, value: cat }, cat)))), /* @__PURE__ */ React.createElement("label", null, "Betrag/Monat", /* @__PURE__ */ React.createElement("input", { type: "number", step: "0.01", value: form.amount, onChange: (e) => set("amount", e.target.value) })), /* @__PURE__ */ React.createElement("label", null, "Startmonat", /* @__PURE__ */ React.createElement("input", { type: "month", value: form.startMonth, onChange: (e) => set("startMonth", e.target.value) })), /* @__PURE__ */ React.createElement("label", null, "Endmonat (optional)", /* @__PURE__ */ React.createElement("input", { type: "month", value: form.endMonth, onChange: (e) => set("endMonth", e.target.value) }))), /* @__PURE__ */ React.createElement("div", { className: "modal-actions" }, /* @__PURE__ */ React.createElement("button", { className: "btn", onClick: submit }, "Speichern"), /* @__PURE__ */ React.createElement("button", { className: "btn btn-ghost", onClick: onClose }, "Abbrechen")));
+}
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(/* @__PURE__ */ React.createElement(App, null));
+</script>
+</body>
+</html>
