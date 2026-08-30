@@ -45,6 +45,13 @@ function esc(s) {
   });
 }
 function pad2(n) { return String(n).padStart(2, '0'); }
+function milestoneHeadline(m) {
+  const parts = m.title.split(' – ');
+  if (parts.length < 2) return esc(m.title.toUpperCase());
+  const tagPart = parts[0];
+  const namePart = parts.slice(1).join(' – ');
+  return esc(tagPart.toUpperCase()) + '.<br>GESPRÄCHSPHASE „' + esc(namePart.toUpperCase()) + '“.';
+}
 function ctxbar() { return '<div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div>'; }
 function navBar(nextLabel) {
   return '<div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button>' +
@@ -119,7 +126,7 @@ function slideMilestoneVorbereitung(m, num, phase) {
   const zeitraum = phase ? phase.zeitraum : '';
   return (
     '<section class="slide" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 0) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
-    '<h1>' + esc(m.title.toUpperCase()) + '</h1>' +
+    '<h1>' + milestoneHeadline(m) + '</h1>' +
     fokusBox + buddyBox +
     '<h2>IST DIESE GESPRÄCHSPHASE ABGESCHLOSSEN?</h2>' +
     '<p class="lead">Diese Liste zeigt, was in ' + esc(zeitraum || 'dieser Zeit') + ' eigentlich passiert sein sollte. Geh sie vor dem Gespräch kurz durch: Was passt schon? Was fehlt noch? Ein offener Punkt ist kein Problem — er wird einfach zum Thema im Gespräch.</p>' +
@@ -138,7 +145,7 @@ function slideMilestoneZielEinstieg(m, num) {
     : '';
   return (
     '<section class="slide" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 1) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
-    '<h1>' + esc(m.title.toUpperCase()) + '</h1>' +
+    '<h1>' + milestoneHeadline(m) + '</h1>' +
     '<div class="box"><b>DARUM GEHT ES MIR IN DIESEM GESPRÄCH.</b><p class="lead" style="margin:10px 0 0">„' + esc(m.ziel) + '“</p></div>' +
     frageBox + zweckBox + bereicheBox +
     navBar('Weiter') +
@@ -152,7 +159,7 @@ function slideMilestoneReaktionen(m, num) {
   }).join('');
   return (
     '<section class="slide" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 2) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
-    '<h1>' + esc(m.title.toUpperCase()) + '</h1>' +
+    '<h1>' + milestoneHeadline(m) + '</h1>' +
     '<h2>WAS DIE NEUE PERSON SAGEN KÖNNTE — UND WIE DU ANTWORTEST.</h2>' +
     qaHtml +
     navBar('Weiter') +
@@ -166,7 +173,7 @@ function slideMilestoneBesserSagen(m, num) {
   }).join('');
   return (
     '<section class="slide" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 3) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
-    '<h1>' + esc(m.title.toUpperCase()) + '</h1>' +
+    '<h1>' + milestoneHeadline(m) + '</h1>' +
     '<h2>SAG DAS NICHT — SAG LIEBER DAS.</h2>' +
     '<p class="lead">Manche Sätze klingen schnell falsch, auch wenn sie nicht böse gemeint sind. Hier siehst du bessere Alternativen.</p>' +
     '<div class="compareHead"><span>Nicht sagen</span><span>Besser sagen</span></div>' +
@@ -180,7 +187,7 @@ function slideMilestoneVereinbarung(m, num) {
   const restFields = omitFields(m.fields, ['teilnehmer']);
   return (
     '<section class="slide" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 4) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
-    '<h1>' + esc(m.title.toUpperCase()) + '</h1>' +
+    '<h1>' + milestoneHeadline(m) + '</h1>' +
     '<p class="lead">Trage hier fest, was ihr im Gespräch besprochen und vereinbart habt — nach Carmens Gesprächsvorlage.</p>' +
     '<div class="weeklyCheck"><div class="weeklyCheckIntro"><b>WAS WURDE BESPROCHEN UND VEREINBART?</b></div>' + fieldsGrid('m' + m.n, restFields) + '</div>' +
     navBar('Weiter') +
@@ -194,7 +201,7 @@ function slideMilestoneFollowUp(m, num, nextPhase, isLast) {
     : '<div class="box"><b>ENDE DER PROBEZEIT.</b><p class="lead" style="margin:10px 0 0">Mit diesem Gespräch endet der Entscheidungs-Korridor. Einmal bauen. Immer wieder nutzen — für die nächste neue Mitarbeiterin oder den nächsten neuen Mitarbeiter.</p></div>';
   return (
     '<section class="slide" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 5) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
-    '<h1>' + esc(m.title.toUpperCase()) + '</h1>' +
+    '<h1>' + milestoneHeadline(m) + '</h1>' +
     '<h2>HAKE AB: IST DIESES GESPRÄCH ERLEDIGT?</h2>' +
     checksList('m' + m.n + '_gf', m.gespraechsfolge) +
     nextBox +
