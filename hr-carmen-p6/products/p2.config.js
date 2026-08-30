@@ -110,7 +110,7 @@ function slideMilestoneVorbereitung(m, num, phase) {
   const buddyBox = (m.n < 4 && buddyTaktung)
     ? '<div class="box"><b>WIE OFT TRIFFT DER BUDDY DEIN NEUES TEAMMITGLIED GERADE?</b><p style="margin:10px 0 0">Ein Buddy ist eine erfahrene Kollegin oder ein erfahrener Kollege, die/der deinem neuen Teammitglied beim Einleben hilft — nicht du selbst. In dieser Gesprächsphase gilt: ' + esc(buddyTaktung) + '</p></div>'
     : '';
-  const fokusBox = m.fokus ? '<div class="box"><b>WORUM GEHT ES IN DIESER GESPRÄCHSPHASE?</b><p class="lead" style="margin:10px 0 0">' + esc(m.fokus) + '</p></div>' : '';
+  const fokusBox = m.fokus ? '<div class="box"><b>WORUM GEHT ES IN DIESER GESPRÄCHSPHASE?</b><p class="lead" style="margin:10px 0 0">Jedes Gespräch hat einen roten Faden — das Thema, um das sich an diesem Tag alles dreht. Bei diesem Gespräch ist das: ' + esc(m.fokus) + ' Was du dafür genau fragst und worauf du achtest, steht auf den nächsten Seiten.</p></div>' : '';
   const teilnehmerFields = pickFields(m.fields, ['teilnehmer']);
   const zeitraum = phase ? phase.zeitraum : '';
   return (
