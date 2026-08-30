@@ -61,9 +61,9 @@
       ],
       "gespraechsfolge": ["30-Tage-Check-in mit Erwartungsabgleich durchgeführt"],
       "fields": [
-        ["TEILNEHMER", "teilnehmer", "Name(n) eintragen …"],
-        ["DOKUMENTATION", "dok", "Kurz eintragen …"],
-        ["NÄCHSTE SCHRITTE", "next", "Kurz eintragen …"]
+        ["TEILNEHMER", "teilnehmer", "Name(n) eintragen …", "Wer nimmt an diesem Gespräch teil? Meist du und die neue Person — bei Bedarf auch der Buddy."],
+        ["DOKUMENTATION", "dok", "Kurz eintragen …", "Was habt ihr besprochen? Stichpunkte reichen völlig."],
+        ["NÄCHSTE SCHRITTE", "next", "Kurz eintragen …", "Was ist bis zum nächsten Gespräch zu tun — und wer macht was bis wann?"]
       ],
       "docFieldId": "dok"
     },

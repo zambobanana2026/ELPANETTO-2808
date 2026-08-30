@@ -53,7 +53,8 @@ function navBar(nextLabel) {
 }
 function fieldsGrid(prefix, fields) {
   return '<div class="weeklyCheckGrid">' + fields.map(function (f) {
-    return '<div class="weeklyCheckCard"><label>' + esc(f[0]) + '</label>' +
+    const hint = f[3] ? '<span style="display:block;font-weight:400;font-size:13px;color:var(--ci);margin:-4px 0 8px">' + esc(f[3]) + '</span>' : '';
+    return '<div class="weeklyCheckCard"><label>' + esc(f[0]) + '</label>' + hint +
       '<textarea data-field="' + prefix + '_' + f[1] + '" placeholder="' + esc(f[2]) + '"></textarea></div>';
   }).join('') + '</div>';
 }
