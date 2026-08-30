@@ -59,7 +59,10 @@ function fieldsGrid(prefix, fields) {
 }
 function checksList(prefix, items) {
   return '<div class="checks">' + items.map(function (c, i) {
-    return '<div class="choice" data-toggle="' + prefix + (i + 1) + '" onclick="toggleChoice(this)">' + esc(c) + '</div>';
+    const label = Array.isArray(c) ? c[0] : c;
+    const hint = Array.isArray(c) ? c[1] : null;
+    const hintHtml = hint ? '<span style="display:block;font-weight:400;font-size:13px;color:var(--ci);margin-top:4px">' + esc(hint) + '</span>' : '';
+    return '<div class="choice" data-toggle="' + prefix + (i + 1) + '" onclick="toggleChoice(this)">' + esc(label) + hintHtml + '</div>';
   }).join('') + '</div>';
 }
 function pickFields(fields, ids) {
