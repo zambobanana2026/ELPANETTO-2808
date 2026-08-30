@@ -233,7 +233,7 @@ tbody input, tbody select { width: 100%; min-width: 90px; font-family: var(--fon
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
 <script>
 const { useState, useEffect, useMemo, useRef, useCallback } = React;
-const LS_KEYS = { ops: "ops8", costs: "costs8", konto: "konto8", income: "income8", theme: "theme8" };
+const LS_KEYS = { ops: "ops8", costs: "costs8", konto: "konto8", income: "income8", theme: "theme8", cash: "cash8" };
 const CATEGORIES = [
   "Inkasso",
   "Finanzamt",
@@ -294,6 +294,7 @@ function makeId(prefix) {
 }
 const DEFAULT_KONTO = { startBalance: 820, startMonth: SCHEDULE_START };
 const DEFAULT_INCOME = { "2026-09": 0 };
+const DEFAULT_CASH = [];
 const DEFAULT_COSTS = [
   { id: makeId("c"), name: "Lebenshaltung", category: "Lebensmittel", amount: 200, startMonth: "2026-09", endMonth: null },
   { id: makeId("c"), name: "Laptop", category: "Sonstiges", amount: 50, startMonth: "2026-09", endMonth: "2026-11" },
@@ -793,6 +794,7 @@ function App() {
   const [costs, setCosts] = useState(() => loadLS(LS_KEYS.costs, DEFAULT_COSTS));
   const [konto, setKonto] = useState(() => loadLS(LS_KEYS.konto, DEFAULT_KONTO));
   const [income, setIncome] = useState(() => loadLS(LS_KEYS.income, DEFAULT_INCOME));
+  const [cash, setCash] = useState(() => loadLS(LS_KEYS.cash, DEFAULT_CASH));
   const [themeState, setThemeState] = useState(() => loadLS(LS_KEYS.theme, { theme: "light", colors: THEMES.light.colors }));
   const [tab, setTab] = useState("zeitplan");
   const [drawer, setDrawer] = useState(null);
@@ -808,6 +810,7 @@ function App() {
   useEffect(() => saveLS(LS_KEYS.costs, costs), [costs]);
   useEffect(() => saveLS(LS_KEYS.konto, konto), [konto]);
   useEffect(() => saveLS(LS_KEYS.income, income), [income]);
+  useEffect(() => saveLS(LS_KEYS.cash, cash), [cash]);
   useEffect(() => saveLS(LS_KEYS.theme, themeState), [themeState]);
   useEffect(() => {
     const c = themeState.colors || THEMES[themeState.theme].colors;
@@ -847,11 +850,12 @@ function App() {
     setCosts(DEFAULT_COSTS);
     setKonto(DEFAULT_KONTO);
     setIncome(DEFAULT_INCOME);
+    setCash(DEFAULT_CASH);
     setThemeState({ theme: "light", colors: THEMES.light.colors });
     playClick();
   }
   function handleExportBackup() {
-    const backup = { ops8: ops, costs8: costs, konto8: konto, income8: income, theme8: themeState, exportedAt: (/* @__PURE__ */ new Date()).toISOString() };
+    const backup = { ops8: ops, costs8: costs, konto8: konto, income8: income, cash8: cash, theme8: themeState, exportedAt: (/* @__PURE__ */ new Date()).toISOString() };
     const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -897,6 +901,14 @@ function App() {
   function deleteCost(id) {
     if (!window.confirm("Diese Fixkosten-Position l\xF6schen?")) return;
     setCosts((prev) => prev.filter((c) => c.id !== id));
+    playClick();
+  }
+  function addCashEntry(entry) {
+    setCash((prev) => [...prev, { ...entry, id: makeId("x") }]);
+    playClick();
+  }
+  function deleteCashEntry(id) {
+    setCash((prev) => prev.filter((e) => e.id !== id));
     playClick();
   }
   function addOp(data) {
@@ -974,6 +986,7 @@ function App() {
     ["zeitplan", "Zeitplan"],
     ["ops", "Offene Posten"],
     ["scan", "Forderung scannen"],
+    ["bar", "Barausgaben"],
     ["fixkosten", "Fixkosten"],
     ["kalender", "Kalender"],
     ["statistik", "Statistik"]
@@ -992,7 +1005,7 @@ function App() {
       onOpenPay: (op) => setDrawer({ type: "op", op }),
       onSetSnowballTarget: setSnowballTarget
     }
-  ), tab === "scan" && /* @__PURE__ */ React.createElement(ScanTab, { ops, onCreateFromScan: createOpFromScan, onUpdateFromScan: updateOpFromScan }), tab === "fixkosten" && /* @__PURE__ */ React.createElement(FixkostenTab, { costs, onUpdateField: updateCostField, onDelete: deleteCost, onNew: () => setNewCostOpen(true) }), tab === "kalender" && /* @__PURE__ */ React.createElement(CalendarTab, { months, costs, ops, calendarMonth, setCalendarMonth }), tab === "statistik" && /* @__PURE__ */ React.createElement(StatistikTab, { progressPct, totalDebtAll, totalPaidAll, rows: visibleRows, months })), /* @__PURE__ */ React.createElement(Drawer, { open: drawer && drawer.type === "month", onClose: () => setDrawer(null), title: drawer && drawer.row ? monthLabel(drawer.row.month) : "" }, drawer && drawer.type === "month" && /* @__PURE__ */ React.createElement(
+  ), tab === "scan" && /* @__PURE__ */ React.createElement(ScanTab, { ops, onCreateFromScan: createOpFromScan, onUpdateFromScan: updateOpFromScan }), tab === "bar" && /* @__PURE__ */ React.createElement(BarausgabenTab, { costs, cash, months, onAdd: addCashEntry, onDelete: deleteCashEntry }), tab === "fixkosten" && /* @__PURE__ */ React.createElement(FixkostenTab, { costs, onUpdateField: updateCostField, onDelete: deleteCost, onNew: () => setNewCostOpen(true) }), tab === "kalender" && /* @__PURE__ */ React.createElement(CalendarTab, { months, costs, ops, calendarMonth, setCalendarMonth }), tab === "statistik" && /* @__PURE__ */ React.createElement(StatistikTab, { progressPct, totalDebtAll, totalPaidAll, rows: visibleRows, months })), /* @__PURE__ */ React.createElement(Drawer, { open: drawer && drawer.type === "month", onClose: () => setDrawer(null), title: drawer && drawer.row ? monthLabel(drawer.row.month) : "" }, drawer && drawer.type === "month" && /* @__PURE__ */ React.createElement(
     MonthDrawerContent,
     {
       row: drawer.row,
@@ -1085,6 +1098,37 @@ function OpDetailDrawer({ op, simRows, onUpdateField, onUpdateRate, rateResetTic
     }
   }, [op.iban, op.name, op.purpose, remaining]);
   return /* @__PURE__ */ React.createElement("div", { className: "op-detail" }, /* @__PURE__ */ React.createElement("div", { className: "field-row" }, /* @__PURE__ */ React.createElement("label", null, "Verwendungszweck"), /* @__PURE__ */ React.createElement("input", { type: "text", value: op.purpose || "", onChange: (e) => onUpdateField(op.id, "purpose", e.target.value) })), /* @__PURE__ */ React.createElement("div", { className: "field-row" }, /* @__PURE__ */ React.createElement("label", null, "IBAN"), /* @__PURE__ */ React.createElement("input", { type: "text", value: op.iban || "", onChange: (e) => onUpdateField(op.id, "iban", e.target.value) })), /* @__PURE__ */ React.createElement("div", { className: "field-row" }, /* @__PURE__ */ React.createElement("label", null, "Bereits gezahlt"), /* @__PURE__ */ React.createElement(NumberField, { key: "paid-" + rateResetTick, value: op.paidSoFar, onCommit: (val) => onUpdateField(op.id, "paidSoFar", Number(val) || 0) })), /* @__PURE__ */ React.createElement("div", { className: "field-row" }, /* @__PURE__ */ React.createElement("label", null, "Rate/Monat"), /* @__PURE__ */ React.createElement(NumberField, { key: "rate-" + rateResetTick, value: op.monthlyRate, onCommit: (val) => onUpdateRate(op.id, val) })), op.iban && /* @__PURE__ */ React.createElement("div", { className: "qr-block" }, /* @__PURE__ */ React.createElement("h4", null, "SEPA-\xDCberweisungs-QR (Girocode)"), /* @__PURE__ */ React.createElement("div", { ref: qrRef, className: "qr-canvas" }), /* @__PURE__ */ React.createElement("p", { className: "muted" }, "Restbetrag ", fmtEUR(remaining), " \xB7 scannbar mit den meisten Banking-Apps.")));
+}
+function todayDateStr() {
+  const d = /* @__PURE__ */ new Date();
+  return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+}
+function BarausgabenTab({ costs, cash, months, onAdd, onDelete }) {
+  const [month, setMonth] = useState(() => {
+    const now = todayMonthStr();
+    return months.includes(now) ? now : SCHEDULE_START;
+  });
+  const [date, setDate] = useState(todayDateStr());
+  const [amount, setAmount] = useState("");
+  const [note, setNote] = useState("");
+  const budget = useMemo(
+    () => round2(costs.filter((c) => c.category === "Lebensmittel" && isCostActive(c, month)).reduce((s, c) => s + c.amount, 0)),
+    [costs, month]
+  );
+  const entries = useMemo(
+    () => cash.filter((e) => e.date.slice(0, 7) === month).sort((a, b) => b.date.localeCompare(a.date)),
+    [cash, month]
+  );
+  const spent = round2(entries.reduce((s, e) => s + e.amount, 0));
+  const rest = round2(budget - spent);
+  function submit() {
+    const val = parseCsvAmount(amount);
+    if (!date || Number.isNaN(val) || val <= 0) return;
+    onAdd({ date, amount: round2(val), note: note.trim() });
+    setAmount("");
+    setNote("");
+  }
+  return /* @__PURE__ */ React.createElement("section", { className: "section" }, /* @__PURE__ */ React.createElement("h2", null, "Barausgaben"), /* @__PURE__ */ React.createElement("p", { className: "muted" }, 'F\xFCr Bargeld, das du vom Konto abhebst und f\xFCr Lebensmittel, Caf\xE9 & Co. ausgibst. Das Budget wird automatisch aus deinen Fixkosten der Kategorie "Lebensmittel" f\xFCr den gew\xE4hlten Monat gezogen (aktuell Lebenshaltung).'), /* @__PURE__ */ React.createElement("div", { className: "field-row" }, /* @__PURE__ */ React.createElement("label", null, "Monat"), /* @__PURE__ */ React.createElement("select", { value: month, onChange: (e) => setMonth(e.target.value) }, months.map((m) => /* @__PURE__ */ React.createElement("option", { key: m, value: m }, monthLabel(m))))), /* @__PURE__ */ React.createElement("div", { className: "summary-box" }, /* @__PURE__ */ React.createElement("div", null, "Budget diesen Monat: ", fmtEUR(budget)), /* @__PURE__ */ React.createElement("div", null, "Ausgegeben: ", fmtEUR(spent)), /* @__PURE__ */ React.createElement("div", { className: "strong", style: { color: rest < 0 ? "#c23b3b" : "#2e9e4d" } }, rest >= 0 ? "\xDCbrig" : "\xDCberzogen", ": ", fmtEUR(Math.abs(rest)))), /* @__PURE__ */ React.createElement("h4", { style: { marginTop: 20 } }, "Neue Ausgabe erfassen"), /* @__PURE__ */ React.createElement("div", { className: "form-grid" }, /* @__PURE__ */ React.createElement("label", null, "Datum", /* @__PURE__ */ React.createElement("input", { type: "date", value: date, onChange: (e) => setDate(e.target.value) })), /* @__PURE__ */ React.createElement("label", null, "Betrag", /* @__PURE__ */ React.createElement("input", { type: "text", inputMode: "decimal", value: amount, onChange: (e) => setAmount(e.target.value), placeholder: "z.B. 12,50" })), /* @__PURE__ */ React.createElement("label", { className: "full" }, "Notiz (optional)", /* @__PURE__ */ React.createElement("input", { type: "text", value: note, onChange: (e) => setNote(e.target.value), placeholder: "z.B. Rewe, Caf\xE9, B\xE4cker..." }))), /* @__PURE__ */ React.createElement("div", { className: "modal-actions", style: { marginTop: 4 } }, /* @__PURE__ */ React.createElement("button", { className: "btn", onClick: submit }, "+ Ausgabe hinzuf\xFCgen")), /* @__PURE__ */ React.createElement("h4", { style: { marginTop: 24 } }, "Ausgaben in ", monthLabel(month)), /* @__PURE__ */ React.createElement("ul", { className: "calendar-list" }, entries.map((e) => /* @__PURE__ */ React.createElement("li", { key: e.id }, /* @__PURE__ */ React.createElement("span", { className: "cal-cat muted" }, e.date.split("-").reverse().join(".")), /* @__PURE__ */ React.createElement("span", { className: "cal-name" }, e.note || "(ohne Notiz)"), /* @__PURE__ */ React.createElement("span", { className: "cal-amount" }, fmtEUR(e.amount)), /* @__PURE__ */ React.createElement("button", { className: "btn-mini btn-danger-outline", onClick: () => onDelete(e.id) }, "L\xF6schen"))), entries.length === 0 && /* @__PURE__ */ React.createElement("li", { className: "muted" }, "Noch keine Barausgaben in diesem Monat erfasst.")));
 }
 function FixkostenTab({ costs, onUpdateField, onDelete, onNew }) {
   return /* @__PURE__ */ React.createElement("section", { className: "section" }, /* @__PURE__ */ React.createElement("div", { className: "section-head" }, /* @__PURE__ */ React.createElement("h2", null, "Fixkosten"), /* @__PURE__ */ React.createElement("button", { className: "btn", onClick: onNew }, "+ Neue Kategorie")), /* @__PURE__ */ React.createElement("div", { className: "table-wrap" }, /* @__PURE__ */ React.createElement("table", { className: "cost-table" }, /* @__PURE__ */ React.createElement("thead", null, /* @__PURE__ */ React.createElement("tr", null, /* @__PURE__ */ React.createElement("th", null, "Name"), /* @__PURE__ */ React.createElement("th", null, "Kategorie"), /* @__PURE__ */ React.createElement("th", null, "Betrag"), /* @__PURE__ */ React.createElement("th", null, "Start"), /* @__PURE__ */ React.createElement("th", null, "Ende"), /* @__PURE__ */ React.createElement("th", null))), /* @__PURE__ */ React.createElement("tbody", null, costs.map((c) => /* @__PURE__ */ React.createElement("tr", { key: c.id }, /* @__PURE__ */ React.createElement("td", null, /* @__PURE__ */ React.createElement("input", { type: "text", value: c.name, onChange: (e) => onUpdateField(c.id, "name", e.target.value) })), /* @__PURE__ */ React.createElement("td", null, /* @__PURE__ */ React.createElement("select", { value: c.category, onChange: (e) => onUpdateField(c.id, "category", e.target.value) }, CATEGORIES.map((cat) => /* @__PURE__ */ React.createElement("option", { key: cat, value: cat }, cat)))), /* @__PURE__ */ React.createElement("td", null, /* @__PURE__ */ React.createElement(NumberField, { value: c.amount, onCommit: (val) => onUpdateField(c.id, "amount", Number(val) || 0) })), /* @__PURE__ */ React.createElement("td", null, /* @__PURE__ */ React.createElement("input", { type: "month", value: c.startMonth, onChange: (e) => onUpdateField(c.id, "startMonth", e.target.value) })), /* @__PURE__ */ React.createElement("td", null, /* @__PURE__ */ React.createElement("input", { type: "month", value: c.endMonth || "", onChange: (e) => onUpdateField(c.id, "endMonth", e.target.value || null) })), /* @__PURE__ */ React.createElement("td", null, /* @__PURE__ */ React.createElement("button", { className: "btn-mini btn-danger-outline", onClick: () => onDelete(c.id) }, "L\xF6schen"))))))));
