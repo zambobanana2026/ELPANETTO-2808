@@ -108,15 +108,17 @@ function milestoneBrand(m, i) {
 function slideMilestoneVorbereitung(m, num, phase) {
   const buddyTaktung = phase ? phase.buddyTaktung : '';
   const buddyBox = (m.n < 4 && buddyTaktung)
-    ? '<div class="box"><b>WIE OFT TRIFFST DU DEINEN BUDDY GERADE?</b><p style="margin:10px 0 0">Ein Buddy ist eine erfahrene Kollegin oder ein erfahrener Kollege, die/der der neuen Person beim Einleben hilft. In dieser Gesprächsphase gilt: ' + esc(buddyTaktung) + '</p></div>'
+    ? '<div class="box"><b>WIE OFT TRIFFT DER BUDDY DEIN NEUES TEAMMITGLIED GERADE?</b><p style="margin:10px 0 0">Ein Buddy ist eine erfahrene Kollegin oder ein erfahrener Kollege, die/der deinem neuen Teammitglied beim Einleben hilft — nicht du selbst. In dieser Gesprächsphase gilt: ' + esc(buddyTaktung) + '</p></div>'
     : '';
   const fokusBox = m.fokus ? '<div class="box"><b>WORUM GEHT ES IN DIESER GESPRÄCHSPHASE?</b><p class="lead" style="margin:10px 0 0">' + esc(m.fokus) + '</p></div>' : '';
   const teilnehmerFields = pickFields(m.fields, ['teilnehmer']);
+  const zeitraum = phase ? phase.zeitraum : '';
   return (
     '<section class="slide" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 0) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
     '<h1>' + esc(m.title.toUpperCase()) + '</h1>' +
     fokusBox + buddyBox +
     '<h2>IST DIESE GESPRÄCHSPHASE ABGESCHLOSSEN?</h2>' +
+    '<p class="lead">Geh vor dem Gespräch kurz durch, was in ' + esc(zeitraum || 'dieser Zeit') + ' schon lief. Ist etwas noch offen, sprecht ihr genau darüber im Gespräch.</p>' +
     checksList('m' + m.n + '_chk', m.checks) +
     '<div class="weeklyCheck"><div class="weeklyCheckIntro"><b>WER NIMMT AM GESPRÄCH TEIL?</b></div>' + fieldsGrid('m' + m.n, teilnehmerFields) + '</div>' +
     navBar('Weiter') +
