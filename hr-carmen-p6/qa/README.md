@@ -8,7 +8,7 @@ node qa/p6_qa.js     # P6: Mitarbeiter-CRUD, Datentrennung, Lizenzgrenze, Reload
                       # Navigation über alle 51 Slides, Team-Bericht, Mobile
 node qa/p6_diff.js   # P6: automatisierter Textvergleich jeder Slide gegen
                       # reference/P6_V3.html (muss "NO TEXT DIFFERENCES" melden)
-node qa/p2_qa.js      # P2: dasselbe Testschema wie p6_qa.js, für 43 Slides
+node qa/p2_qa.js      # P2: dasselbe Testschema wie p6_qa.js, für 47 Slides
 ```
 
 Falls `playwright` nicht als lokales Modul auflösbar ist (z. B. weil nur

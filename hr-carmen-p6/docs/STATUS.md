@@ -1,5 +1,96 @@
 # Status — Carmen Next Motor/Config
 
+## P2 — Verständlichkeits-Durchgang: erklärte Boxen, Feld-Hinweise, 47 Slides (v3)
+
+Martin fand nach der v2-Fassung (43 Slides, 5 Unterseiten je Station) einzelne
+Abschnitte immer noch zu knapp/abgehakt für ein 49€-Produkt — im direkten
+Review von Tag 30, Seite für Seite. Dieser Durchgang macht die Fassung
+durchgängig verständlicher, ohne den Stoff zu ändern:
+
+- **"Phase" → "Gesprächsphase"** in den Meilenstein-Labels (Vorbereitung),
+  wo es um die aktuelle 30/60/90/150-Etappe des Gesprächs ging, nicht um die
+  Übersichts-Phasen (die behalten "Phase", weil dort korrekt).
+- **Jede vorher stichwortartige Box bekommt eine erklärende Einleitung**,
+  bevor der eigentliche Wert kommt (Fokus-Box, Buddy-Taktung-Box,
+  Checklisten-Intro, Bewertungsbereiche-Intro bei Tag 90) — Prinzip: erst
+  sagen, was das ist und wofür es gut ist, dann den Wert selbst.
+- **Jedes Eingabefeld** (alle Produkte-weiten `weeklyCheckCard`-Felder) kann
+  jetzt eine eigene Hinweiszeile tragen (`fieldsGrid()` akzeptiert optional
+  ein 4. Array-Element je Feld); **jeder Checklisten-Punkt** kann ebenso eine
+  Hinweiszeile tragen (`checksList()` akzeptiert `[label, hint]` statt nur
+  `label`) — beides rückwärtskompatibel, wirkt sich nicht auf P6 aus, das
+  weiterhin nur reine Strings übergibt. Durchgängig befüllt für alle 4
+  Meilensteine + Buddy + Eskalation + Trennung, außer bei den drei
+  Abschluss-Checklisten (Buddy-Checkliste, Eskalations-Checkliste,
+  Trennungs-Checkliste) — die fassen bereits erklärten Stoff zusammen, dort
+  reicht ein Intro-Satz statt 10–13 Einzel-Hinweisen.
+- **"Im Gespräch" (3/5) in zwei eigene Seiten gesplittet**: "Typische
+  Reaktionen" (nur die Q&A-Blöcke) und "Besser sagen" (nur die
+  Vergleichstabelle) — vorher beides auf einer Seite. Grund: eine Seite pro
+  Thema statt zwei Themen auf einer Seite; eine Seite pro einzelner Reaktion
+  wäre zu dünn geworden (kurz erwogen, verworfen). Damit wächst jeder
+  Meilenstein von 5 auf **6 Unterseiten** (Vorbereitung / Ziel & Einstieg /
+  Typische Reaktionen / Besser sagen / Vereinbarung / Follow-up).
+- **Neue zweizeilige Meilenstein-Überschrift**: "TAG 30." / "GESPRÄCHSPHASE
+  „CHECK-IN“." statt der bisherigen 1:1-Wiederholung der Brotkrümel-Zeile
+  ("TAG 30 – CHECK-IN"). Automatisch für alle 4 Meilensteine aus dem
+  vorhandenen Titel abgeleitet (`milestoneHeadline()`, Split am " – " statt
+  am bloßen Gedankenstrich — wichtig, weil "Tag 150–170" selbst einen
+  Gedankenstrich ohne Leerzeichen enthält). Bei Tag 150–170 entsteht dadurch
+  eine leichte Dopplung ("Gesprächsphase „Probezeit-Abschlussgespräch"")),
+  weil der Name selbst schon "-gespräch" enthält — mit Martin abgesprochen,
+  bewusst so belassen.
+- **Buddy-Framework bekommt eine eigene Überschrift pro Unterseite** (z. B.
+  "BUDDY-FRAMEWORK. WER IST DER BUDDY?") statt der bisherigen 5-fach
+  identischen "KMU-BUDDY-FRAMEWORK." — zieht damit mit Eskalationsprotokoll
+  und Trennungs-Leitfaden gleich, die schon vorher pro Seite unterschiedliche
+  Überschriften hatten.
+- **Trennungs-Leitfaden, Schritt 3 "Sachlicher Übergang"**: war eine
+  statische Aufzählung (4 Punkte, nicht anklickbar) — jetzt eine anklickbare
+  Checkliste wie der Rest des Produkts, weil die vier Punkte tatsächlich
+  während des Gesprächs abgehakt werden sollen.
+- **Ein echter Bug gefunden und behoben**: Die Buddy-Taktung-Box auf der
+  Vorbereitungs-Seite (Tag 30/60/90) las `m.buddyTaktung` — dieses Feld gibt
+  es auf dem Meilenstein-Objekt gar nicht, der Wert liegt auf
+  `data.phases[i]`. Die Box war dadurch in der v2-Fassung leer (unbemerkt,
+  weil ohne Erklärtext kaum auffiel). Jetzt wird die passende Phase an die
+  Slide-Funktion durchgereicht.
+
+**Struktur-Entscheidung Buddy/Eskalation/Trennung (mein Vorschlag, mit
+Martin abgestimmt):** Die bestehende 5-Unterseiten-Aufteilung je Werkzeug
+bleibt, weil der Stoff sich schon vorher sauber in 5 Stationen trennte
+(Buddy: Rolle/Dauer/Aufgaben/Grenzen/Vorlage; Eskalation und Trennung:
+ihre eigenen Schritt-Folgen). Keine neue Struktur nötig — "vollwertige
+Station" wurde stattdessen durch den gleichen Erklär-Durchgang wie bei den
+Meilensteinen erreicht, nicht durch ein anderes Slide-Muster.
+
+**Neue Gesamtlänge:** 47 Slides (vorher 43): 4 Meilensteine × 6 (+4) +
+Buddy/Eskalation/Trennung × 5 (unverändert) + Übersicht/Team-Bericht/
+Intro/Outro (unverändert).
+
+**Alle neuen Erklärungen und Feld-Hinweise sind von Carmen Next verfasst,
+nicht aus dem PDF übernommen** — gleicher Umgang wie beim "Lob"-Sonderfall
+bei P6 und den "Reaktionen"/"Besser sagen"-Inhalten aus v2: inhaltlich
+sachlich an das jeweilige Thema angelehnt, aber zusätzlich, nicht aus dem
+Fachwissen-Archiv extrahiert. Im ausgelieferten Produkt nicht gekennzeichnet
+(würde eher verunsichern), hier dokumentiert.
+
+**Motor:** `motor/engine.js`/`.css` weiterhin komplett unverändert (Diff
+gegen den Stand vor diesem Durchgang: keine Änderung). P6 bleibt davon
+unberührt — `qa/p6_qa.js` grün, `qa/p6_diff.js` weiterhin "NO TEXT
+DIFFERENCES ACROSS ALL SLIDES".
+
+**QA:** `qa/p2_qa.js` komplett auf 47 Slides umgestellt (Slide-Nummern über
+dieselben Formeln wie in `products/p2.config.js` hergeleitet, nicht mehr
+hart codiert) und um neue Assertions erweitert: Meilenstein-Überschrift
+nennt die Gesprächsphase, Feld- und Checklisten-Hinweise sind vorhanden,
+"Typische Reaktionen"/"Besser sagen" sind sauber getrennt (keine Vermischung
+der beiden vorherigen Inhalte), Buddy-Überschriften unterscheiden sich pro
+Unterseite, Trennungs-Schritt-3-Liste ist jetzt anklickbar. Alle Checks
+grün, keine Konsolen-/Seitenfehler.
+
+---
+
 ## P2 — Onboarding-Prozessbundle, Ausbau auf 5 Unterseiten je Station (v2)
 
 Martin fand die erste P2-Fassung (16 Slides, 1 Slide je Meilenstein) zu dünn

@@ -2,7 +2,17 @@ const { chromium } = require('playwright');
 const path = require('path');
 
 const FILE_URL = 'file://' + path.resolve(__dirname, '..', 'release', 'P2_Onboarding-Prozessbundle.html');
-const TOTAL_SLIDES = 43;
+
+// Mirrors the slide-numbering constants in products/p2.config.js
+const FIRST_MILESTONE_SLIDE = 7;
+const SLIDES_PER_MILESTONE = 6; // Vorbereitung / Ziel&Einstieg / Reaktionen / Besser sagen / Vereinbarung / Follow-up
+const BUDDY_FIRST_SLIDE = 31;
+const ESKALATION_FIRST_SLIDE = 36;
+const TRENNUNG_FIRST_SLIDE = 41;
+const TEAMBERICHT_SLIDE = 46;
+const TOTAL_SLIDES = 47;
+
+function ms(milestoneIndex, subIndex) { return FIRST_MILESTONE_SLIDE + milestoneIndex * SLIDES_PER_MILESTONE + subIndex; }
 
 function assert(cond, msg) {
   if (!cond) throw new Error('FAIL: ' + msg);
@@ -47,7 +57,11 @@ function assert(cond, msg) {
   assert((await page.locator('.slide.active .tile').count()) === 7, 'overview has 4 phase tiles + 3 tool tiles');
   await page.evaluate(() => window.goTo(6));
   await page.click('.slide.active .grid .tile >> nth=0');
-  assert((await page.locator('.slide.active').getAttribute('data-slide')) === '7', 'phase tile 1 jumps to slide 7 (Tag 30 Vorbereitung)');
+  assert((await page.locator('.slide.active').getAttribute('data-slide')) === String(ms(0, 0)), 'phase tile 1 jumps to Tag 30 Vorbereitung');
+
+  // ---- Milestone headline: "TAG X." / "GESPRÄCHSPHASE „NAME"." ----
+  const tag30H1 = await page.locator('.slide.active h1').innerText();
+  assert(tag30H1.includes('TAG 30') && tag30H1.includes('GESPRÄCHSPHASE') && tag30H1.includes('CHECK-IN'), 'Tag30 headline names the phase: got "' + tag30H1.replace(/\n/g, ' / ') + '"');
 
   // ---- Employees + data separation ----
   await page.evaluate(() => window.goTo(5));
@@ -58,20 +72,21 @@ function assert(cond, msg) {
   assert((await page.locator('.tile:has-text("Anna Testperson") .tileSubtitle').textContent()) === 'Teamleitung Vertrieb — Vertrieb', 'Anna tile shows position — Abteilung');
   assert((await page.locator('.tile:has-text("Ben Testperson") .tileSubtitle').count()) === 0, 'Ben tile has no subtitle (fields left blank)');
 
-  // Tag 30 Vorbereitung (slide 7) holds the "teilnehmer" field; Vereinbarung (slide 10) holds dok/next
-  await page.evaluate(() => window.goTo(7));
+  // Tag 30 Vorbereitung holds the "teilnehmer" field, with its explanatory hint; Vereinbarung holds dok/next
+  await page.evaluate((n) => window.goTo(n), ms(0, 0));
   assert((await page.locator('.slide.active textarea[data-field]').count()) === 1, 'Tag30 Vorbereitung slide has exactly 1 field (Teilnehmer)');
-  await page.evaluate(() => window.goTo(10));
+  assert((await page.locator('.slide.active .weeklyCheckCard span').first().textContent()).length > 0, 'Tag30 Teilnehmer field carries an explanatory hint');
+  await page.evaluate((n) => window.goTo(n), ms(0, 4)); // Vereinbarung
   await page.fill('textarea[data-field="m1_dok"]', 'Ben-Notiz');
   await page.evaluate(() => window.goTo(5));
   await page.click('.tile:has-text("Anna Testperson")');
-  await page.evaluate(() => window.goTo(10));
+  await page.evaluate((n) => window.goTo(n), ms(0, 4));
   const annaValue = await page.inputValue('textarea[data-field="m1_dok"]');
   assert(annaValue === '', 'field empty for Anna (no leak from Ben): got "' + annaValue + '"');
   await page.fill('textarea[data-field="m1_dok"]', 'Anna-Notiz');
   await page.evaluate(() => window.goTo(5));
   await page.click('.tile:has-text("Ben Testperson")');
-  await page.evaluate(() => window.goTo(10));
+  await page.evaluate((n) => window.goTo(n), ms(0, 4));
   const benValue = await page.inputValue('textarea[data-field="m1_dok"]');
   assert(benValue === 'Ben-Notiz', 'Ben field restored correctly: got "' + benValue + '"');
 
@@ -83,56 +98,75 @@ function assert(cond, msg) {
   assert(await page.locator('#empLimitNote').isVisible(), 'license-limit note visible for 21st employee');
   assert(!(await page.locator('#empModal').evaluate(el => el.classList.contains('open'))), 'modal blocked for 21st employee');
 
-  // ---- Milestone "Im Gespräch" (3/5) pages carry reactions + compare table ----
-  await page.evaluate(() => window.goTo(9)); // Tag30 slide 3/5
-  assert((await page.locator('.slide.active .qa').count()) === 4, 'Tag30 "Im Gespräch" has 4 reaction Q&A blocks');
-  assert((await page.locator('.slide.active .compareRow').count()) === 3, 'Tag30 "Im Gespräch" has 3 compare rows');
+  // ---- "Typische Reaktionen" (3/6) and "Besser sagen" (4/6) are now separate slides ----
+  await page.evaluate((n) => window.goTo(n), ms(0, 2)); // Tag30 Reaktionen
+  assert((await page.locator('.slide.active .qa').count()) === 4, 'Tag30 "Typische Reaktionen" has 4 reaction Q&A blocks');
+  assert((await page.locator('.slide.active .compareRow').count()) === 0, 'Tag30 "Typische Reaktionen" carries no compare rows (clean split)');
+  await page.evaluate((n) => window.goTo(n), ms(0, 3)); // Tag30 Besser sagen
+  assert((await page.locator('.slide.active .compareRow').count()) === 3, 'Tag30 "Besser sagen" has 3 compare rows');
+  assert((await page.locator('.slide.active .qa').count()) === 0, 'Tag30 "Besser sagen" carries no reaction blocks (clean split)');
+
+  // ---- Milestone checklist items carry explanatory hints (Tag30 Vorbereitung) ----
+  await page.evaluate((n) => window.goTo(n), ms(0, 0));
+  const checkHintCount = await page.locator('.slide.active .choice span').count();
+  assert(checkHintCount === 3, 'Tag30 Vorbereitung: all 3 checklist items carry a hint span');
 
   // ---- Milestone 3 (Tag 90) structured fields + Bewertungsbereiche ----
-  await page.evaluate(() => window.goTo(18)); // Tag90 base 17 -> +1 Ziel&Einstieg
+  await page.evaluate((n) => window.goTo(n), ms(2, 1)); // Tag90 Ziel & Einstieg
   assert((await page.locator('.slide.active .qlist li').count()) === 4, 'Tag90 Ziel&Einstieg lists 4 Bewertungsbereiche');
-  await page.evaluate(() => window.goTo(20)); // Tag90 Vereinbarung (base 17 + 3)
+  await page.evaluate((n) => window.goTo(n), ms(2, 4)); // Tag90 Vereinbarung
   assert((await page.locator('.slide.active textarea[data-field]').count()) === 6, 'Tag90 Vereinbarung has 6 fields (Fach/Selbst/Teamfit/Kultur/Perspektive/Next)');
+  assert((await page.locator('.slide.active .weeklyCheckCard span').count()) === 6, 'Tag90 Vereinbarung: all 6 fields carry a hint');
   await page.fill('textarea[data-field="m3_perspektive"]', 'positiv');
 
-  // ---- Milestone Follow-up (5/5) shows next-phase preview / closing note ----
-  await page.evaluate(() => window.goTo(11)); // Tag30 Follow-up (base7+4)
+  // ---- Milestone Follow-up (6/6) shows next-phase preview / closing note ----
+  await page.evaluate((n) => window.goTo(n), ms(0, 5)); // Tag30 Follow-up
   assert((await page.locator('.slide.active').innerText()).includes('ANWENDEN & BEITRAGEN'), 'Tag30 follow-up previews next phase (Anwenden & Beitragen)');
-  await page.evaluate(() => window.goTo(26)); // Tag150 Follow-up (base22+4), last milestone
+  await page.evaluate((n) => window.goTo(n), ms(3, 5)); // Tag150 Follow-up, last milestone
   assert((await page.locator('.slide.active').innerText()).includes('ENDE DER PROBEZEIT'), 'Tag150 follow-up shows closing note (no next phase)');
   const tag150NextBtn = await page.locator('.slide.active .nav button.btn:not(.alt)').textContent();
   assert(tag150NextBtn.includes('Buddy-Framework'), 'Tag150 follow-up next-button correctly announces Buddy-Framework: got "' + tag150NextBtn + '"');
 
-  // ---- Buddy-Framework (5 subpages, slides 27-31) ----
-  await page.evaluate(() => window.goTo(27));
+  // ---- Buddy-Framework (5 subpages, own headline per subpage) ----
+  await page.evaluate((n) => window.goTo(n), BUDDY_FIRST_SLIDE);
+  const buddyH1_1 = await page.locator('.slide.active h1').innerText();
   assert((await page.locator('.slide.active').innerText()).includes('ROLLE DES BUDDYS'), 'Buddy slide 1/5 shows Rolle');
-  await page.evaluate(() => window.goTo(29));
+  await page.evaluate((n) => window.goTo(n), BUDDY_FIRST_SLIDE + 1);
+  const buddyH1_2 = await page.locator('.slide.active h1').innerText();
+  assert(buddyH1_1 !== buddyH1_2, 'Buddy headline differs per subpage (was identical on all 5 before this pass): "' + buddyH1_1.replace(/\n/g, ' ') + '" vs "' + buddyH1_2.replace(/\n/g, ' ') + '"');
+  await page.evaluate((n) => window.goTo(n), BUDDY_FIRST_SLIDE + 2);
   assert((await page.locator('.slide.active .checks .choice').count()) === 5, 'Buddy slide 3/5 (Aufgaben) has 5 checks');
-  await page.evaluate(() => window.goTo(30));
+  await page.evaluate((n) => window.goTo(n), BUDDY_FIRST_SLIDE + 3);
   assert((await page.locator('.slide.active').innerText()).includes('STRIKTE GRENZEN'), 'Buddy slide 4/5 shows Grenzen & Tabus');
-  await page.evaluate(() => window.goTo(31));
+  await page.evaluate((n) => window.goTo(n), BUDDY_FIRST_SLIDE + 4);
   assert((await page.locator('.slide.active .checks .choice').count()) === 13, 'Buddy checklist slide has 13 checks');
+  assert((await page.locator('.slide.active .weeklyCheckCard span').count()) === 2, 'Buddy Arbeitsvorlage: both fields carry a hint');
   await page.click('.choice[data-toggle="buddy_chk1"]');
   assert(await page.locator('.choice[data-toggle="buddy_chk1"]').evaluate(el => el.classList.contains('on')), 'buddy choice toggled on');
 
-  // ---- Eskalationsprotokoll (5 subpages, slides 32-36) ----
-  await page.evaluate(() => window.goTo(32));
+  // ---- Eskalationsprotokoll (5 subpages) ----
+  await page.evaluate((n) => window.goTo(n), ESKALATION_FIRST_SLIDE);
   assert((await page.locator('.slide.active .tile').count()) === 3, 'Eskalation overview shows 3-step overview');
-  await page.evaluate(() => window.goTo(35)); // Schritt 2 / Lernkurve, ja/nein toggle
+  await page.evaluate((n) => window.goTo(n), ESKALATION_FIRST_SLIDE + 1); // Schritt 1, Faktenabgleich
+  assert((await page.locator('.slide.active .weeklyCheckCard span').count()) === 2, 'Eskalation Schritt 1: both fields carry a hint');
+  await page.evaluate((n) => window.goTo(n), ESKALATION_FIRST_SLIDE + 3); // Schritt 2 / Lernkurve, ja/nein toggle
   await page.click('.choice[data-toggle="esk_verb_ja"]');
   assert(await page.locator('.choice[data-toggle="esk_verb_ja"]').evaluate(el => el.classList.contains('on')), 'esk ja toggled on');
   await page.click('.choice[data-toggle="esk_verb_nein"]');
   assert(await page.locator('.choice[data-toggle="esk_verb_nein"]').evaluate(el => el.classList.contains('on')), 'esk nein toggled on');
   assert(!(await page.locator('.choice[data-toggle="esk_verb_ja"]').evaluate(el => el.classList.contains('on'))), 'esk ja/nein are mutually exclusive (ja turned off when nein selected)');
-  await page.evaluate(() => window.goTo(36)); // Schritt 3 + Checkliste
+  await page.evaluate((n) => window.goTo(n), ESKALATION_FIRST_SLIDE + 4); // Schritt 3 + Checkliste
   assert((await page.locator('.slide.active .checks .choice').count()) === 10, 'Eskalation final slide has 10-item checklist');
 
-  // ---- Trennungs-Leitfaden (5 subpages, slides 37-41) ----
-  await page.evaluate(() => window.goTo(41));
+  // ---- Trennungs-Leitfaden (5 subpages) ----
+  await page.evaluate((n) => window.goTo(n), TRENNUNG_FIRST_SLIDE + 3); // "3. Sachlicher Übergang" - now a clickable checklist
+  assert((await page.locator('.slide.active .checks .choice').count()) === 4, 'Trennung "Sachlicher Übergang" is now a 4-item clickable checklist (was a static list)');
+  await page.evaluate((n) => window.goTo(n), TRENNUNG_FIRST_SLIDE + 4);
   assert((await page.locator('.slide.active .checks .choice').count()) === 7, 'Trennung protocol slide has 7 checks');
   const trText = await page.locator('.slide.active').innerText();
   assert(trText.includes('ersetzen keine individuelle Rechtsberatung'), 'general disclaimer repeated on Trennung final slide');
-  await page.evaluate(() => window.goTo(37));
+  assert((await page.locator('.slide.active .weeklyCheckCard span').count()) === 1, 'Trennung Protokoll field carries a hint');
+  await page.evaluate((n) => window.goTo(n), TRENNUNG_FIRST_SLIDE);
   assert((await page.locator('.slide.active').innerText()).includes('§ 622 Abs. 3 BGB'), 'BGB reference present on Trennung leitplanke slide');
 
   // ---- Reload persistence ----
@@ -140,16 +174,16 @@ function assert(cond, msg) {
   assert((await page.locator('#empCount').textContent()) === '20', 'employees persisted after reload');
   await page.evaluate(() => window.goTo(5));
   assert((await page.locator('.tile:has-text("Anna Testperson") .tileSubtitle').textContent()) === 'Teamleitung Vertrieb — Vertrieb', 'position/Abteilung persisted after reload');
-  await page.evaluate(() => window.goTo(20));
+  await page.evaluate((n) => window.goTo(n), ms(2, 4));
   const perspVal = await page.inputValue('textarea[data-field="m3_perspektive"]');
   assert(perspVal === 'positiv', 'Tag90 field persisted after reload: got "' + perspVal + '"');
-  await page.evaluate(() => window.goTo(31));
+  await page.evaluate((n) => window.goTo(n), BUDDY_FIRST_SLIDE + 4);
   assert(await page.locator('.choice[data-toggle="buddy_chk1"]').evaluate(el => el.classList.contains('on')), 'buddy checklist choice persisted after reload');
-  await page.evaluate(() => window.goTo(35));
+  await page.evaluate((n) => window.goTo(n), ESKALATION_FIRST_SLIDE + 3);
   assert(await page.locator('.choice[data-toggle="esk_verb_nein"]').evaluate(el => el.classList.contains('on')), 'escalation ja/nein choice persisted after reload');
 
   // ---- Team report ----
-  await page.evaluate(() => window.goTo(42));
+  await page.evaluate((n) => window.goTo(n), TEAMBERICHT_SLIDE);
   const teamRows = await page.locator('#teamTableBody tr').count();
   assert(teamRows >= 1, 'team report has rows: ' + teamRows);
   const cntMA = await page.locator('#cntTeamMA').textContent();
