@@ -1,5 +1,69 @@
 # Status — Carmen Next Motor/Config
 
+## P2 — Onboarding-Prozessbundle, Ausbau auf 5 Unterseiten je Station (v2)
+
+Martin fand die erste P2-Fassung (16 Slides, 1 Slide je Meilenstein) zu dünn
+für ein 49€-Produkt. Dieser Durchgang baut sie auf **43 Slides** aus: Jede der
+4 Meilenstein-Stationen (Tag 30/60/90/150–170) sowie Buddy-Framework,
+Eskalationsprotokoll und Trennungs-Leitfaden bekommen je **5 Unterseiten**,
+analog zu P6s Muster (ein Thema pro Seite, kurz und klar statt vollgestopft).
+Motor (`motor/engine.js`/`.css`) blieb dabei erneut **unverändert** — nur ein
+kleiner, generischer Helfer (`toggleYesNo`) kam lokal in `p2.config.js` dazu,
+für das Ja/Nein-Feld der Lernkurven-Prüfung; er nutzt ausschließlich die
+bereits vorhandene generische Choice-Toggle-Logik des Motors.
+
+**Wie die 5 Unterseiten gefüllt sind:**
+- **Buddy-Framework, Eskalationsprotokoll, Trennungs-Leitfaden:** vollständig
+  aus dem PDF (Rolle/Dauer/Aufgaben/Grenzen/Checkliste bzw. die 3 Eskalations-
+  Schritte + Checkliste bzw. die 3 Trennungs-Schritte + Checkliste). Keine
+  Zeile erfunden — nur sauberer auf 5 Seiten verteilt statt wie vorher auf
+  1–2 Seiten zusammengedrängt. Neu ins JSON übernommen (vorher nicht
+  extrahiert): die vollständige Buddy-Checkliste (13 Punkte, PDF-Abschnitt
+  10.2), die vollständige Eskalations-Checkliste (10 Punkte, Abschnitt 10.3)
+  und das Ja/Nein-Feld „Sichtbare Verbesserung innerhalb von 14 Tagen"
+  (Abschnitt 12, Arbeitsvorlage).
+- **Die 4 Meilenstein-Gespräche:** Vorbereitung (Kontext + Checkliste je
+  Phase aus dem Probezeit-Radar, Abschnitt 10.1), Ziel & Einstieg (Frage/
+  Zweck/Ziel, bei Tag 90 zusätzlich die vier Bewertungsbereiche), **Im
+  Gespräch**, Vereinbarung/Dokumentation (die Original-Arbeitsfelder) und
+  Follow-up (Gesprächsfolge-Haken aus Abschnitt 10.4 + Vorschau auf die
+  nächste Phase).
+
+**Transparente Lücke — mit Martin geklärt, nicht eigenmächtig entschieden:**
+Anders als P6 ist das P2-Quell-PDF ein reines Prozess-/Checklisten-Dokument
+ohne Gesprächsskripte. Für die Seite „Im Gespräch" (typische Mitarbeiter-
+Reaktionen + „Nicht sagen/besser sagen"-Vergleichstabelle je Meilenstein)
+gab das PDF keinen Stoff her. Auf Nachfrage hat Martin sich für die Option
+entschieden, die auch beim P6-Sonderfall Karte 8 „Lob und Anerkennung" schon
+angewendet wurde: Diese vier Seiten (eine je Meilenstein) hat Carmen Next
+selbst geschrieben, passend zum jeweiligen Gesprächsthema und in Carmens
+sachlichem Ton, aber **nicht** aus dem Original-Fachwissen-Archiv extrahiert.
+Wie bei „Lob" ist das im ausgelieferten Produkt nicht sichtbar gekennzeichnet
+(würde bei einem verkauften Produkt eher verunsichern), sondern hier
+dokumentiert: betroffen sind ausschließlich `reaktionen` und `compare` in
+`content/cards_p2.json` für alle vier Meilensteine (Tag 30/60/90/150–170).
+Alle anderen neuen Inhalte in dieser Fassung sind wörtlich bzw. sachlich
+unverändert aus dem PDF.
+
+**localStorage-Version angehoben:** `p2_data_v1` → `p2_data_v2`, weil sich
+Feld-IDs und Slide-Nummern strukturell geändert haben (analog zu P6s eigenem
+`p6_data_v2`) — alte gespeicherte Testdaten aus der v1-Fassung werden beim
+nächsten Laden verworfen, das betrifft aber nur lokale Entwicklungsstände,
+nicht ausgelieferte Käuferdaten (Produkt war noch nicht im Verkauf).
+
+**QA:** `qa/p2_qa.js` komplett erweitert (43 statt 16 Slides sequentiell
+geprüft, neue Assertions für Checklisten-Längen je Station, Reaktionen/
+Vergleichstabelle, Ja/Nein-Exklusivität, Follow-up-Vorschau der nächsten
+Phase, Übersicht-Verlinkung auf die richtige erste Unterseite) — alle grün.
+`qa/p6_qa.js` und `qa/p6_diff.js` bleiben unverändert grün (P6 wurde nicht
+angefasst, siehe Diff-Ergebnis „NO TEXT DIFFERENCES ACROSS ALL SLIDES").
+Nebenbei in beiden P6-QA-Skripten sowie `p2_qa.js` den Playwright-
+`executablePath` an den in dieser Umgebung tatsächlich vorhandenen Chromium-
+Pfad (`/opt/pw-browsers/chromium`) angepasst — reine Tooling-Korrektur ohne
+Auswirkung auf die Produkte selbst.
+
+---
+
 ## P2 — Onboarding-Prozessbundle (neu gebaut, kein Vorgänger-Prototyp)
 
 Anders als P6 gab es für P2 noch keine geprüfte interaktive Fassung —

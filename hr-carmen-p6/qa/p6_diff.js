@@ -5,7 +5,7 @@ const ORIG = 'file://' + path.resolve(__dirname, '..', 'reference', 'P6_V3.html'
 const NEW = 'file://' + path.resolve(__dirname, '..', 'release', 'P6_Schwierige_Mitarbeitergespraeche.html');
 
 (async () => {
-  const browser = await chromium.launch();
+  const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' }).catch(async () => chromium.launch());
   const page = await browser.newPage();
 
   async function extractAll(url) {

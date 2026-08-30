@@ -3,26 +3,41 @@
    CARMEN NEXT — products/p2.config.js
    P2 „Onboarding-Prozessbundle" — Produkt-Konfiguration für den Motor.
 
-   Inhalte kommen ausschließlich aus content/cards_p2.json, extrahiert aus
-   dem Original-PDF „Onboarding-Prozessbundle.pdf" (handoff/source, siehe
-   docs/CARMEN_NEXT_HANDOFF.md). Anders als P6 gab es für P2 noch KEINEN
-   geprüften Interaktions-Prototyp — dies ist die erste interaktive Fassung.
-   Design-Entscheidungen, die dabei getroffen wurden, stehen in docs/STATUS.md.
+   Inhalte kommen aus content/cards_p2.json, extrahiert aus dem Original-PDF
+   „Onboarding-Prozessbundle.pdf" (reference/p2-source, siehe docs/STATUS.md).
 
    P2 nutzt ein drittes Interaktions-Muster (weder P1s Wochen-Ampel-Zyklus
    noch P6s situative Kartenauswahl): eine chronologische Meilenstein-Linie
    (Tag 30 → 60 → 90 → 150–170) plus drei begleitende Werkzeuge (Buddy,
-   Eskalationsprotokoll, Trennungs-Leitfaden). Deshalb sind die Slides —
-   anders als bei P6 — sequentiell verkettet (jedes "Weiter" führt zur
-   nächsten Station), nicht nur über die Übersicht erreichbar.
+   Eskalationsprotokoll, Trennungs-Leitfaden). Die Slides sind sequentiell
+   verkettet (jedes "Weiter" führt zur nächsten Station).
+
+   Jede der vier Meilenstein-Stationen sowie Buddy/Eskalation/Trennung sind
+   analog zu P6 in 5 Unterseiten aufgeteilt (ein Thema pro Seite). Für die
+   4 Meilensteine liefert das Quell-PDF ausschließlich Prozess-/Checklisten-
+   Inhalt, keine Gesprächsskripte wie bei P6. Die Seite "Im Gespräch" (3/5)
+   je Meilenstein — typische Mitarbeiter-Reaktionen + Vergleichstabelle —
+   wurde deshalb, mit Martin abgestimmt, von Carmen Next ergänzt statt aus
+   dem Original übernommen (gleicher Sonderfall wie P6-Karte 8 "Lob", siehe
+   docs/STATUS.md). Alle übrigen Inhalte (Buddy/Eskalation/Trennung sowie
+   die Vorbereitungs-/Vereinbarungs-Seiten der Meilensteine) sind wörtlich
+   bzw. sachlich unverändert aus dem PDF.
    ============================================================================ */
 
 const FIRST_MILESTONE_SLIDE = 7;
-const BUDDY_SLIDE = 11;
-const ESKALATION_SLIDE_1 = 12;
-const ESKALATION_SLIDE_2 = 13;
-const TRENNUNG_SLIDE = 14;
-const TEAMBERICHT_SLIDE = 15;
+const SLIDES_PER_MILESTONE = 5;
+const BUDDY_FIRST_SLIDE = 27;
+const SLIDES_PER_BUDDY = 5;
+const ESKALATION_FIRST_SLIDE = 32;
+const SLIDES_PER_ESKALATION = 5;
+const TRENNUNG_FIRST_SLIDE = 37;
+const SLIDES_PER_TRENNUNG = 5;
+const TEAMBERICHT_SLIDE = 42;
+
+const MILESTONE_SUBTITLES = ['VORBEREITUNG', 'ZIEL & EINSTIEG', 'IM GESPRÄCH', 'VEREINBARUNG', 'FOLLOW-UP'];
+const BUDDY_SUBTITLES = ['ROLLE', 'DAUER & TAKTUNG', 'AUFGABEN', 'GRENZEN & TABUS', 'ARBEITSVORLAGE'];
+const ESKALATION_SUBTITLES = ['WANN GREIFT DAS?', 'SCHRITT 1 · FAKTENABGLEICH', 'ZWISCHENZIEL', 'SCHRITT 2 · LERNKURVE', 'SCHRITT 3 · ENTSCHEIDUNG'];
+const TRENNUNG_SUBTITLES = ['LEITPLANKE', 'SCHRITT 1', 'SCHRITT 2', 'SCHRITT 3', 'PROTOKOLL'];
 
 function esc(s) {
   return String(s == null ? '' : s).replace(/[&<>]/g, function (c) {
@@ -47,25 +62,34 @@ function checksList(prefix, items) {
     return '<div class="choice" data-toggle="' + prefix + (i + 1) + '" onclick="toggleChoice(this)">' + esc(c) + '</div>';
   }).join('') + '</div>';
 }
+function pickFields(fields, ids) {
+  return fields.filter(function (f) { return ids.indexOf(f[1]) !== -1; });
+}
+function omitFields(fields, ids) {
+  return fields.filter(function (f) { return ids.indexOf(f[1]) === -1; });
+}
 
+/* ----------------------------------------------------------------------
+   ÜBERSICHT (Slide 6)
+   ---------------------------------------------------------------------- */
 function slideOverview(data) {
   const phaseTiles = data.phases.map(function (p) {
-    const targetSlide = FIRST_MILESTONE_SLIDE + p.n - 1;
+    const targetSlide = FIRST_MILESTONE_SLIDE + (p.n - 1) * SLIDES_PER_MILESTONE;
     return '<div class="tile" style="cursor:pointer" onclick="goTo(' + targetSlide + ')">' +
       '<b>' + esc(p.zeitraum) + ' — ' + esc(p.phase.toUpperCase()) + '</b>' +
       '<small>' + esc(p.fokus) + '<br><b style="color:var(--ci)">Meilenstein:</b> ' + esc(p.meilenstein) + '</small></div>';
   }).join('');
   const toolTiles = [
-    ['KMU-BUDDY-FRAMEWORK', 'Kultureller Wegweiser für die ersten vier bis sechs Wochen.', BUDDY_SLIDE],
-    ['WENN ES HAKT — ESKALATIONSPROTOKOLL', 'Bei sichtbarer Leistungslücke: 14-Tage-Eskalationsprotokoll.', ESKALATION_SLIDE_1],
-    ['TRENNUNGS-LEITFADEN', '10-Minuten-Protokoll für den Fall einer Trennung.', TRENNUNG_SLIDE]
+    ['KMU-BUDDY-FRAMEWORK', 'Kultureller Wegweiser für die ersten vier bis sechs Wochen.', BUDDY_FIRST_SLIDE],
+    ['WENN ES HAKT — ESKALATIONSPROTOKOLL', 'Bei sichtbarer Leistungslücke: 14-Tage-Eskalationsprotokoll.', ESKALATION_FIRST_SLIDE],
+    ['TRENNUNGS-LEITFADEN', '10-Minuten-Protokoll für den Fall einer Trennung.', TRENNUNG_FIRST_SLIDE]
   ].map(function (t) {
     return '<div class="tile" style="cursor:pointer" onclick="goTo(' + t[2] + ')"><b>' + t[0] + '</b><small>' + t[1] + '</small></div>';
   }).join('');
   return (
     '<section class="slide" data-slide="6"><div class="brand">P2 / ÜBERSICHT</div><div class="num">06</div>' +
     '<h1>IHR<br>PROBEZEIT-RADAR.</h1>' +
-    '<p class="lead">Tag 1 → Tag 30 → Tag 60 → Tag 90 → Tag 150–170 → Ende der Probezeit. Klicken Sie eine Phase oder ein Werkzeug an, oder gehen Sie der Reihe nach vor.</p>' +
+    '<p class="lead">Tag 1 → Tag 30 → Tag 60 → Tag 90 → Tag 150–170 → Ende der Probezeit. Klicken Sie eine Phase oder ein Werkzeug an, oder gehen Sie der Reihe nach vor. Jede Station ist in 5 kurze Unterseiten aufgeteilt.</p>' +
     '<div class="grid">' + phaseTiles + '</div>' +
     '<h2>WEITERE WERKZEUGE.</h2>' +
     '<div class="grid">' + toolTiles + '</div>' +
@@ -74,84 +98,245 @@ function slideOverview(data) {
   );
 }
 
-function slideMilestone(m, num) {
-  const fokusBox = m.fokus ? '<div class="box"><b>FOKUS.</b><p class="lead" style="margin:10px 0 0">' + esc(m.fokus) + '</p></div>' : '';
+/* ----------------------------------------------------------------------
+   MEILENSTEINE — 5 Unterseiten je Gespräch (Tag 30 / 60 / 90 / 150–170)
+   ---------------------------------------------------------------------- */
+function milestoneBrand(m, i) {
+  return 'P2 / ' + esc(m.zeitpunkt) + ' · GESPRÄCH ' + m.n + '/4 · ' + (i + 1) + '/5 ' + MILESTONE_SUBTITLES[i];
+}
+
+function slideMilestoneVorbereitung(m, num) {
+  const buddyBox = (m.n < 4)
+    ? '<div class="box"><b>BUDDY-TAKTUNG IN DIESER PHASE.</b><p style="margin:10px 0 0">' + esc(m.buddyTaktung || '') + '</p></div>'
+    : '';
+  const fokusBox = m.fokus ? '<div class="box"><b>FOKUS DIESER PHASE.</b><p class="lead" style="margin:10px 0 0">' + esc(m.fokus) + '</p></div>' : '';
+  const teilnehmerFields = pickFields(m.fields, ['teilnehmer']);
+  return (
+    '<section class="slide" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 0) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
+    '<h1>' + esc(m.title.toUpperCase()) + '</h1>' +
+    fokusBox + buddyBox +
+    '<h2>IST DIESE PHASE ABGESCHLOSSEN?</h2>' +
+    checksList('m' + m.n + '_chk', m.checks) +
+    '<div class="weeklyCheck"><div class="weeklyCheckIntro"><b>WER NIMMT TEIL?</b></div>' + fieldsGrid('m' + m.n, teilnehmerFields) + '</div>' +
+    navBar('Weiter') +
+    '</section>'
+  );
+}
+
+function slideMilestoneZielEinstieg(m, num) {
   const frageBox = m.frage ? '<div class="box"><b>' + esc((m.frageLabel || 'FRAGE').toUpperCase()) + '.</b><p class="lead" style="margin:10px 0 0">„' + esc(m.frage) + '“</p></div>' : '';
   const zweckBox = m.zweck ? '<div class="box"><b>ZWECK.</b><p class="lead" style="margin:10px 0 0">' + esc(m.zweck) + '</p></div>' : '';
+  const bereicheBox = m.bewertungsbereiche
+    ? '<h2>DAS WIRD HEUTE BEWERTET.</h2><ul class="qlist">' + m.bewertungsbereiche.map(function (b) { return '<li>' + esc(b) + '</li>'; }).join('') + '</ul>'
+    : '';
   return (
-    '<section class="slide" data-slide="' + num + '"><div class="brand">P2 / ' + esc(m.zeitpunkt) + ' · GESPRÄCH ' + m.n + '/4</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
+    '<section class="slide" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 1) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
     '<h1>' + esc(m.title.toUpperCase()) + '</h1>' +
-    fokusBox + frageBox + zweckBox +
     '<div class="box"><b>MEIN GESPRÄCHSZIEL.</b><p class="lead" style="margin:10px 0 0">„' + esc(m.ziel) + '“</p></div>' +
-    '<div class="weeklyCheck"><div class="weeklyCheckIntro"><b>ARBEITSFELDER.</b></div>' + fieldsGrid('m' + m.n, m.fields) + '</div>' +
+    frageBox + zweckBox + bereicheBox +
     navBar('Weiter') +
     '</section>'
   );
 }
 
-function slideBuddy(b) {
-  const taktungHtml = b.taktung.map(function (t) { return t[0] + ': ' + t[1]; }).join(' · ');
-  return (
-    '<section class="slide" data-slide="' + BUDDY_SLIDE + '"><div class="brand">P2 / BUDDY-FRAMEWORK</div><div class="num">' + pad2(BUDDY_SLIDE) + '</div>' + ctxbar() +
-    '<h1>KMU-BUDDY-<br>FRAMEWORK.</h1>' +
-    '<div class="box"><b>ROLLE DES BUDDYS.</b><p class="lead" style="margin:10px 0 0">' + esc(b.rolle) + '</p></div>' +
-    '<div class="box"><b>DAUER &amp; TAKTUNG.</b><p style="margin:10px 0 0">' + esc(b.dauer) + ' — ' + esc(taktungHtml) + '</p></div>' +
-    '<h2>AUFGABEN &amp; GRENZEN.</h2>' +
-    checksList('buddy_chk', b.checks) +
-    '<div class="weeklyCheck"><div class="weeklyCheckIntro"><b>ARBEITSFELDER.</b></div>' + fieldsGrid('buddy', b.fields) + '</div>' +
-    navBar('Weiter') +
-    '</section>'
-  );
-}
-
-function slideEskalation1(e) {
-  return (
-    '<section class="slide" data-slide="' + ESKALATION_SLIDE_1 + '"><div class="brand">P2 / ESKALATIONSPROTOKOLL · 1/2 ABLAUF</div><div class="num">' + pad2(ESKALATION_SLIDE_1) + '</div>' + ctxbar() +
-    '<h1>WENN ES HAKT.<br>14-TAGE-ESKALATIONSPROTOKOLL.</h1>' +
-    '<p class="lead">' + esc(e.intro) + '</p>' +
-    '<div class="note"><b>GRUNDSATZ.</b><br>„' + esc(e.grundsatz) + '“<br><br><b>SCHLÜSSELFRAGE.</b><br>„' + esc(e.schluesselfrage) + '“</div>' +
-    '<h2>DIE 10 SCHRITTE.</h2>' +
-    checksList('esk_step', e.steps) +
-    navBar('Weiter') +
-    '</section>'
-  );
-}
-
-function slideEskalation2(e) {
-  return (
-    '<section class="slide" data-slide="' + ESKALATION_SLIDE_2 + '"><div class="brand">P2 / ESKALATIONSPROTOKOLL · 2/2 DOKUMENTATION</div><div class="num">' + pad2(ESKALATION_SLIDE_2) + '</div>' + ctxbar() +
-    '<h1>WENN ES HAKT.<br>14-TAGE-ESKALATIONSPROTOKOLL.</h1>' +
-    '<div class="weeklyCheck"><div class="weeklyCheckIntro"><b>DOKUMENTATION.</b></div>' + fieldsGrid('esk', e.fields) + '</div>' +
-    '<div class="note" style="border-left-color:#c99a2e"><b>ACHTUNG.</b><br>Kein Vorwurf und keine emotionalen Phrasen. ' + esc(e.rechtshinweis) + '</div>' +
-    navBar('Weiter') +
-    '</section>'
-  );
-}
-
-function slideTrennung(t, rechtlicherHinweisAllgemein) {
-  const ablaufHtml = t.ablauf.map(function (a) {
-    let inner = '<b>' + esc(a.titel) + '</b>';
-    if (a.hinweis) inner += '<p>' + esc(a.hinweis) + '</p>';
-    if (a.formulierung) inner += '<p>„' + esc(a.formulierung) + '“</p>';
-    if (a.punkte) inner += '<ul class="qlist">' + a.punkte.map(function (p) { return '<li>' + esc(p) + '</li>'; }).join('') + '</ul>';
-    return '<div class="qa">' + inner + '</div>';
+function slideMilestoneImGespraech(m, num) {
+  const qaHtml = m.reaktionen.map(function (pair) {
+    return '<div class="qa"><b>„' + esc(pair[0]) + '“</b><p>' + esc(pair[1]) + '</p></div>';
+  }).join('');
+  const compareHtml = m.compare.map(function (pair) {
+    return '<div class="compareRow"><div class="no">„' + esc(pair[0]) + '“</div><div class="yes">„' + esc(pair[1]) + '“</div></div>';
   }).join('');
   return (
-    '<section class="slide" data-slide="' + TRENNUNG_SLIDE + '"><div class="brand">P2 / TRENNUNGS-LEITFADEN</div><div class="num">' + pad2(TRENNUNG_SLIDE) + '</div>' + ctxbar() +
+    '<section class="slide" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 2) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
+    '<h1>' + esc(m.title.toUpperCase()) + '</h1>' +
+    '<h2>TYPISCHE REAKTIONEN — UND MEINE ANTWORT.</h2>' +
+    qaHtml +
+    '<h2>SAG DAS NICHT — SAG LIEBER DAS.</h2>' +
+    '<div class="compareHead"><span>Nicht sagen</span><span>Besser sagen</span></div>' +
+    compareHtml +
+    navBar('Weiter') +
+    '</section>'
+  );
+}
+
+function slideMilestoneVereinbarung(m, num) {
+  const restFields = omitFields(m.fields, ['teilnehmer']);
+  return (
+    '<section class="slide" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 3) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
+    '<h1>' + esc(m.title.toUpperCase()) + '</h1>' +
+    '<p class="lead">Nach Carmens Gesprächsvorlage.</p>' +
+    '<div class="weeklyCheck"><div class="weeklyCheckIntro"><b>DOKUMENTATION.</b></div>' + fieldsGrid('m' + m.n, restFields) + '</div>' +
+    navBar('Weiter') +
+    '</section>'
+  );
+}
+
+function slideMilestoneFollowUp(m, num, nextPhase, isLast) {
+  const nextBox = nextPhase
+    ? '<div class="box"><b>WAS ALS NÄCHSTES ANSTEHT.</b><p class="lead" style="margin:10px 0 0"><b>' + esc(nextPhase.zeitraum) + ' — ' + esc(nextPhase.phase.toUpperCase()) + '.</b><br>' + esc(nextPhase.fokus) + '</p></div>'
+    : '<div class="box"><b>ENDE DER PROBEZEIT.</b><p class="lead" style="margin:10px 0 0">Mit diesem Gespräch endet der Entscheidungs-Korridor. Einmal bauen. Immer wieder nutzen — für die nächste neue Mitarbeiterin oder den nächsten neuen Mitarbeiter.</p></div>';
+  return (
+    '<section class="slide" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 4) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
+    '<h1>' + esc(m.title.toUpperCase()) + '</h1>' +
+    '<h2>GESPRÄCHSFOLGE.</h2>' +
+    checksList('m' + m.n + '_gf', m.gespraechsfolge) +
+    nextBox +
+    navBar(isLast ? 'Weiter zum Buddy-Framework' : 'Nächste Station') +
+    '</section>'
+  );
+}
+
+function buildMilestoneSlides(data) {
+  const out = [];
+  data.milestones.forEach(function (m, i) {
+    const base = FIRST_MILESTONE_SLIDE + i * SLIDES_PER_MILESTONE;
+    const nextPhase = data.phases[i + 1] || null;
+    const isLast = i === data.milestones.length - 1;
+    out.push(slideMilestoneVorbereitung(m, base));
+    out.push(slideMilestoneZielEinstieg(m, base + 1));
+    out.push(slideMilestoneImGespraech(m, base + 2));
+    out.push(slideMilestoneVereinbarung(m, base + 3));
+    out.push(slideMilestoneFollowUp(m, base + 4, nextPhase, isLast));
+  });
+  return out.join('\n');
+}
+
+/* ----------------------------------------------------------------------
+   BUDDY-FRAMEWORK — 5 Unterseiten
+   ---------------------------------------------------------------------- */
+function buddyBrand(i) { return 'P2 / BUDDY-FRAMEWORK · ' + (i + 1) + '/5 ' + BUDDY_SUBTITLES[i]; }
+
+function buildBuddySlides(b) {
+  const s1 = BUDDY_FIRST_SLIDE, s2 = s1 + 1, s3 = s1 + 2, s4 = s1 + 3, s5 = s1 + 4;
+  const taktungHtml = b.taktung.map(function (t) { return '<div class="qa"><b>' + esc(t[0]) + '</b><p>' + esc(t[1]) + '</p></div>'; }).join('');
+  return [
+    '<section class="slide" data-slide="' + s1 + '"><div class="brand">' + buddyBrand(0) + '</div><div class="num">' + pad2(s1) + '</div>' + ctxbar() +
+    '<h1>KMU-BUDDY-<br>FRAMEWORK.</h1>' +
+    '<div class="box"><b>ROLLE DES BUDDYS.</b><p class="lead" style="margin:10px 0 0">' + esc(b.rolle) + '</p></div>' +
+    navBar('Weiter') + '</section>',
+
+    '<section class="slide" data-slide="' + s2 + '"><div class="brand">' + buddyBrand(1) + '</div><div class="num">' + pad2(s2) + '</div>' + ctxbar() +
+    '<h1>KMU-BUDDY-<br>FRAMEWORK.</h1>' +
+    '<div class="box"><b>DAUER.</b><p style="margin:10px 0 0">' + esc(b.dauer) + '</p></div>' +
+    '<h2>TAKTUNG.</h2>' + taktungHtml +
+    navBar('Weiter') + '</section>',
+
+    '<section class="slide" data-slide="' + s3 + '"><div class="brand">' + buddyBrand(2) + '</div><div class="num">' + pad2(s3) + '</div>' + ctxbar() +
+    '<h1>KMU-BUDDY-<br>FRAMEWORK.</h1>' +
+    '<h2>DER BUDDY DARF.</h2>' +
+    checksList('buddy_auf', b.aufgaben) +
+    navBar('Weiter') + '</section>',
+
+    '<section class="slide" data-slide="' + s4 + '"><div class="brand">' + buddyBrand(3) + '</div><div class="num">' + pad2(s4) + '</div>' + ctxbar() +
+    '<h1>KMU-BUDDY-<br>FRAMEWORK.</h1>' +
+    '<div class="note" style="border-left-color:var(--red)"><b>STRIKTE GRENZEN UND TABUS.</b><br>' + b.tabus.map(esc).join('<br>') + '</div>' +
+    navBar('Weiter') + '</section>',
+
+    '<section class="slide" data-slide="' + s5 + '"><div class="brand">' + buddyBrand(4) + '</div><div class="num">' + pad2(s5) + '</div>' + ctxbar() +
+    '<h1>KMU-BUDDY-<br>FRAMEWORK.</h1>' +
+    '<h2>BUDDY-CHECKLISTE.</h2>' +
+    checksList('buddy_chk', b.checkliste) +
+    '<div class="weeklyCheck"><div class="weeklyCheckIntro"><b>ARBEITSVORLAGE.</b></div>' + fieldsGrid('buddy', b.fields) + '</div>' +
+    navBar('Weiter zum Eskalationsprotokoll') + '</section>'
+  ].join('\n');
+}
+
+/* ----------------------------------------------------------------------
+   14-TAGE-ESKALATIONSPROTOKOLL — 5 Unterseiten
+   ---------------------------------------------------------------------- */
+function eskBrand(i) { return 'P2 / ESKALATIONSPROTOKOLL · ' + (i + 1) + '/5 ' + ESKALATION_SUBTITLES[i]; }
+
+function buildEskalationSlides(e) {
+  const s1 = ESKALATION_FIRST_SLIDE, s2 = s1 + 1, s3 = s1 + 2, s4 = s1 + 3, s5 = s1 + 4;
+  const stepOverview = '<div class="grid"><div class="tile"><b>SCHRITT 1</b><small>' + esc(e.schritt1.titel) + ' (Tag 1–14)</small></div>' +
+    '<div class="tile"><b>SCHRITT 2</b><small>' + esc(e.schritt2.titel) + '</small></div>' +
+    '<div class="tile"><b>SCHRITT 3</b><small>' + esc(e.schritt3.titel) + '</small></div></div>';
+  return [
+    '<section class="slide" data-slide="' + s1 + '"><div class="brand">' + eskBrand(0) + '</div><div class="num">' + pad2(s1) + '</div>' + ctxbar() +
+    '<h1>WENN ES HAKT.<br>14-TAGE-ESKALATIONSPROTOKOLL.</h1>' +
+    '<p class="lead">' + esc(e.intro) + '</p>' +
+    '<div class="note"><b>GRUNDSATZ.</b><br>„' + esc(e.grundsatz) + '“</div>' +
+    '<h2>DIE DREI SCHRITTE.</h2>' + stepOverview +
+    navBar('Weiter') + '</section>',
+
+    '<section class="slide" data-slide="' + s2 + '"><div class="brand">' + eskBrand(1) + '</div><div class="num">' + pad2(s2) + '</div>' + ctxbar() +
+    '<h1>SCHRITT 1.<br>' + esc(e.schritt1.titel.toUpperCase()) + '.</h1>' +
+    '<p class="lead">' + esc(e.schritt1.text) + '</p>' +
+    '<div class="weeklyCheck"><div class="weeklyCheckIntro"><b>DOKUMENTATION.</b></div>' + fieldsGrid('esk', pickFields(e.fields, ['luecke', 'fakten'])) + '</div>' +
+    navBar('Weiter') + '</section>',
+
+    '<section class="slide" data-slide="' + s3 + '"><div class="brand">' + eskBrand(2) + '</div><div class="num">' + pad2(s3) + '</div>' + ctxbar() +
+    '<h1>ZWISCHENZIEL &amp;<br>SCHLÜSSELFRAGE.</h1>' +
+    '<div class="note"><b>SCHLÜSSELFRAGE.</b><br>„' + esc(e.schluesselfrage) + '“</div>' +
+    '<div class="weeklyCheck"><div class="weeklyCheckIntro"><b>DOKUMENTATION.</b></div>' + fieldsGrid('esk', pickFields(e.fields, ['abgleich', 'zwischenziel', 'antwort'])) + '</div>' +
+    navBar('Weiter') + '</section>',
+
+    '<section class="slide" data-slide="' + s4 + '"><div class="brand">' + eskBrand(3) + '</div><div class="num">' + pad2(s4) + '</div>' + ctxbar() +
+    '<h1>SCHRITT 2.<br>' + esc(e.schritt2.titel.toUpperCase()) + '.</h1>' +
+    '<p class="lead">' + esc(e.schritt2.text) + '</p>' +
+    '<h2>SICHTBARE VERBESSERUNG INNERHALB VON 14 TAGEN?</h2>' +
+    '<div class="checks">' +
+    '<div class="choice" data-toggle="esk_verb_ja" onclick="toggleYesNo(this, \'esk_verb_nein\')">Ja</div>' +
+    '<div class="choice" data-toggle="esk_verb_nein" onclick="toggleYesNo(this, \'esk_verb_ja\')">Nein</div>' +
+    '</div>' +
+    '<div class="weeklyCheck"><div class="weeklyCheckIntro"><b>DOKUMENTATION.</b></div>' + fieldsGrid('esk', pickFields(e.fields, ['lernkurve'])) + '</div>' +
+    navBar('Weiter') + '</section>',
+
+    '<section class="slide" data-slide="' + s5 + '"><div class="brand">' + eskBrand(4) + '</div><div class="num">' + pad2(s5) + '</div>' + ctxbar() +
+    '<h1>SCHRITT 3.<br>' + esc(e.schritt3.titel.toUpperCase()) + '.</h1>' +
+    '<p class="lead">' + esc(e.schritt3.text) + '</p>' +
+    '<div class="note" style="border-left-color:#c99a2e"><b>ACHTUNG.</b><br>' + esc(e.schritt3.rechtshinweis) + '</div>' +
+    '<div class="weeklyCheck"><div class="weeklyCheckIntro"><b>DOKUMENTATION.</b></div>' + fieldsGrid('esk', pickFields(e.fields, ['entscheidung'])) + '</div>' +
+    '<h2>CHECKLISTE.</h2>' +
+    checksList('esk_chk', e.checkliste) +
+    navBar('Weiter zum Trennungsleitfaden') + '</section>'
+  ].join('\n');
+}
+
+/* ----------------------------------------------------------------------
+   TRENNUNGS-LEITFADEN — 5 Unterseiten
+   ---------------------------------------------------------------------- */
+function trBrand(i) { return 'P2 / TRENNUNGS-LEITFADEN · ' + (i + 1) + '/5 ' + TRENNUNG_SUBTITLES[i]; }
+
+function buildTrennungSlides(t, rechtlicherHinweisAllgemein) {
+  const s1 = TRENNUNG_FIRST_SLIDE, s2 = s1 + 1, s3 = s1 + 2, s4 = s1 + 3, s5 = s1 + 4;
+  const a1 = t.ablauf[0], a2 = t.ablauf[1], a3 = t.ablauf[2];
+  return [
+    '<section class="slide" data-slide="' + s1 + '"><div class="brand">' + trBrand(0) + '</div><div class="num">' + pad2(s1) + '</div>' + ctxbar() +
     '<h1>TRENNUNGS-LEITFADEN.<br>10-MINUTEN-PROTOKOLL.</h1>' +
     '<div class="note" style="border-left-color:var(--red)"><b>RECHTLICHE LEITPLANKE.</b><br>' + esc(t.rechtlicheLeitplanke) + '</div>' +
     '<div class="box"><b>VIER-AUGEN-PRINZIP.</b><p style="margin:10px 0 0">' + esc(t.vierAugen) + '</p></div>' +
     '<div class="box"><b>GESPRÄCHSDAUER.</b><p style="margin:10px 0 0">' + esc(t.dauer) + '</p></div>' +
-    '<h2>ABLAUF.</h2>' +
-    ablaufHtml +
+    navBar('Weiter') + '</section>',
+
+    '<section class="slide" data-slide="' + s2 + '"><div class="brand">' + trBrand(1) + '</div><div class="num">' + pad2(s2) + '</div>' + ctxbar() +
+    '<h1>' + esc(a1.titel.toUpperCase()) + '.</h1>' +
+    '<div class="box"><b>FESTE FORMULIERUNG.</b><p class="lead" style="margin:10px 0 0">„' + esc(a1.formulierung) + '“</p></div>' +
+    navBar('Weiter') + '</section>',
+
+    '<section class="slide" data-slide="' + s3 + '"><div class="brand">' + trBrand(2) + '</div><div class="num">' + pad2(s3) + '</div>' + ctxbar() +
+    '<h1>' + esc(a2.titel.toUpperCase()) + '.</h1>' +
+    '<p class="lead">' + esc(a2.hinweis) + '</p>' +
+    '<div class="box"><b>FESTE FORMULIERUNG.</b><p class="lead" style="margin:10px 0 0">„' + esc(a2.formulierung) + '“</p></div>' +
+    navBar('Weiter') + '</section>',
+
+    '<section class="slide" data-slide="' + s4 + '"><div class="brand">' + trBrand(3) + '</div><div class="num">' + pad2(s4) + '</div>' + ctxbar() +
+    '<h1>' + esc(a3.titel.toUpperCase()) + '.</h1>' +
+    '<ul class="qlist">' + a3.punkte.map(function (p) { return '<li>' + esc(p) + '</li>'; }).join('') + '</ul>' +
+    navBar('Weiter') + '</section>',
+
+    '<section class="slide" data-slide="' + s5 + '"><div class="brand">' + trBrand(4) + '</div><div class="num">' + pad2(s5) + '</div>' + ctxbar() +
+    '<h1>PROTOKOLL &amp;<br>CHECKLISTE.</h1>' +
     checksList('tr_chk', t.checks) +
     '<div class="weeklyCheck"><div class="weeklyCheckIntro"><b>ARBEITSFELDER.</b></div>' + fieldsGrid('tr', t.fields) + '</div>' +
     '<div class="note" style="border-left-color:var(--red)"><b>RECHTLICHER HINWEIS.</b><br>' + esc(rechtlicherHinweisAllgemein) + '</div>' +
-    navBar('Weiter') +
-    '</section>'
-  );
+    navBar('Weiter zum Team-Bericht') + '</section>'
+  ].join('\n');
 }
 
+/* ----------------------------------------------------------------------
+   TEAM-BERICHT
+   ---------------------------------------------------------------------- */
 function slideTeamBericht() {
   return (
     '<section class="slide" data-slide="' + TEAMBERICHT_SLIDE + '"><div class="brand">P2 / TEAM-BERICHT</div><div class="num">' + pad2(TEAMBERICHT_SLIDE) + '</div>' +
@@ -170,16 +355,14 @@ function slideTeamBericht() {
 }
 
 function buildCardSlides(data) {
-  const out = [slideOverview(data)];
-  data.milestones.forEach(function (m, i) {
-    out.push(slideMilestone(m, FIRST_MILESTONE_SLIDE + i));
-  });
-  out.push(slideBuddy(data.buddy));
-  out.push(slideEskalation1(data.eskalation));
-  out.push(slideEskalation2(data.eskalation));
-  out.push(slideTrennung(data.trennung, data.rechtlicherHinweisAllgemein));
-  out.push(slideTeamBericht());
-  return out.join('\n');
+  return [
+    slideOverview(data),
+    buildMilestoneSlides(data),
+    buildBuddySlides(data.buddy),
+    buildEskalationSlides(data.eskalation),
+    buildTrennungSlides(data.trennung, data.rechtlicherHinweisAllgemein),
+    slideTeamBericht()
+  ].join('\n');
 }
 
 function cardFieldMeta(data) {
@@ -193,7 +376,7 @@ const initScript = function (data) {
   const meta = cardFieldMeta(data);
   return (
     'const CARD_META = ' + JSON.stringify(meta) + ';\n' +
-    'const store = MotorEngine.createStore("p2_data_v1", function(){ return { employees:{}, employeeOrder:[], activeEmployeeId:null, byEmployee:{}, choices:{} }; });\n' +
+    'const store = MotorEngine.createStore("p2_data_v2", function(){ return { employees:{}, employeeOrder:[], activeEmployeeId:null, byEmployee:{}, choices:{} }; });\n' +
     'const manager = MotorEngine.createEmployeeManager({\n' +
     '  store: store,\n' +
     '  license: { maxEmployees: 20 },\n' +
@@ -219,6 +402,14 @@ const initScript = function (data) {
     'function nextSlide(){ nav.next(); }\n' +
     'function prevSlide(){ nav.prev(); }\n' +
     'function toggleChoice(el){ choices.toggle(el); }\n' +
+    'function toggleYesNo(el, otherKey){\n' +
+    '  const wasOn = el.classList.contains("on");\n' +
+    '  choices.toggle(el);\n' +
+    '  if(!wasOn){\n' +
+    '    const other = document.querySelector(\'[data-toggle="\'+otherKey+\'"]\');\n' +
+    '    if(other && other.classList.contains("on")){ choices.toggle(other); }\n' +
+    '  }\n' +
+    '}\n' +
     'function openEmpModal(){\n' +
     '  if(manager.isFull()){ const note=document.getElementById("empLimitNote"); if(note) note.style.display="block"; return; }\n' +
     '  document.getElementById("empNameInput").value = "";\n' +
