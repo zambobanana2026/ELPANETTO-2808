@@ -237,30 +237,35 @@ function buildBuddySlides(b) {
   const taktungHtml = b.taktung.map(function (t) { return '<div class="qa"><b>' + esc(t[0]) + '</b><p>' + esc(t[1]) + '</p></div>'; }).join('');
   return [
     '<section class="slide" data-slide="' + s1 + '"><div class="brand">' + buddyBrand(0) + '</div><div class="num">' + pad2(s1) + '</div>' + ctxbar() +
-    '<h1>KMU-BUDDY-<br>FRAMEWORK.</h1>' +
+    '<h1>BUDDY-FRAMEWORK.<br>WER IST DER BUDDY?</h1>' +
     '<div class="box"><b>ROLLE DES BUDDYS.</b><p class="lead" style="margin:10px 0 0">' + esc(b.rolle) + '</p></div>' +
     navBar('Weiter') + '</section>',
 
     '<section class="slide" data-slide="' + s2 + '"><div class="brand">' + buddyBrand(1) + '</div><div class="num">' + pad2(s2) + '</div>' + ctxbar() +
-    '<h1>KMU-BUDDY-<br>FRAMEWORK.</h1>' +
-    '<div class="box"><b>DAUER.</b><p style="margin:10px 0 0">' + esc(b.dauer) + '</p></div>' +
-    '<h2>TAKTUNG.</h2>' + taktungHtml +
+    '<h1>BUDDY-FRAMEWORK.<br>WIE LANGE UND WIE OFT?</h1>' +
+    '<div class="box"><b>WIE LANGE BEGLEITET DER BUDDY?</b><p style="margin:10px 0 0">Die Rolle ist bewusst zeitlich begrenzt — danach soll die neue Person allein zurechtkommen. Dauer: ' + esc(b.dauer) + '</p></div>' +
+    '<h2>TAKTUNG.</h2>' +
+    '<p class="lead">Auch wie oft ihr euch trefft, nimmt mit der Zeit ab:</p>' +
+    taktungHtml +
     navBar('Weiter') + '</section>',
 
     '<section class="slide" data-slide="' + s3 + '"><div class="brand">' + buddyBrand(2) + '</div><div class="num">' + pad2(s3) + '</div>' + ctxbar() +
-    '<h1>KMU-BUDDY-<br>FRAMEWORK.</h1>' +
+    '<h1>BUDDY-FRAMEWORK.<br>WAS DARF DER BUDDY TUN?</h1>' +
+    '<p class="lead">Das ist die Aufgabe des Buddys — nicht mehr und nicht weniger:</p>' +
     '<h2>DER BUDDY DARF.</h2>' +
     checksList('buddy_auf', b.aufgaben) +
     navBar('Weiter') + '</section>',
 
     '<section class="slide" data-slide="' + s4 + '"><div class="brand">' + buddyBrand(3) + '</div><div class="num">' + pad2(s4) + '</div>' + ctxbar() +
-    '<h1>KMU-BUDDY-<br>FRAMEWORK.</h1>' +
+    '<h1>BUDDY-FRAMEWORK.<br>WAS DER BUDDY NICHT DARF.</h1>' +
+    '<p class="lead">Damit für alle klar bleibt, wer wofür zuständig ist — der Buddy ersetzt weder dich noch HR:</p>' +
     '<div class="note" style="border-left-color:var(--red)"><b>STRIKTE GRENZEN UND TABUS.</b><br>' + b.tabus.map(esc).join('<br>') + '</div>' +
     navBar('Weiter') + '</section>',
 
     '<section class="slide" data-slide="' + s5 + '"><div class="brand">' + buddyBrand(4) + '</div><div class="num">' + pad2(s5) + '</div>' + ctxbar() +
-    '<h1>KMU-BUDDY-<br>FRAMEWORK.</h1>' +
+    '<h1>BUDDY-FRAMEWORK.<br>CHECKLISTE &amp; ARBEITSVORLAGE.</h1>' +
     '<h2>BUDDY-CHECKLISTE.</h2>' +
+    '<p class="lead">Das fasst die letzten vier Seiten als Checkliste zusammen — häkel ab, was schon passt.</p>' +
     checksList('buddy_chk', b.checkliste) +
     '<div class="weeklyCheck"><div class="weeklyCheckIntro"><b>ARBEITSVORLAGE.</b></div>' + fieldsGrid('buddy', b.fields) + '</div>' +
     navBar('Weiter zum Eskalationsprotokoll') + '</section>'
@@ -314,6 +319,7 @@ function buildEskalationSlides(e) {
     '<div class="note" style="border-left-color:#c99a2e"><b>ACHTUNG.</b><br>' + esc(e.schritt3.rechtshinweis) + '</div>' +
     '<div class="weeklyCheck"><div class="weeklyCheckIntro"><b>DOKUMENTATION.</b></div>' + fieldsGrid('esk', pickFields(e.fields, ['entscheidung'])) + '</div>' +
     '<h2>CHECKLISTE.</h2>' +
+    '<p class="lead">Das fasst das ganze Eskalationsprotokoll zusammen — geh es kurz durch, bevor du weitermachst.</p>' +
     checksList('esk_chk', e.checkliste) +
     navBar('Weiter zum Trennungsleitfaden') + '</section>'
   ].join('\n');
@@ -332,11 +338,12 @@ function buildTrennungSlides(t, rechtlicherHinweisAllgemein) {
     '<h1>TRENNUNGS-LEITFADEN.<br>10-MINUTEN-PROTOKOLL.</h1>' +
     '<div class="note" style="border-left-color:var(--red)"><b>RECHTLICHE LEITPLANKE.</b><br>' + esc(t.rechtlicheLeitplanke) + '</div>' +
     '<div class="box"><b>VIER-AUGEN-PRINZIP.</b><p style="margin:10px 0 0">' + esc(t.vierAugen) + '</p></div>' +
-    '<div class="box"><b>GESPRÄCHSDAUER.</b><p style="margin:10px 0 0">' + esc(t.dauer) + '</p></div>' +
+    '<div class="box"><b>GESPRÄCHSDAUER.</b><p style="margin:10px 0 0">Kurz und klar halten — lange Erklärungen verunsichern in dieser Situation nur. ' + esc(t.dauer) + '</p></div>' +
     navBar('Weiter') + '</section>',
 
     '<section class="slide" data-slide="' + s2 + '"><div class="brand">' + trBrand(1) + '</div><div class="num">' + pad2(s2) + '</div>' + ctxbar() +
     '<h1>' + esc(a1.titel.toUpperCase()) + '.</h1>' +
+    '<p class="lead">So beginnst du das Gespräch — wortwörtlich:</p>' +
     '<div class="box"><b>FESTE FORMULIERUNG.</b><p class="lead" style="margin:10px 0 0">„' + esc(a1.formulierung) + '“</p></div>' +
     navBar('Weiter') + '</section>',
 
@@ -348,11 +355,13 @@ function buildTrennungSlides(t, rechtlicherHinweisAllgemein) {
 
     '<section class="slide" data-slide="' + s4 + '"><div class="brand">' + trBrand(3) + '</div><div class="num">' + pad2(s4) + '</div>' + ctxbar() +
     '<h1>' + esc(a3.titel.toUpperCase()) + '.</h1>' +
-    '<ul class="qlist">' + a3.punkte.map(function (p) { return '<li>' + esc(p) + '</li>'; }).join('') + '</ul>' +
+    '<p class="lead">Das sind die praktischen Punkte, die direkt im Anschluss an die Ansage erledigt werden — häkel ab, was schon geklärt ist:</p>' +
+    checksList('tr_ablauf', a3.punkte) +
     navBar('Weiter') + '</section>',
 
     '<section class="slide" data-slide="' + s5 + '"><div class="brand">' + trBrand(4) + '</div><div class="num">' + pad2(s5) + '</div>' + ctxbar() +
     '<h1>PROTOKOLL &amp;<br>CHECKLISTE.</h1>' +
+    '<p class="lead">Das fasst den ganzen Trennungs-Leitfaden zusammen — geh es kurz durch, bevor du das Gespräch führst.</p>' +
     checksList('tr_chk', t.checks) +
     '<div class="weeklyCheck"><div class="weeklyCheckIntro"><b>ARBEITSFELDER.</b></div>' + fieldsGrid('tr', t.fields) + '</div>' +
     '<div class="note" style="border-left-color:var(--red)"><b>RECHTLICHER HINWEIS.</b><br>' + esc(rechtlicherHinweisAllgemein) + '</div>' +

@@ -205,8 +205,8 @@
       "Buddy-Phase spätestens nach 6 Wochen beendet"
     ],
     "fields": [
-      ["NAME BUDDY", "name", "Name eintragen …"],
-      ["NOTIZEN ZUR BUDDY-PHASE", "notizen", "Kurz eintragen …"]
+      ["NAME BUDDY", "name", "Name eintragen …", "Wer übernimmt die Buddy-Rolle für diese Person?"],
+      ["NOTIZEN ZUR BUDDY-PHASE", "notizen", "Kurz eintragen …", "Läuft die Begleitung gut, oder gibt es Stolpersteine?"]
     ]
   },
   "eskalation": {
@@ -240,13 +240,13 @@
       "Kein Mitschleppen bis kurz vor Probezeitende"
     ],
     "fields": [
-      ["SICHTBARE LEISTUNGSLÜCKE", "luecke", "Kurz eintragen …"],
-      ["FAKTENABGLEICH IM 1:1-GESPRÄCH (TAG 1–14)", "fakten", "Kurz eintragen …"],
-      ["SACHLICHER ABGLEICH MIT DER ZIELERWARTUNG", "abgleich", "Kurz eintragen …"],
-      ["VERBINDLICHES ZWISCHENZIEL FÜR DIE FOLGENDE WOCHE", "zwischenziel", "Kurz eintragen …"],
-      ["ANTWORT AUF DIE SCHLÜSSELFRAGE", "antwort", "Kurz eintragen …"],
-      ["LERNKURVEN-PRÜFUNG (TAG 15–28)", "lernkurve", "Kurz eintragen …"],
-      ["ENTSCHEIDUNG (ZIELVEREINBARUNG ODER TRENNUNGSPROZESS)", "entscheidung", "Kurz eintragen …"]
+      ["SICHTBARE LEISTUNGSLÜCKE", "luecke", "Kurz eintragen …", "Was genau fällt dir auf? Ein konkretes Beispiel hilft mehr als ein allgemeiner Eindruck."],
+      ["FAKTENABGLEICH IM 1:1-GESPRÄCH (TAG 1–14)", "fakten", "Kurz eintragen …", "Was habt ihr im Gespräch besprochen? Sachlich, ohne Vorwurf."],
+      ["SACHLICHER ABGLEICH MIT DER ZIELERWARTUNG", "abgleich", "Kurz eintragen …", "Wie weit liegt das Ergebnis von dem entfernt, was eigentlich erwartet war?"],
+      ["VERBINDLICHES ZWISCHENZIEL FÜR DIE FOLGENDE WOCHE", "zwischenziel", "Kurz eintragen …", "Was soll bis zum nächsten Check konkret erreicht sein?"],
+      ["ANTWORT AUF DIE SCHLÜSSELFRAGE", "antwort", "Kurz eintragen …", "Was hat die Person geantwortet, als du gefragt hast, welche Unterstützung fehlt?"],
+      ["LERNKURVEN-PRÜFUNG (TAG 15–28)", "lernkurve", "Kurz eintragen …", "Was hat sich seit dem letzten Gespräch verändert — zum Besseren oder nicht?"],
+      ["ENTSCHEIDUNG (ZIELVEREINBARUNG ODER TRENNUNGSPROZESS)", "entscheidung", "Kurz eintragen …", "Wie geht es jetzt weiter — schriftliche Zielvereinbarung mit Bewährungsfrist oder Trennungsprozess?"]
     ],
     "rechtshinweis": "Kein Mitschleppen bis kurz vor Probezeitende."
   },
@@ -285,7 +285,7 @@
       "Übergabe offener Aufgaben vorbereitet"
     ],
     "fields": [
-      ["NOTIZEN ZUM PROTOKOLL", "notizen", "Kurz eintragen …"]
+      ["NOTIZEN ZUM PROTOKOLL", "notizen", "Kurz eintragen …", "Was ist während oder nach dem Gespräch wichtig festzuhalten?"]
     ]
   },
   "rechtlicherHinweisAllgemein": "Die arbeitsrechtlichen Hinweise in diesem Produkt stammen aus dem bereitgestellten Carmen-Fachwissen-Archiv. Sie wurden nicht erweitert oder eigenständig interpretiert. Die arbeitsrechtlichen Hinweise dienen der allgemeinen Orientierung und ersetzen keine individuelle Rechtsberatung. Bei konkreten Einzelfällen sollte fachkundige arbeitsrechtliche Beratung eingeholt werden."
