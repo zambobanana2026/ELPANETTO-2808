@@ -1,14 +1,24 @@
 # Status — Carmen Next Motor/Config
 
-## P6 Slide 2 — bewusste Abweichung vom Original-Prototyp
+## P6 Slides 2 & 6 — bewusste Abweichung vom Original-Prototyp
 
-Auf Wunsch wurde Slide 2 ("So funktioniert's") geändert: die 4 Schritte stehen
-jetzt untereinander (neue, generische Motor-Klasse `.grid1` in `engine.css`)
-statt im 2-Spalten-Grid, und jeder Schritt hat mehr Erklärung inklusive eines
-durchgängigen Beispiels ("Julia Berger"). Das ist die einzige inhaltliche
-Abweichung von `reference/P6_V3.html` — `qa/p6_diff.js` meldet dafür jetzt
-absichtlich "1 slides differ" auf Slide 2, alles andere ist weiterhin identisch.
-Funktional (`qa/p6_qa.js`) unverändert grün, P2 unberührt.
+Auf Wunsch wurden zwei Übersichts-Slides umgebaut:
+
+- **Slide 2** ("So funktioniert's"): die 4 Schritte stehen jetzt untereinander
+  (neue, generische Motor-Klasse `.grid1` in `engine.css`, analog zum
+  bestehenden `.grid4`) statt im 2-Spalten-Grid, jeder Schritt mit mehr
+  Erklärung inklusive eines durchgängigen Beispiels ("Julia Berger").
+- **Slide 6** ("Welches Gespräch steht an?"): die 8 Karten-Kacheln ebenfalls
+  untereinander, jede mit einem echten Beispiel aus `content/cards_p6.json`
+  (Situation + „Nicht sagen"/„Besser sagen"-Kontrast der jeweiligen Karte,
+  wörtlich aus den bereits vorhandenen `beispiel`-Feldern übernommen, nichts
+  neu erfunden).
+
+Das sind die einzigen inhaltlichen Abweichungen von `reference/P6_V3.html` —
+`qa/p6_diff.js` meldet dafür jetzt absichtlich "2 slides differ" (Slide 2 und
+6), alles andere ist weiterhin identisch. Funktional (`qa/p6_qa.js`,
+inkl. Klick-Navigation von den Karten-Kacheln zu den jeweiligen Karten-Slides)
+unverändert grün, P2 unberührt.
 
 ## P2 — Onboarding-Prozessbundle (neu gebaut, kein Vorgänger-Prototyp)
 
