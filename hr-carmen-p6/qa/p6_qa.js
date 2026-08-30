@@ -138,10 +138,10 @@ function assert(cond, msg) {
   await page.click('.slide.active .nav button.btn:not(.alt)');
   assert((await page.locator('.slide.active').getAttribute('data-slide')) === '47', 'card 8 forwards correctly to slide 47 (Bibliothek)');
 
-  // Verify card 1 (non-last) follow-up slide (11) says "Nächste Karte" and forwards to slide 12
+  // Verify card 1 (non-last) follow-up slide (11) says "Nächste Gesprächskarte" and forwards to slide 12
   await page.evaluate(() => window.goTo(11));
   const firstCardBtnText = await page.locator('.slide.active .nav button.btn:not(.alt)').textContent();
-  assert(firstCardBtnText.includes('Nächste Karte'), 'card 1 follow-up next-button says "Nächste Karte": got "' + firstCardBtnText + '"');
+  assert(firstCardBtnText.includes('Nächste Gesprächskarte'), 'card 1 follow-up next-button says "Nächste Gesprächskarte": got "' + firstCardBtnText + '"');
   await page.click('.slide.active .nav button.btn:not(.alt)');
   assert((await page.locator('.slide.active').getAttribute('data-slide')) === '12', 'card 1 forwards correctly to slide 12 (card 2)');
 
@@ -162,6 +162,40 @@ function assert(cond, msg) {
   await page.evaluate(() => window.goTo(3));
   const legalText = await page.locator('.slide.active .note').textContent();
   assert(legalText.includes('keine individuelle Rechtsberatung'), 'legal disclaimer present on slide 3');
+
+  // ---- Color theme picker ----
+  await page.click('.themeTrigger');
+  assert(await page.locator('#themeModal').evaluate(el => el.classList.contains('open')), 'theme modal opens');
+  assert((await page.locator('.themeSwatch').count()) === 10, 'exactly 10 theme swatches rendered');
+  const getVars = () => page.evaluate(() => {
+    const cs = getComputedStyle(document.documentElement);
+    return { ci: cs.getPropertyValue('--ci').trim(), pagebg: cs.getPropertyValue('--pagebg').trim(), paper: cs.getPropertyValue('--paper').trim(), surface: cs.getPropertyValue('--surface').trim(), ink: cs.getPropertyValue('--ink').trim() };
+  });
+  const before = await getVars();
+  await page.locator('.themeSwatch').nth(2).click(); // pick 3rd preset (Bordeaux)
+  const after = await getVars();
+  assert(after.ci !== before.ci, 'picking a swatch changes --ci: ' + before.ci + ' -> ' + after.ci);
+  assert(after.pagebg !== before.pagebg, 'picking a swatch changes --pagebg (page background): ' + before.pagebg + ' -> ' + after.pagebg);
+  assert(after.paper !== before.paper, 'picking a swatch changes --paper (slide background): ' + before.paper + ' -> ' + after.paper);
+  const bodyBg = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+  assert(bodyBg !== 'rgb(235, 232, 227)', 'body background actually repaints on screen: ' + bodyBg);
+  await page.click('.dialog button:has-text("Schließen")');
+  assert(!(await page.locator('#themeModal').evaluate(el => el.classList.contains('open'))), 'theme modal closes');
+  await page.reload();
+  const reloaded = await getVars();
+  assert(reloaded.ci === after.ci && reloaded.pagebg === after.pagebg, 'theme choice (incl. background) persists after reload: ' + JSON.stringify(reloaded));
+
+  // Dark preset (Anthrazit, last swatch): verify ink flips light-on-dark, not just accent
+  await page.click('.themeTrigger');
+  await page.locator('.themeSwatch').nth(9).click();
+  const dark = await getVars();
+  assert(dark.pagebg === '#181818', 'dark preset sets a genuinely dark page background: ' + dark.pagebg);
+  assert(dark.ink === '#f0efec', 'dark preset flips text to a light color for contrast: ' + dark.ink);
+  await page.click('.dialog button:has-text("Schließen")');
+  // reset to default for the rest of the run
+  await page.click('.themeTrigger');
+  await page.locator('.themeSwatch').nth(0).click();
+  await page.click('.dialog button:has-text("Schließen")');
 
   // ---- Mobile viewport ----
   await context.close();

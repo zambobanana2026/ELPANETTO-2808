@@ -64,6 +64,101 @@ Auswirkung auf die Produkte selbst.
 
 ---
 
+## Farbmodelle — neue, generische Motor-Funktion (P6 + P2)
+
+Auf Wunsch jederzeit wechselbare Farbschemata: ein kleiner Kreis-Button
+(🎨) fixiert oben links, auf jeder Slide sichtbar (liegt außerhalb der
+`.slide`-Sections, damit er die Navigation übersteht), öffnet ein Modal mit
+10 fertigen Farbmodellen. Implementiert in `motor/engine.js`
+(`createColorThemes` + `DEFAULT_THEMES`) und `motor/engine.css`
+(`.themeTrigger`, `.themeSwatches`, `.themeSwatch`) — beide Produkte binden
+es in ihrem `initScript` identisch ein, nur der localStorage-Key ist
+produktspezifisch (`p6_theme_v1` / `p2_theme_v1`), damit eine Wahl in P6
+nicht die in P2 überschreibt.
+
+**Erste Fassung war unvollständig** — überschrieb nur `--ci`/`--mint`
+(Marke/Akzent), ließ Hintergrund und Text absichtlich fest, um Kontrast
+nicht zu riskieren. Martin hat als Referenz sein eigenes "OP Manager"-Tool
+gezeigt: dort ist jedes Farbmodell ein vollständig abgestimmtes Set aus
+sechs Kanälen (bg/surface/text/accent/border/muted), inklusive eines echten
+Dark-Themes — das war der eigentliche Maßstab. Zweite Fassung jetzt danach
+gebaut: neun Tokens pro Modell (`pagebg`, `paper`, `surface`, `ink`,
+`muted`, `line`, `ci`, `mint`, `num`), alle als **zusammengehöriges Set**
+pro Modell gewählt (nicht einzeln überschrieben), damit Kontrast innerhalb
+eines Modells garantiert bleibt. Dafür mussten alle fest verdrahteten
+`white`/`#fff`/`#777`-Stellen in `engine.css` auf die neuen Tokens
+(`--surface`, `--muted`) umgestellt werden (Karten, Textareas, Inputs,
+Dialoge, Team-Tabelle, Formulierungs-Boxen usw.) — betrifft nur P6 und P2,
+da beide denselben Motor teilen.
+
+9 der 10 Modelle sind helle Varianten (nur `pagebg`/`paper`/`muted`/`line`/
+`ci`/`mint`/`num` wandern mit dem Farbton, `ink`/`surface` bleiben gleich).
+Das zehnte ("Anthrazit (Dunkel)") ist ein echtes dunkles Theme —
+`ink` kippt dort zusätzlich auf hell, `surface` auf dunkel, damit der
+Kontrast stimmt.
+
+**Bewusst weiterhin fest über alle Modelle:** die Ampelfarben
+`--green`/`--orange`/`--red` (Erfolg/Warnung/Fehler darf nicht mit der
+Marke kippen), der helle Grün-Ton hinter angehakten Checkboxen
+(`.choice.on`, fest an `--green` gekoppelt statt an ein Farbmodell), und
+der rote PDF-Druck-Button (`.pdfBtn`, eigenständige feste Aktionsfarbe,
+kein Marken-Token). Print-Ausgabe (`@media print`) bleibt immer reines
+Weiß, unabhängig vom gewählten Bildschirm-Theme — für den PDF-Export
+gewollt.
+
+Wahl wird wie Mitarbeiterdaten in localStorage gespeichert und übersteht
+Reload — inklusive der Hintergrundfarbe, nicht nur des Akzents.
+
+## P6 Slides 2, 4 & 6 — bewusste Abweichung vom Original-Prototyp
+
+Auf Wunsch wurden drei Übersichts-Slides umgebaut:
+
+- **Slide 2** ("So funktioniert's"): die 4 Schritte stehen jetzt untereinander
+  (neue, generische Motor-Klasse `.grid1` in `engine.css`, analog zum
+  bestehenden `.grid4`) statt im 2-Spalten-Grid, jeder Schritt mit mehr
+  Erklärung inklusive eines durchgängigen Beispiels ("Julia Berger").
+- **Slide 4** ("Das Carmen-KLAR-System"): K/L/A/R ebenfalls untereinander,
+  jeder Buchstabe mit Beispiel im selben "Julia"-Faden wie Slide 2 (K bezieht
+  sich inhaltlich auf dasselbe Leistungs-Beispiel, R paraphrasiert die echte
+  erste Reaktion aus Karte 1 in `content/cards_p6.json`). Der Abschluss-Kasten
+  ("+ Abschluss und Follow-up") hat ebenfalls ein Beispiel bekommen.
+- **Slide 6** ("Welches Gespräch steht an?"): die 8 Karten-Kacheln ebenfalls
+  untereinander, jede mit einem echten Beispiel aus `content/cards_p6.json`
+  (Situation + „Nicht sagen"/„Besser sagen"-Kontrast der jeweiligen Karte,
+  wörtlich aus den bereits vorhandenen `beispiel`-Feldern übernommen, nichts
+  neu erfunden).
+
+Zusätzlich Slides 47 (Formulierungs-Bibliothek) und 48 (Notfallkarte) auf
+`.grid1` umgestellt (nur Layout, kein Textinhalt geändert — beide hatten
+bereits je zwei Beispielsätze pro Box). Bewusst **nicht** angefasst: Slide 1
+(Hero) bleibt mehrspaltig, weil es eine Marketing-Kachelreihe und keine
+Schritt-für-Schritt-Erklärung ist; die 40 Karten-Slides (7–46) folgen bereits
+dem "eine Sache pro Slide, mit echtem Beispiel"-Prinzip in ihrem eigenen
+etablierten Format (Vorbereitung/Ziel/Reaktionen/Vereinbarung/Follow-up) und
+wurden daher nicht in das Slide-2/4/6-Muster gepresst.
+
+## P6 — "Karte" → "Gesprächskarte"
+
+Auf Wunsch umbenannt: überall, wo bisher "KARTE 1" / "Karte 1" für eine der
+8 Situationskarten stand (Marken-Zeile jeder Karten-Unterseite, Überschrift
+"PASST DIESE KARTE?", die 8 Kacheln auf Slide 6, der "Nächste Karte"-Button),
+steht jetzt "GESPRÄCHSKARTE"/"Gesprächskarte" — durchgesetzt in
+`products/p6.config.js` (generierte Karten-Slides) und
+`products/p6/intro.slides.html` (Slide 2 und 6). "NOTFALLKARTE" (Slide 48,
+anderes Konzept) bleibt unverändert. P2 nicht betroffen — dort gibt es keine
+"Karte 1/2/3"-Nummerierung, das war nur ein P6-Begriff.
+
+Damit weicht jetzt ein Großteil der Slides (43 von 51) inhaltlich von
+`reference/P6_V3.html` ab — `qa/p6_diff.js` zeigt das erwartungsgemäß an.
+Das ist ab jetzt der Normalfall: sobald P6 über den migrierten Ausgangsstand
+hinaus weiterentwickelt wird, wächst diese Zahl mit jeder gewollten
+Änderung. `qa/p6_diff.js` bleibt trotzdem nützlich als Stichprobe, ob eine
+Änderung nur dort auftaucht, wo sie hingehört (und nicht versehentlich noch
+woanders) — nicht mehr als Nachweis "nichts hat sich verändert". Funktional
+(`qa/p6_qa.js`) weiterhin grün, P2 unberührt.
+
+---
+
 ## P2 — Onboarding-Prozessbundle (neu gebaut, kein Vorgänger-Prototyp)
 
 Anders als P6 gab es für P2 noch keine geprüfte interaktive Fassung —

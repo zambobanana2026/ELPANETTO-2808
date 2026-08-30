@@ -12,3 +12,11 @@
 <label>Abteilung<input type="text" id="empAbteilungInput" placeholder="z. B. Einkauf"></label>
 <div class="row"><button class="btn alt" onclick="closeEmpModal()">Abbrechen</button><button class="btn" onclick="confirmAddEmployee()">Hinzufügen</button></div>
 </div></div>
+
+<button class="themeTrigger" onclick="openThemeModal()" title="Farbe ändern" aria-label="Farbe ändern">🎨</button>
+<div class="modal" id="themeModal"><div class="dialog">
+<h2>FARBE WÄHLEN</h2>
+<p style="margin:0;color:var(--ci);font-size:13px">Zehn abgestimmte Farbmodelle — jederzeit wechselbar, bleibt gespeichert.</p>
+<div class="themeSwatches" id="themeSwatches"></div>
+<div class="row"><button class="btn alt" onclick="closeThemeModal()">Schließen</button></div>
+</div></div>

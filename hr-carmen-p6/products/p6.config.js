@@ -5,7 +5,7 @@
 
    Inhalte kommen ausschließlich aus content/cards_p6.json (maschinenlesbar,
    echter extrahierter/redigierter Text aus reference/P6_V3.html — siehe
-   docs/CARMEN_NEXT_HANDOFF.md für den Kontext zu Karte 8 "Lob", die dort
+   docs/CARMEN_NEXT_HANDOFF.md für den Kontext zu Gesprächskarte 8 "Lob", die dort
    ergänzt wurde). Slides 1–6 und 47–51 sind Marketing-/Rahmentext ohne
    Karten-Datenbezug und liegen als statische Fragmente in products/p6/.
 
@@ -40,9 +40,9 @@ function slidePrep(card, num) {
       '<textarea data-field="k' + card.n + '_f' + (i + 1) + '" placeholder="Kurz eintragen …"></textarea></div>';
   }).join('');
   return (
-    '<section class="slide" data-slide="' + num + '"><div class="brand">P6 / KARTE ' + card.n + ' · 1/5 ' + SUBTITLES[0] + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
+    '<section class="slide" data-slide="' + num + '"><div class="brand">P6 / GESPRÄCHSKARTE ' + card.n + ' · 1/5 ' + SUBTITLES[0] + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
     '<h1>' + esc(card.title.toUpperCase()) + '</h1>' +
-    '<h2>PASST DIESE KARTE?</h2>' +
+    '<h2>PASST DIESE GESPRÄCHSKARTE?</h2>' +
     '<div class="checks">' + checksHtml + '</div>' +
     '<div class="note">' + esc(card.hinweis) + '</div>' +
     '<div class="weeklyCheck"><div class="weeklyCheckIntro"><b>5-MINUTEN-VORBEREITUNG.</b></div>' +
@@ -55,7 +55,7 @@ function slidePrep(card, num) {
 function slideZielEinstieg(card, num) {
   const fragenHtml = card.fragen.map(function (f) { return '<li>„' + esc(f) + '“</li>'; }).join('');
   return (
-    '<section class="slide" data-slide="' + num + '"><div class="brand">P6 / KARTE ' + card.n + ' · 2/5 ' + SUBTITLES[1] + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
+    '<section class="slide" data-slide="' + num + '"><div class="brand">P6 / GESPRÄCHSKARTE ' + card.n + ' · 2/5 ' + SUBTITLES[1] + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
     '<h1>' + esc(card.title.toUpperCase()) + '</h1>' +
     '<div class="box"><b>MEIN GESPRÄCHSZIEL.</b><p class="lead" style="margin:10px 0 0">„' + esc(card.ziel) + '“</p></div>' +
     '<div class="box"><b>DER ERSTE SATZ.</b><p class="lead" style="margin:10px 0 0">„' + esc(card.satz) + '“</p></div>' +
@@ -74,7 +74,7 @@ function slideImGespraech(card, num) {
     return '<div class="compareRow"><div class="no">„' + esc(pair[0]) + '“</div><div class="yes">„' + esc(pair[1]) + '“</div></div>';
   }).join('');
   return (
-    '<section class="slide" data-slide="' + num + '"><div class="brand">P6 / KARTE ' + card.n + ' · 3/5 ' + SUBTITLES[2] + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
+    '<section class="slide" data-slide="' + num + '"><div class="brand">P6 / GESPRÄCHSKARTE ' + card.n + ' · 3/5 ' + SUBTITLES[2] + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
     '<h1>' + esc(card.title.toUpperCase()) + '</h1>' +
     '<h2>TYPISCHE REAKTIONEN — UND MEINE ANTWORT.</h2>' +
     qaHtml +
@@ -104,7 +104,7 @@ function slideVereinbarung(card, num) {
       '<textarea data-field="k' + card.n + '_' + f[1] + '" placeholder="' + f[2] + '"></textarea></div>';
   }).join('');
   return (
-    '<section class="slide" data-slide="' + num + '"><div class="brand">P6 / KARTE ' + card.n + ' · 4/5 ' + SUBTITLES[3] + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
+    '<section class="slide" data-slide="' + num + '"><div class="brand">P6 / GESPRÄCHSKARTE ' + card.n + ' · 4/5 ' + SUBTITLES[3] + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
     '<h1>' + esc(card.title.toUpperCase()) + '</h1>' +
     '<p class="lead">Nach Carmens Vorlage „Maßnahmenvereinbarung“.</p>' +
     '<div class="weeklyCheck"><div class="weeklyCheckIntro"><b>MASSNAHMENVEREINBARUNG.</b></div>' +
@@ -129,14 +129,14 @@ function slideFollowUp(card, num, isLast) {
     ? '<div class="note" style="border-left-color:var(--red)"><b>RECHTLICHER HINWEIS.</b><br>' + esc(card.rechtshinweis) + '</div>'
     : '';
   return (
-    '<section class="slide" data-slide="' + num + '"><div class="brand">P6 / KARTE ' + card.n + ' · 5/5 ' + SUBTITLES[4] + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
+    '<section class="slide" data-slide="' + num + '"><div class="brand">P6 / GESPRÄCHSKARTE ' + card.n + ' · 5/5 ' + SUBTITLES[4] + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
     '<h1>' + esc(card.title.toUpperCase()) + '</h1>' +
     '<p class="lead">Nach Carmens Vorlage „Follow-up“ — für den vereinbarten Prüftermin.</p>' +
     '<div class="weeklyCheck"><div class="weeklyCheckIntro"><b>FOLLOW-UP-PRÜFUNG.</b></div>' +
     '<div class="weeklyCheckGrid">' + fieldsHtml + '</div></div>' +
     '<div class="note" style="border-left-color:#c99a2e"><b>ACHTUNG.</b><br>' + esc(card.achtung) + '</div>' +
     rechtshinweis +
-    navBar(isLast ? 'Weiter zur Bibliothek' : 'Nächste Karte') +
+    navBar(isLast ? 'Weiter zur Bibliothek' : 'Nächste Gesprächskarte') +
     '</section>'
   );
 }
@@ -184,8 +184,11 @@ const initScript = function (cards) {
     '  }\n' +
     '});\n' +
     'const choices = MotorEngine.createChoices(store);\n' +
+    'const theme = MotorEngine.createColorThemes(MotorEngine.DEFAULT_THEMES, "p6_theme_v1");\n' +
     'const nav = MotorEngine.createNav();\n' +
     '\n' +
+    'function openThemeModal(){ theme.renderSwatches("#themeSwatches"); MotorEngine.openModal("themeModal"); }\n' +
+    'function closeThemeModal(){ MotorEngine.closeModal("themeModal"); }\n' +
     'function goTo(n){ nav.goTo(n); }\n' +
     'function nextSlide(){ nav.next(); }\n' +
     'function prevSlide(){ nav.prev(); }\n' +
@@ -229,6 +232,7 @@ const initScript = function (cards) {
     '});\n' +
     '\n' +
     'document.addEventListener("DOMContentLoaded", function(){\n' +
+    '  theme.init();\n' +
     '  manager.render();\n' +
     '  choices.bindAll();\n' +
     '  MotorEngine.bindFields(store, manager);\n' +

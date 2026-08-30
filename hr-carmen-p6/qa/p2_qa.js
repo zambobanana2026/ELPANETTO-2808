@@ -159,6 +159,26 @@ function assert(cond, msg) {
   await page.evaluate(() => window.goTo(3));
   assert((await page.locator('.slide.active .note').textContent()).includes('keine individuelle Rechtsberatung'), 'general legal disclaimer on slide 3');
 
+  // ---- Color theme picker ----
+  await page.click('.themeTrigger');
+  assert(await page.locator('#themeModal').evaluate(el => el.classList.contains('open')), 'theme modal opens');
+  assert((await page.locator('.themeSwatch').count()) === 10, 'exactly 10 theme swatches rendered');
+  const getVars = () => page.evaluate(() => {
+    const cs = getComputedStyle(document.documentElement);
+    return { ci: cs.getPropertyValue('--ci').trim(), pagebg: cs.getPropertyValue('--pagebg').trim(), paper: cs.getPropertyValue('--paper').trim() };
+  });
+  const before = await getVars();
+  await page.locator('.themeSwatch').nth(2).click();
+  const after = await getVars();
+  assert(after.ci !== before.ci, 'picking a swatch changes --ci: ' + before.ci + ' -> ' + after.ci);
+  assert(after.pagebg !== before.pagebg, 'picking a swatch changes --pagebg (page background): ' + before.pagebg + ' -> ' + after.pagebg);
+  const bodyBg = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+  assert(bodyBg !== 'rgb(235, 232, 227)', 'body background actually repaints on screen: ' + bodyBg);
+  await page.click('.dialog button:has-text("Schließen")');
+  await page.reload();
+  const reloaded = await getVars();
+  assert(reloaded.ci === after.ci && reloaded.pagebg === after.pagebg, 'theme choice (incl. background) persists after reload: ' + JSON.stringify(reloaded));
+
   await context.close();
 
   // ---- Mobile viewport ----
