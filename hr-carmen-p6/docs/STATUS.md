@@ -64,12 +64,6 @@ Auf Wunsch wurden drei Übersichts-Slides umgebaut:
   wörtlich aus den bereits vorhandenen `beispiel`-Feldern übernommen, nichts
   neu erfunden).
 
-Das sind die einzigen inhaltlichen Abweichungen von `reference/P6_V3.html` —
-`qa/p6_diff.js` meldet dafür jetzt absichtlich "3 slides differ" (Slide 2, 4
-und 6), alles andere ist weiterhin identisch. Funktional (`qa/p6_qa.js`,
-inkl. Klick-Navigation von den Karten-Kacheln zu den jeweiligen Karten-Slides)
-unverändert grün, P2 unberührt.
-
 Zusätzlich Slides 47 (Formulierungs-Bibliothek) und 48 (Notfallkarte) auf
 `.grid1` umgestellt (nur Layout, kein Textinhalt geändert — beide hatten
 bereits je zwei Beispielsätze pro Box). Bewusst **nicht** angefasst: Slide 1
@@ -78,6 +72,26 @@ Schritt-für-Schritt-Erklärung ist; die 40 Karten-Slides (7–46) folgen bereit
 dem "eine Sache pro Slide, mit echtem Beispiel"-Prinzip in ihrem eigenen
 etablierten Format (Vorbereitung/Ziel/Reaktionen/Vereinbarung/Follow-up) und
 wurden daher nicht in das Slide-2/4/6-Muster gepresst.
+
+## P6 — "Karte" → "Gesprächskarte"
+
+Auf Wunsch umbenannt: überall, wo bisher "KARTE 1" / "Karte 1" für eine der
+8 Situationskarten stand (Marken-Zeile jeder Karten-Unterseite, Überschrift
+"PASST DIESE KARTE?", die 8 Kacheln auf Slide 6, der "Nächste Karte"-Button),
+steht jetzt "GESPRÄCHSKARTE"/"Gesprächskarte" — durchgesetzt in
+`products/p6.config.js` (generierte Karten-Slides) und
+`products/p6/intro.slides.html` (Slide 2 und 6). "NOTFALLKARTE" (Slide 48,
+anderes Konzept) bleibt unverändert. P2 nicht betroffen — dort gibt es keine
+"Karte 1/2/3"-Nummerierung, das war nur ein P6-Begriff.
+
+Damit weicht jetzt ein Großteil der Slides (43 von 51) inhaltlich von
+`reference/P6_V3.html` ab — `qa/p6_diff.js` zeigt das erwartungsgemäß an.
+Das ist ab jetzt der Normalfall: sobald P6 über den migrierten Ausgangsstand
+hinaus weiterentwickelt wird, wächst diese Zahl mit jeder gewollten
+Änderung. `qa/p6_diff.js` bleibt trotzdem nützlich als Stichprobe, ob eine
+Änderung nur dort auftaucht, wo sie hingehört (und nicht versehentlich noch
+woanders) — nicht mehr als Nachweis "nichts hat sich verändert". Funktional
+(`qa/p6_qa.js`) weiterhin grün, P2 unberührt.
 
 ## P2 — Onboarding-Prozessbundle (neu gebaut, kein Vorgänger-Prototyp)
 

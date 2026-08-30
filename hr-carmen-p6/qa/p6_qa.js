@@ -138,10 +138,10 @@ function assert(cond, msg) {
   await page.click('.slide.active .nav button.btn:not(.alt)');
   assert((await page.locator('.slide.active').getAttribute('data-slide')) === '47', 'card 8 forwards correctly to slide 47 (Bibliothek)');
 
-  // Verify card 1 (non-last) follow-up slide (11) says "Nächste Karte" and forwards to slide 12
+  // Verify card 1 (non-last) follow-up slide (11) says "Nächste Gesprächskarte" and forwards to slide 12
   await page.evaluate(() => window.goTo(11));
   const firstCardBtnText = await page.locator('.slide.active .nav button.btn:not(.alt)').textContent();
-  assert(firstCardBtnText.includes('Nächste Karte'), 'card 1 follow-up next-button says "Nächste Karte": got "' + firstCardBtnText + '"');
+  assert(firstCardBtnText.includes('Nächste Gesprächskarte'), 'card 1 follow-up next-button says "Nächste Gesprächskarte": got "' + firstCardBtnText + '"');
   await page.click('.slide.active .nav button.btn:not(.alt)');
   assert((await page.locator('.slide.active').getAttribute('data-slide')) === '12', 'card 1 forwards correctly to slide 12 (card 2)');
 
