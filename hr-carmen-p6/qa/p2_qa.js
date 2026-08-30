@@ -23,9 +23,11 @@ function assert(cond, msg) {
   assert(await page.locator('.slide.active').count() === 1, 'exactly one active slide on load');
   assert((await page.locator('.slide.active').getAttribute('data-slide')) === '1', 'starts on slide 1');
 
-  async function addEmployee(name) {
+  async function addEmployee(name, position, abteilung) {
     await page.click('button:has-text("MITARBEITER HINZUFÜGEN")');
     await page.fill('#empNameInput', name);
+    if (position) await page.fill('#empPositionInput', position);
+    if (abteilung) await page.fill('#empAbteilungInput', abteilung);
     await page.click('.dialog button:has-text("Hinzufügen")');
   }
 
@@ -40,10 +42,12 @@ function assert(cond, msg) {
 
   // ---- Employees + data separation ----
   await page.evaluate(() => window.goTo(5));
-  await addEmployee('Anna Testperson');
+  await addEmployee('Anna Testperson', 'Teamleitung Vertrieb', 'Vertrieb');
   await addEmployee('Ben Testperson');
   assert((await page.locator('#empCount').textContent()) === '2', 'employee count = 2');
   assert(await page.locator('.tile.activeEmp b').textContent() === 'Ben Testperson', 'last-added employee is active');
+  assert((await page.locator('.tile:has-text("Anna Testperson") .tileSubtitle').textContent()) === 'Teamleitung Vertrieb — Vertrieb', 'Anna tile shows position — Abteilung');
+  assert((await page.locator('.tile:has-text("Ben Testperson") .tileSubtitle').count()) === 0, 'Ben tile has no subtitle (fields left blank)');
 
   await page.evaluate(() => window.goTo(7)); // Tag 30 card
   await page.fill('textarea[data-field="m1_dok"]', 'Ben-Notiz');
@@ -85,6 +89,8 @@ function assert(cond, msg) {
   // ---- Reload persistence ----
   await page.reload();
   assert((await page.locator('#empCount').textContent()) === '20', 'employees persisted after reload');
+  await page.evaluate(() => window.goTo(5));
+  assert((await page.locator('.tile:has-text("Anna Testperson") .tileSubtitle').textContent()) === 'Teamleitung Vertrieb — Vertrieb', 'position/Abteilung persisted after reload');
   await page.evaluate(() => window.goTo(9));
   const perspVal = await page.inputValue('textarea[data-field="m3_perspektive"]');
   assert(perspVal === 'positiv', 'Tag90 field persisted after reload: got "' + perspVal + '"');

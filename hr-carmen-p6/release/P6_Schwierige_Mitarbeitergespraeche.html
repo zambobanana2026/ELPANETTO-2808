@@ -28,6 +28,7 @@ h2{font-size:21px;letter-spacing:-.4px;margin:26px 0 10px}
 .tile,.box{background:white;border:1px solid var(--line);padding:20px;margin-bottom:10px}
 .tile b{display:block;font-size:16px}
 .tile small{display:block;color:#777;line-height:1.45;margin-top:8px}
+.tile small.tileSubtitle{color:var(--ci);font-weight:800;margin-top:2px}
 .tile.activeEmp{outline:2px solid var(--ci);border-color:var(--ci)}
 .tile .rm{float:right;color:var(--red);cursor:pointer;font-size:12px;font-weight:800}
 .box b{display:block;font-size:12px;letter-spacing:1px;color:var(--ci)}
@@ -68,6 +69,8 @@ input[type=text]{width:100%;padding:12px;border:1px solid var(--line);font:inher
 .modal.open{display:flex}
 .dialog{background:var(--paper);width:min(420px,100%);padding:26px;border:1px solid var(--line)}
 .dialog h2{margin-top:0}
+.dialog label{display:block;margin-top:14px}
+.dialog label:first-of-type{margin-top:0}
 .dialog .row{display:flex;gap:10px;margin-top:16px}
 .teamTable{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
 .teamTable th{text-align:left;font-size:10px;letter-spacing:1px;color:var(--ci);padding:8px 6px;border-bottom:2px solid var(--line)}
@@ -352,12 +355,12 @@ input[type=text]{width:100%;padding:12px;border:1px solid var(--line);font:inher
 
     function isFull() { return D.employeeOrder.length >= license.maxEmployees; }
 
-    function add(name) {
+    function add(name, extra) {
       name = (name || '').trim();
       if (!name) return null;
       if (isFull()) return null;
       const id = newId();
-      D.employees[id] = { id: id, name: name };
+      D.employees[id] = Object.assign({ id: id, name: name }, extra || {});
       D.employeeOrder.push(id);
       D.activeEmployeeId = id;
       store.save();
@@ -392,10 +395,12 @@ input[type=text]{width:100%;padding:12px;border:1px solid var(--line);font:inher
           div.style.cursor = 'pointer';
           div.onclick = function () { setActive(id); };
           const small = opts.tileLabel ? opts.tileLabel(bucketFor(id)) : '';
+          const subtitle = opts.tileSubtitle ? opts.tileSubtitle(emp) : '';
           const removeFn = opts.removeFnName || 'removeEmployee';
           div.innerHTML =
             '<span class="rm" onclick="' + removeFn + '(&quot;' + id + '&quot;, event)">entfernen</span>' +
             '<b>' + escapeHtml(emp.name) + '</b>' +
+            (subtitle ? '<small class="tileSubtitle">' + escapeHtml(subtitle) + '</small>' : '') +
             (small ? '<small>' + escapeHtml(small) + '</small>' : '');
           grid.appendChild(div);
         });

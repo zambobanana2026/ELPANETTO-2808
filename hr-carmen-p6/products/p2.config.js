@@ -207,6 +207,9 @@ const initScript = function (data) {
     '    let docCount = 0;\n' +
     '    CARD_META.forEach(function(c){ if((bucket.fields[c.docFieldId]||"").trim()) docCount++; });\n' +
     '    return docCount + " von " + CARD_META.length + " Kernkonversationen dokumentiert";\n' +
+    '  },\n' +
+    '  tileSubtitle: function(emp){\n' +
+    '    return [emp.position, emp.abteilung].filter(function(v){ return (v||"").trim(); }).join(" — ");\n' +
     '  }\n' +
     '});\n' +
     'const choices = MotorEngine.createChoices(store);\n' +
@@ -219,13 +222,17 @@ const initScript = function (data) {
     'function openEmpModal(){\n' +
     '  if(manager.isFull()){ const note=document.getElementById("empLimitNote"); if(note) note.style.display="block"; return; }\n' +
     '  document.getElementById("empNameInput").value = "";\n' +
+    '  document.getElementById("empPositionInput").value = "";\n' +
+    '  document.getElementById("empAbteilungInput").value = "";\n' +
     '  MotorEngine.openModal("empModal");\n' +
     '  document.getElementById("empNameInput").focus();\n' +
     '}\n' +
     'function closeEmpModal(){ MotorEngine.closeModal("empModal"); }\n' +
     'function confirmAddEmployee(){\n' +
     '  const name = document.getElementById("empNameInput").value;\n' +
-    '  const id = manager.add(name);\n' +
+    '  const position = document.getElementById("empPositionInput").value.trim();\n' +
+    '  const abteilung = document.getElementById("empAbteilungInput").value.trim();\n' +
+    '  const id = manager.add(name, { position: position, abteilung: abteilung });\n' +
     '  if(id){ closeEmpModal(); }\n' +
     '  else if((name||"").trim()){ closeEmpModal(); const note=document.getElementById("empLimitNote"); if(note) note.style.display="block"; }\n' +
     '}\n' +

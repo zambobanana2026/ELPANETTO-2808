@@ -101,12 +101,12 @@
 
     function isFull() { return D.employeeOrder.length >= license.maxEmployees; }
 
-    function add(name) {
+    function add(name, extra) {
       name = (name || '').trim();
       if (!name) return null;
       if (isFull()) return null;
       const id = newId();
-      D.employees[id] = { id: id, name: name };
+      D.employees[id] = Object.assign({ id: id, name: name }, extra || {});
       D.employeeOrder.push(id);
       D.activeEmployeeId = id;
       store.save();
@@ -141,10 +141,12 @@
           div.style.cursor = 'pointer';
           div.onclick = function () { setActive(id); };
           const small = opts.tileLabel ? opts.tileLabel(bucketFor(id)) : '';
+          const subtitle = opts.tileSubtitle ? opts.tileSubtitle(emp) : '';
           const removeFn = opts.removeFnName || 'removeEmployee';
           div.innerHTML =
             '<span class="rm" onclick="' + removeFn + '(&quot;' + id + '&quot;, event)">entfernen</span>' +
             '<b>' + escapeHtml(emp.name) + '</b>' +
+            (subtitle ? '<small class="tileSubtitle">' + escapeHtml(subtitle) + '</small>' : '') +
             (small ? '<small>' + escapeHtml(small) + '</small>' : '');
           grid.appendChild(div);
         });
