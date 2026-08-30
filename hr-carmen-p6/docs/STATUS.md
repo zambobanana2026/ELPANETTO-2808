@@ -1,13 +1,18 @@
 # Status — Carmen Next Motor/Config
 
-## P6 Slides 2 & 6 — bewusste Abweichung vom Original-Prototyp
+## P6 Slides 2, 4 & 6 — bewusste Abweichung vom Original-Prototyp
 
-Auf Wunsch wurden zwei Übersichts-Slides umgebaut:
+Auf Wunsch wurden drei Übersichts-Slides umgebaut:
 
 - **Slide 2** ("So funktioniert's"): die 4 Schritte stehen jetzt untereinander
   (neue, generische Motor-Klasse `.grid1` in `engine.css`, analog zum
   bestehenden `.grid4`) statt im 2-Spalten-Grid, jeder Schritt mit mehr
   Erklärung inklusive eines durchgängigen Beispiels ("Julia Berger").
+- **Slide 4** ("Das Carmen-KLAR-System"): K/L/A/R ebenfalls untereinander,
+  jeder Buchstabe mit Beispiel im selben "Julia"-Faden wie Slide 2 (K bezieht
+  sich inhaltlich auf dasselbe Leistungs-Beispiel, R paraphrasiert die echte
+  erste Reaktion aus Karte 1 in `content/cards_p6.json`). Der Abschluss-Kasten
+  ("+ Abschluss und Follow-up") hat ebenfalls ein Beispiel bekommen.
 - **Slide 6** ("Welches Gespräch steht an?"): die 8 Karten-Kacheln ebenfalls
   untereinander, jede mit einem echten Beispiel aus `content/cards_p6.json`
   (Situation + „Nicht sagen"/„Besser sagen"-Kontrast der jeweiligen Karte,
@@ -15,8 +20,8 @@ Auf Wunsch wurden zwei Übersichts-Slides umgebaut:
   neu erfunden).
 
 Das sind die einzigen inhaltlichen Abweichungen von `reference/P6_V3.html` —
-`qa/p6_diff.js` meldet dafür jetzt absichtlich "2 slides differ" (Slide 2 und
-6), alles andere ist weiterhin identisch. Funktional (`qa/p6_qa.js`,
+`qa/p6_diff.js` meldet dafür jetzt absichtlich "3 slides differ" (Slide 2, 4
+und 6), alles andere ist weiterhin identisch. Funktional (`qa/p6_qa.js`,
 inkl. Klick-Navigation von den Karten-Kacheln zu den jeweiligen Karten-Slides)
 unverändert grün, P2 unberührt.
 
