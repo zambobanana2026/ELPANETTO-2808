@@ -1,5 +1,15 @@
 # Status — Carmen Next Motor/Config
 
+## P6 Slide 2 — bewusste Abweichung vom Original-Prototyp
+
+Auf Wunsch wurde Slide 2 ("So funktioniert's") geändert: die 4 Schritte stehen
+jetzt untereinander (neue, generische Motor-Klasse `.grid1` in `engine.css`)
+statt im 2-Spalten-Grid, und jeder Schritt hat mehr Erklärung inklusive eines
+durchgängigen Beispiels ("Julia Berger"). Das ist die einzige inhaltliche
+Abweichung von `reference/P6_V3.html` — `qa/p6_diff.js` meldet dafür jetzt
+absichtlich "1 slides differ" auf Slide 2, alles andere ist weiterhin identisch.
+Funktional (`qa/p6_qa.js`) unverändert grün, P2 unberührt.
+
 ## P2 — Onboarding-Prozessbundle (neu gebaut, kein Vorgänger-Prototyp)
 
 Anders als P6 gab es für P2 noch keine geprüfte interaktive Fassung —
