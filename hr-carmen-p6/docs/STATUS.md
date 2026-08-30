@@ -12,12 +12,38 @@ es in ihrem `initScript` identisch ein, nur der localStorage-Key ist
 produktspezifisch (`p6_theme_v1` / `p2_theme_v1`), damit eine Wahl in P6
 nicht die in P2 überschreibt.
 
-Bewusst begrenzter Eingriff: jedes Modell überschreibt nur `--ci` (Buttons,
-Labels, Marken-Grau) und `--mint` (Akzent/Seitenzahl). `--ink`, `--paper`,
-`--line` sowie die Ampelfarben `--green`/`--orange`/`--red` bleiben über alle
-Modelle hinweg fest, damit Lesbarkeit und die Bedeutung "Erfolg/Warnung/
-Fehler" nicht mit der Marke kippen. Wahl wird wie Mitarbeiterdaten in
-localStorage gespeichert und übersteht Reload.
+**Erste Fassung war unvollständig** — überschrieb nur `--ci`/`--mint`
+(Marke/Akzent), ließ Hintergrund und Text absichtlich fest, um Kontrast
+nicht zu riskieren. Martin hat als Referenz sein eigenes "OP Manager"-Tool
+gezeigt: dort ist jedes Farbmodell ein vollständig abgestimmtes Set aus
+sechs Kanälen (bg/surface/text/accent/border/muted), inklusive eines echten
+Dark-Themes — das war der eigentliche Maßstab. Zweite Fassung jetzt danach
+gebaut: neun Tokens pro Modell (`pagebg`, `paper`, `surface`, `ink`,
+`muted`, `line`, `ci`, `mint`, `num`), alle als **zusammengehöriges Set**
+pro Modell gewählt (nicht einzeln überschrieben), damit Kontrast innerhalb
+eines Modells garantiert bleibt. Dafür mussten alle fest verdrahteten
+`white`/`#fff`/`#777`-Stellen in `engine.css` auf die neuen Tokens
+(`--surface`, `--muted`) umgestellt werden (Karten, Textareas, Inputs,
+Dialoge, Team-Tabelle, Formulierungs-Boxen usw.) — betrifft nur P6 und P2,
+da beide denselben Motor teilen.
+
+9 der 10 Modelle sind helle Varianten (nur `pagebg`/`paper`/`muted`/`line`/
+`ci`/`mint`/`num` wandern mit dem Farbton, `ink`/`surface` bleiben gleich).
+Das zehnte ("Anthrazit (Dunkel)") ist ein echtes dunkles Theme —
+`ink` kippt dort zusätzlich auf hell, `surface` auf dunkel, damit der
+Kontrast stimmt.
+
+**Bewusst weiterhin fest über alle Modelle:** die Ampelfarben
+`--green`/`--orange`/`--red` (Erfolg/Warnung/Fehler darf nicht mit der
+Marke kippen), der helle Grün-Ton hinter angehakten Checkboxen
+(`.choice.on`, fest an `--green` gekoppelt statt an ein Farbmodell), und
+der rote PDF-Druck-Button (`.pdfBtn`, eigenständige feste Aktionsfarbe,
+kein Marken-Token). Print-Ausgabe (`@media print`) bleibt immer reines
+Weiß, unabhängig vom gewählten Bildschirm-Theme — für den PDF-Export
+gewollt.
+
+Wahl wird wie Mitarbeiterdaten in localStorage gespeichert und übersteht
+Reload — inklusive der Hintergrundfarbe, nicht nur des Akzents.
 
 ## P6 Slides 2, 4 & 6 — bewusste Abweichung vom Original-Prototyp
 

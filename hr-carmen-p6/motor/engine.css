@@ -4,13 +4,13 @@
    CI-Tokens 1:1 aus P1 (Referenz) übernommen — nicht verändern, wenn ein neues
    Produkt gebaut wird. Nur der jeweilige products/*.config.js liefert Inhalte.
    ============================================================================ */
-:root{--ink:#252525;--paper:#f6f4f0;--line:#d9d5cf;--mint:#8fe3cf;--ci:#7f7a74;--green:#16a36a;--orange:#ef9b28;--red:#df4545}
-*{box-sizing:border-box} body{margin:0;background:#ebe8e3;color:var(--ink);font-family:Arial,Helvetica,sans-serif}
+:root{--ink:#252525;--paper:#f6f4f0;--pagebg:#ebe8e3;--surface:#ffffff;--muted:#777672;--line:#d9d5cf;--mint:#8fe3cf;--ci:#7f7a74;--num:#55cdb2;--green:#16a36a;--orange:#ef9b28;--red:#df4545}
+*{box-sizing:border-box} body{margin:0;background:var(--pagebg);color:var(--ink);font-family:Arial,Helvetica,sans-serif}
 #app{max-width:1180px;margin:0 auto;padding:22px}
 .slide{display:none;background:var(--paper);min-height:760px;padding:44px 48px 60px;position:relative;border:1px solid var(--line)}
 .slide.active{display:block}
-.num{position:absolute;right:42px;top:34px;font-size:34px;font-weight:800;color:#55cdb2;letter-spacing:-2px}
-.brand{font-size:12px;letter-spacing:3px;font-weight:800;color:#777}
+.num{position:absolute;right:42px;top:34px;font-size:34px;font-weight:800;color:var(--num);letter-spacing:-2px}
+.brand{font-size:12px;letter-spacing:3px;font-weight:800;color:var(--muted)}
 .ctxbar{font-size:11px;letter-spacing:1px;color:var(--ci);font-weight:800;margin-top:6px}
 .ctxbar b{color:var(--ink)}
 h1{font-size:clamp(28px,4.6vw,52px);line-height:1.02;letter-spacing:-1.5px;margin:30px 0 18px;max-width:900px}
@@ -19,44 +19,44 @@ h2{font-size:21px;letter-spacing:-.4px;margin:26px 0 10px}
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:22px 0}
 .grid4{grid-template-columns:repeat(4,minmax(0,1fr))}
 .grid1{grid-template-columns:1fr}
-.tile,.box{background:white;border:1px solid var(--line);padding:20px;margin-bottom:10px}
+.tile,.box{background:var(--surface);border:1px solid var(--line);padding:20px;margin-bottom:10px}
 .tile b{display:block;font-size:16px}
-.tile small{display:block;color:#777;line-height:1.45;margin-top:8px}
+.tile small{display:block;color:var(--muted);line-height:1.45;margin-top:8px}
 .tile small.tileSubtitle{color:var(--ci);font-weight:800;margin-top:2px}
 .tile.activeEmp{outline:2px solid var(--ci);border-color:var(--ci)}
 .tile .rm{float:right;color:var(--red);cursor:pointer;font-size:12px;font-weight:800}
 .box b{display:block;font-size:12px;letter-spacing:1px;color:var(--ci)}
 .btn{border:0;background:var(--ci);color:white;padding:13px 18px;font-weight:800;letter-spacing:.5px;cursor:pointer;margin-top:12px;font-size:14px}
-.btn.alt{background:white;color:var(--ink);border:1px solid var(--line)}
-textarea{width:100%;padding:12px;border:1px solid var(--line);background:white;font:inherit;min-height:78px;resize:vertical}
-input[type=text]{width:100%;padding:12px;border:1px solid var(--line);font:inherit;margin-top:8px}
+.btn.alt{background:var(--surface);color:var(--ink);border:1px solid var(--line)}
+textarea{width:100%;padding:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;min-height:78px;resize:vertical}
+input[type=text]{width:100%;padding:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;margin-top:8px}
 .checks{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0}
-.choice{border:1px solid var(--line);background:white;padding:12px 14px;cursor:pointer;font-size:14px}
+.choice{border:1px solid var(--line);background:var(--surface);padding:12px 14px;cursor:pointer;font-size:14px}
 .choice.on{border-color:var(--green);background:#eafbf3;outline:1px solid var(--green)}
-.note{border-left:4px solid var(--mint);padding:14px 16px;background:white;margin:18px 0;line-height:1.5}
+.note{border-left:4px solid var(--mint);padding:14px 16px;background:var(--surface);margin:18px 0;line-height:1.5}
 .nav{display:flex;justify-content:space-between;gap:10px;margin-top:34px}
 .nav .homeBtn{flex:0 0 auto}
-.qa{background:#fff;border:1px solid var(--line);padding:12px 14px;margin:8px 0;font-size:14px;line-height:1.5}
+.qa{background:var(--surface);border:1px solid var(--line);padding:12px 14px;margin:8px 0;font-size:14px;line-height:1.5}
 .qa b{display:block;margin-bottom:5px}
 .qlist{padding-left:20px;line-height:1.7}
 .compareHead{display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:11px;letter-spacing:1px;color:var(--ci);font-weight:800;margin-top:14px}
 .compareRow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:6px 0}
-.compareRow div{background:#fff;border:1px solid var(--line);padding:10px;font-size:13px;line-height:1.4}
+.compareRow div{background:var(--surface);border:1px solid var(--line);padding:10px;font-size:13px;line-height:1.4}
 .compareRow .no{border-left:3px solid var(--red)}
 .compareRow .yes{border-left:3px solid var(--green)}
 .weeklyCheck{margin-top:22px;border-top:5px solid var(--ci);padding-top:16px}
-.weeklyCheckIntro{background:#fff;border:1px solid var(--line);padding:14px 16px;margin:14px 0 12px}
+.weeklyCheckIntro{background:var(--surface);border:1px solid var(--line);padding:14px 16px;margin:14px 0 12px}
 .weeklyCheckIntro b{display:block;font-size:12px;letter-spacing:1.2px;color:var(--ci)}
 .weeklyCheckGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
-.weeklyCheckCard{background:#fff;border:1px solid var(--line);padding:14px}
+.weeklyCheckCard{background:var(--surface);border:1px solid var(--line);padding:14px}
 .weeklyCheckCard label{display:block;font-size:11px;font-weight:800;letter-spacing:.5px;margin-bottom:8px;color:var(--ci)}
-.reportBox{border:1px solid var(--line);background:#fff;padding:16px;margin:10px 0}
+.reportBox{border:1px solid var(--line);background:var(--surface);padding:16px;margin:10px 0}
 .reportBox b{display:block;font-size:11px;letter-spacing:1.2px;color:var(--ci);margin-bottom:9px}
 .bigCounts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0}
-.bigCounts div{border:1px solid var(--line);background:#fff;padding:14px;text-align:center}
+.bigCounts div{border:1px solid var(--line);background:var(--surface);padding:14px;text-align:center}
 .bigCounts strong{display:block;font-size:36px}
-.bigCounts small{display:block;font-size:10px;margin-top:6px;color:#777}
-.ctaHero{margin:22px 0;border:1px solid var(--line);padding:22px;background:#fff}
+.bigCounts small{display:block;font-size:10px;margin-top:6px;color:var(--muted)}
+.ctaHero{margin:22px 0;border:1px solid var(--line);padding:22px;background:var(--surface)}
 .ctaHero>b{font-size:11px;letter-spacing:1.5px;color:var(--ci)}
 .pdfBtn{border:0;border-radius:999px;background:#e12b2b;color:#fff;font-weight:900;padding:11px 18px;font-size:12px;letter-spacing:.3px;cursor:pointer;margin-top:12px;margin-right:8px}
 .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:9;align-items:center;justify-content:center;padding:20px}
@@ -69,7 +69,7 @@ input[type=text]{width:100%;padding:12px;border:1px solid var(--line);font:inher
 .teamTable{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
 .teamTable th{text-align:left;font-size:10px;letter-spacing:1px;color:var(--ci);padding:8px 6px;border-bottom:2px solid var(--line)}
 .teamTable td{padding:9px 6px;border-bottom:1px solid var(--line)}
-.themeTrigger{position:fixed;left:16px;top:16px;z-index:9;width:42px;height:42px;border-radius:999px;border:1px solid var(--line);background:#fff;cursor:pointer;font-size:18px;box-shadow:0 2px 6px rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;padding:0}
+.themeTrigger{position:fixed;left:16px;top:16px;z-index:9;width:42px;height:42px;border-radius:999px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-size:18px;box-shadow:0 2px 6px rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;padding:0}
 .themeSwatches{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-top:14px}
 .themeSwatch{aspect-ratio:1;border-radius:8px;cursor:pointer;border:2px solid var(--line)}
 .themeSwatch.active{border-color:var(--ink)}
