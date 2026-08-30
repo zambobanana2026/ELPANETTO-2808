@@ -76,6 +76,10 @@ input[type=text]{width:100%;padding:12px;border:1px solid var(--line);font:inher
 .teamTable{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
 .teamTable th{text-align:left;font-size:10px;letter-spacing:1px;color:var(--ci);padding:8px 6px;border-bottom:2px solid var(--line)}
 .teamTable td{padding:9px 6px;border-bottom:1px solid var(--line)}
+.themeTrigger{position:fixed;left:16px;top:16px;z-index:9;width:42px;height:42px;border-radius:999px;border:1px solid var(--line);background:#fff;cursor:pointer;font-size:18px;box-shadow:0 2px 6px rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;padding:0}
+.themeSwatches{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-top:14px}
+.themeSwatch{aspect-ratio:1;border-radius:8px;cursor:pointer;border:2px solid var(--line)}
+.themeSwatch.active{border-color:var(--ink)}
 @media(max-width:700px){
  body{background:var(--paper)}
  #app{max-width:480px;margin:0 auto;padding:0}
@@ -86,8 +90,10 @@ input[type=text]{width:100%;padding:12px;border:1px solid var(--line);font:inher
  .nav{position:fixed;z-index:8;bottom:0;left:50%;transform:translateX(-50%);width:min(480px,100%);margin:0;background:var(--paper);border-top:1px solid var(--line);padding:12px}
  .nav .btn{margin:0;padding:12px}
  .teamTable{font-size:11px}
+ .themeTrigger{left:10px;top:10px;width:38px;height:38px}
 }
 @media print{
+ .themeTrigger{display:none!important}
  body{background:#fff}
  #app{max-width:100%;padding:0}
  .slide{display:block!important;min-height:0;border:0;page-break-after:always;padding:20px}
@@ -212,14 +218,14 @@ input[type=text]{width:100%;padding:12px;border:1px solid var(--line);font:inher
 <section class="slide" data-slide="47"><div class="brand">P6 / BIBLIOTHEK</div><div class="num">47</div>
 <h1>FORMULIERUNGS-<br>BIBLIOTHEK.</h1>
 <p class="lead">Fertige Sätze für die wiederkehrenden Momente eines schwierigen Gesprächs.</p>
-<div class="grid"><div class="box"><b>SCHWIERIGES GESPRÄCH BEGINNEN</b><p style="margin:8px 0 0;font-size:14px">„Ich möchte heute ein konkretes Thema ansprechen, weil es Auswirkungen auf die Arbeit hat.“</p><p style="margin:8px 0 0;font-size:14px">„Mir ist wichtig, dass wir das sachlich klären und auch deine Sicht hören.“</p></div><div class="box"><b>KRITIK SACHLICH ÄUSSERN</b><p style="margin:8px 0 0;font-size:14px">„Am … war … vereinbart. Beobachtet habe ich … . Die Auswirkung war … .“</p><p style="margin:8px 0 0;font-size:14px">„Ich bewerte nicht dich als Person. Ich spreche über dieses konkrete Verhalten und die Wirkung.“</p></div><div class="box"><b>WIDERSTAND AUFNEHMEN</b><p style="margin:8px 0 0;font-size:14px">„Ich höre, dass du das anders einschätzt. Lass uns bei der konkreten Situation bleiben.“</p><p style="margin:8px 0 0;font-size:14px">„Was genau ist dein Einwand, und woran könnten wir ihn prüfen?“</p></div><div class="box"><b>GRENZEN SETZEN</b><p style="margin:8px 0 0;font-size:14px">„Ich spreche gern weiter, aber nicht in diesem Ton.“</p><p style="margin:8px 0 0;font-size:14px">„Kritik ist möglich. Persönliche Angriffe sind keine akzeptable Form der Zusammenarbeit.“</p></div><div class="box"><b>BEI EMOTIONEN RUHIG BLEIBEN</b><p style="margin:8px 0 0;font-size:14px">„Ich sehe, dass dich das gerade stark beschäftigt. Wir können kurz pausieren und danach sachlich weitersprechen.“</p><p style="margin:8px 0 0;font-size:14px">„Du musst das nicht sofort beantworten. Die Vereinbarung und der nächste Termin bleiben trotzdem bestehen.“</p></div><div class="box"><b>ERWARTUNGEN FORMULIEREN</b><p style="margin:8px 0 0;font-size:14px">„Künftig erwarte ich konkret, dass … bis … erledigt und im … dokumentiert ist.“</p><p style="margin:8px 0 0;font-size:14px">„Woran können wir beide erkennen, dass die Vereinbarung umgesetzt ist?“</p></div><div class="box"><b>VEREINBARUNG TREFFEN</b><p style="margin:8px 0 0;font-size:14px">„Lass uns festhalten: Du machst … bis … . Ich unterstütze durch … . Wir prüfen das am … .“</p><p style="margin:8px 0 0;font-size:14px">„Kannst du bitte in deinen Worten zusammenfassen, was du mitnimmst?“</p></div><div class="box"><b>GESPRÄCH BEENDEN</b><p style="margin:8px 0 0;font-size:14px">„Wir haben heute … vereinbart. Der nächste Schritt ist … .“</p><p style="margin:8px 0 0;font-size:14px">„Wenn sich vorher ein Hindernis zeigt, meldest du dich bitte bis … .“</p></div><div class="box"><b>FOLLOW-UP ANKÜNDIGEN</b><p style="margin:8px 0 0;font-size:14px">„Wir warten nicht bis zum nächsten Jahresgespräch, sondern prüfen den Stand am … .“</p><p style="margin:8px 0 0;font-size:14px">„Beim Follow-up schauen wir auf die Umsetzung, nicht auf gute Absichten.“</p></div><div class="box"><b>ANERKENNUNG AUSSPRECHEN</b><p style="margin:8px 0 0;font-size:14px">„Mir ist aufgefallen, dass … . Das hat konkret bewirkt, dass … .“</p><p style="margin:8px 0 0;font-size:14px">„Genau das würde ich mir öfter von dir wünschen.“</p></div></div>
+<div class="grid grid1"><div class="box"><b>SCHWIERIGES GESPRÄCH BEGINNEN</b><p style="margin:8px 0 0;font-size:14px">„Ich möchte heute ein konkretes Thema ansprechen, weil es Auswirkungen auf die Arbeit hat.“</p><p style="margin:8px 0 0;font-size:14px">„Mir ist wichtig, dass wir das sachlich klären und auch deine Sicht hören.“</p></div><div class="box"><b>KRITIK SACHLICH ÄUSSERN</b><p style="margin:8px 0 0;font-size:14px">„Am … war … vereinbart. Beobachtet habe ich … . Die Auswirkung war … .“</p><p style="margin:8px 0 0;font-size:14px">„Ich bewerte nicht dich als Person. Ich spreche über dieses konkrete Verhalten und die Wirkung.“</p></div><div class="box"><b>WIDERSTAND AUFNEHMEN</b><p style="margin:8px 0 0;font-size:14px">„Ich höre, dass du das anders einschätzt. Lass uns bei der konkreten Situation bleiben.“</p><p style="margin:8px 0 0;font-size:14px">„Was genau ist dein Einwand, und woran könnten wir ihn prüfen?“</p></div><div class="box"><b>GRENZEN SETZEN</b><p style="margin:8px 0 0;font-size:14px">„Ich spreche gern weiter, aber nicht in diesem Ton.“</p><p style="margin:8px 0 0;font-size:14px">„Kritik ist möglich. Persönliche Angriffe sind keine akzeptable Form der Zusammenarbeit.“</p></div><div class="box"><b>BEI EMOTIONEN RUHIG BLEIBEN</b><p style="margin:8px 0 0;font-size:14px">„Ich sehe, dass dich das gerade stark beschäftigt. Wir können kurz pausieren und danach sachlich weitersprechen.“</p><p style="margin:8px 0 0;font-size:14px">„Du musst das nicht sofort beantworten. Die Vereinbarung und der nächste Termin bleiben trotzdem bestehen.“</p></div><div class="box"><b>ERWARTUNGEN FORMULIEREN</b><p style="margin:8px 0 0;font-size:14px">„Künftig erwarte ich konkret, dass … bis … erledigt und im … dokumentiert ist.“</p><p style="margin:8px 0 0;font-size:14px">„Woran können wir beide erkennen, dass die Vereinbarung umgesetzt ist?“</p></div><div class="box"><b>VEREINBARUNG TREFFEN</b><p style="margin:8px 0 0;font-size:14px">„Lass uns festhalten: Du machst … bis … . Ich unterstütze durch … . Wir prüfen das am … .“</p><p style="margin:8px 0 0;font-size:14px">„Kannst du bitte in deinen Worten zusammenfassen, was du mitnimmst?“</p></div><div class="box"><b>GESPRÄCH BEENDEN</b><p style="margin:8px 0 0;font-size:14px">„Wir haben heute … vereinbart. Der nächste Schritt ist … .“</p><p style="margin:8px 0 0;font-size:14px">„Wenn sich vorher ein Hindernis zeigt, meldest du dich bitte bis … .“</p></div><div class="box"><b>FOLLOW-UP ANKÜNDIGEN</b><p style="margin:8px 0 0;font-size:14px">„Wir warten nicht bis zum nächsten Jahresgespräch, sondern prüfen den Stand am … .“</p><p style="margin:8px 0 0;font-size:14px">„Beim Follow-up schauen wir auf die Umsetzung, nicht auf gute Absichten.“</p></div><div class="box"><b>ANERKENNUNG AUSSPRECHEN</b><p style="margin:8px 0 0;font-size:14px">„Mir ist aufgefallen, dass … . Das hat konkret bewirkt, dass … .“</p><p style="margin:8px 0 0;font-size:14px">„Genau das würde ich mir öfter von dir wünschen.“</p></div></div>
 <div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div>
 </section>
 
 <section class="slide" data-slide="48"><div class="brand">P6 / NOTFALLKARTE</div><div class="num">48</div>
 <h1>WENN DAS<br>GESPRÄCH KIPPT.</h1>
 <p class="lead">Wenn eine Situation eskaliert oder der Gesprächsrahmen nicht mehr sicher ist: Gespräch ruhig beenden und einen geeigneten weiteren Rahmen organisieren.</p>
-<div class="grid"><div class="box"><b>Mitarbeitende wird laut</b><p style="margin:8px 0 2px"><span style="color:var(--red);font-weight:800">Nicht:</span> Lautstärke spiegeln oder drohen</p><p style="margin:2px 0 0"><span style="color:var(--green);font-weight:800">Stattdessen:</span> „Ich möchte das klären. Wir setzen kurz ab, sprechen aber sachlich weiter.“</p></div><div class="box"><b>Person wird emotional / Diskussion wird verweigert</b><p style="margin:8px 0 2px"><span style="color:var(--red);font-weight:800">Nicht:</span> Gefühle abwerten oder sofort lösen wollen</p><p style="margin:2px 0 0"><span style="color:var(--green);font-weight:800">Stattdessen:</span> „Ich sehe, dass dich das trifft. Möchtest du kurz pausieren?“</p></div><div class="box"><b>Person antwortet nicht mehr</b><p style="margin:8px 0 2px"><span style="color:var(--red);font-weight:800">Nicht:</span> Druck erhöhen oder die Person vorführen</p><p style="margin:2px 0 0"><span style="color:var(--green);font-weight:800">Stattdessen:</span> „Du musst nicht sofort alles beantworten. Wir halten fest, was heute geklärt werden kann, und vereinbaren den nächsten Termin.“</p></div><div class="box"><b>Person droht mit Kündigung</b><p style="margin:8px 0 2px"><span style="color:var(--red);font-weight:800">Nicht:</span> Im Affekt Gegenangebote oder Drohungen machen</p><p style="margin:2px 0 0"><span style="color:var(--green);font-weight:800">Stattdessen:</span> „Ich höre, dass du über eine Kündigung nachdenkst. Wir bleiben zunächst bei dem Thema, das wir heute klären wollten.“</p></div><div class="box"><b>„Dann kündige ich eben.“</b><p style="margin:8px 0 2px"><span style="color:var(--red);font-weight:800">Nicht:</span> „Dann mach doch“ sagen</p><p style="margin:2px 0 0"><span style="color:var(--green);font-weight:800">Stattdessen:</span> „Das ist deine Entscheidung. Ich möchte trotzdem die aktuelle Arbeitssituation und den nächsten sachlichen Schritt klären.“</p></div><div class="box"><b>Unfaire Behandlung wird behauptet</b><p style="margin:8px 0 2px"><span style="color:var(--red);font-weight:800">Nicht:</span> Sofort widersprechen oder abwiegeln</p><p style="margin:2px 0 0"><span style="color:var(--green);font-weight:800">Stattdessen:</span> „Ich nehme den Vorwurf ernst. Bitte nenne mir ein konkretes Beispiel, damit wir es prüfen können.“</p></div><div class="box"><b>Verweis auf andere Kolleginnen</b><p style="margin:8px 0 2px"><span style="color:var(--red);font-weight:800">Nicht:</span> Thema auf alle ausweiten</p><p style="margin:2px 0 0"><span style="color:var(--green);font-weight:800">Stattdessen:</span> „Ich notiere den weiteren Hinweis und prüfe ihn separat. Heute bleiben wir bei deiner konkreten Situation.“</p></div><div class="box"><b>Gespräch driftet ab</b><p style="margin:8px 0 2px"><span style="color:var(--red);font-weight:800">Nicht:</span> Alles gleichzeitig bearbeiten</p><p style="margin:2px 0 0"><span style="color:var(--green);font-weight:800">Stattdessen:</span> „Das ist ein eigenes Thema. Ich parke es und führe uns zum vereinbarten Gesprächsziel zurück.“</p></div></div>
+<div class="grid grid1"><div class="box"><b>Mitarbeitende wird laut</b><p style="margin:8px 0 2px"><span style="color:var(--red);font-weight:800">Nicht:</span> Lautstärke spiegeln oder drohen</p><p style="margin:2px 0 0"><span style="color:var(--green);font-weight:800">Stattdessen:</span> „Ich möchte das klären. Wir setzen kurz ab, sprechen aber sachlich weiter.“</p></div><div class="box"><b>Person wird emotional / Diskussion wird verweigert</b><p style="margin:8px 0 2px"><span style="color:var(--red);font-weight:800">Nicht:</span> Gefühle abwerten oder sofort lösen wollen</p><p style="margin:2px 0 0"><span style="color:var(--green);font-weight:800">Stattdessen:</span> „Ich sehe, dass dich das trifft. Möchtest du kurz pausieren?“</p></div><div class="box"><b>Person antwortet nicht mehr</b><p style="margin:8px 0 2px"><span style="color:var(--red);font-weight:800">Nicht:</span> Druck erhöhen oder die Person vorführen</p><p style="margin:2px 0 0"><span style="color:var(--green);font-weight:800">Stattdessen:</span> „Du musst nicht sofort alles beantworten. Wir halten fest, was heute geklärt werden kann, und vereinbaren den nächsten Termin.“</p></div><div class="box"><b>Person droht mit Kündigung</b><p style="margin:8px 0 2px"><span style="color:var(--red);font-weight:800">Nicht:</span> Im Affekt Gegenangebote oder Drohungen machen</p><p style="margin:2px 0 0"><span style="color:var(--green);font-weight:800">Stattdessen:</span> „Ich höre, dass du über eine Kündigung nachdenkst. Wir bleiben zunächst bei dem Thema, das wir heute klären wollten.“</p></div><div class="box"><b>„Dann kündige ich eben.“</b><p style="margin:8px 0 2px"><span style="color:var(--red);font-weight:800">Nicht:</span> „Dann mach doch“ sagen</p><p style="margin:2px 0 0"><span style="color:var(--green);font-weight:800">Stattdessen:</span> „Das ist deine Entscheidung. Ich möchte trotzdem die aktuelle Arbeitssituation und den nächsten sachlichen Schritt klären.“</p></div><div class="box"><b>Unfaire Behandlung wird behauptet</b><p style="margin:8px 0 2px"><span style="color:var(--red);font-weight:800">Nicht:</span> Sofort widersprechen oder abwiegeln</p><p style="margin:2px 0 0"><span style="color:var(--green);font-weight:800">Stattdessen:</span> „Ich nehme den Vorwurf ernst. Bitte nenne mir ein konkretes Beispiel, damit wir es prüfen können.“</p></div><div class="box"><b>Verweis auf andere Kolleginnen</b><p style="margin:8px 0 2px"><span style="color:var(--red);font-weight:800">Nicht:</span> Thema auf alle ausweiten</p><p style="margin:2px 0 0"><span style="color:var(--green);font-weight:800">Stattdessen:</span> „Ich notiere den weiteren Hinweis und prüfe ihn separat. Heute bleiben wir bei deiner konkreten Situation.“</p></div><div class="box"><b>Gespräch driftet ab</b><p style="margin:8px 0 2px"><span style="color:var(--red);font-weight:800">Nicht:</span> Alles gleichzeitig bearbeiten</p><p style="margin:2px 0 0"><span style="color:var(--green);font-weight:800">Stattdessen:</span> „Das ist ein eigenes Thema. Ich parke es und führe uns zum vereinbarten Gesprächsziel zurück.“</p></div></div>
 <div class="note">Diese Toolbox ersetzt keine individuelle rechtliche oder fachliche Einschätzung.</div>
 <div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div>
 </section>
@@ -257,6 +263,14 @@ input[type=text]{width:100%;padding:12px;border:1px solid var(--line);font:inher
 <h2>MITARBEITER HINZUFÜGEN</h2>
 <label>Name<input type="text" id="empNameInput" placeholder="z. B. Julia Berger"></label>
 <div class="row"><button class="btn alt" onclick="closeEmpModal()">Abbrechen</button><button class="btn" onclick="confirmAddEmployee()">Hinzufügen</button></div>
+</div></div>
+
+<button class="themeTrigger" onclick="openThemeModal()" title="Farbe ändern" aria-label="Farbe ändern">🎨</button>
+<div class="modal" id="themeModal"><div class="dialog">
+<h2>FARBE WÄHLEN</h2>
+<p style="margin:0;color:var(--ci);font-size:13px">Zehn abgestimmte Farbmodelle — jederzeit wechselbar, bleibt gespeichert.</p>
+<div class="themeSwatches" id="themeSwatches"></div>
+<div class="row"><button class="btn alt" onclick="closeThemeModal()">Schließen</button></div>
 </div></div>
 
 </div>
@@ -490,6 +504,62 @@ input[type=text]{width:100%;padding:12px;border:1px solid var(--line);font:inher
   }
 
   // ---------------------------------------------------------------------
+  // Farbmodelle: überschreibt nur die beiden Marken-Tokens --ci und --mint
+  // (Buttons/Labels bzw. Akzent/Seitenzahl). --ink, --paper, --line und die
+  // Ampelfarben (--green/--orange/--red) bleiben für Lesbarkeit und
+  // gleichbleibende Bedeutung (Erfolg/Warnung/Fehler) über alle Modelle
+  // hinweg fest. Persistiert die Wahl in localStorage, damit sie einen
+  // Reload übersteht — genau wie Mitarbeiterdaten.
+  // ---------------------------------------------------------------------
+  const DEFAULT_THEMES = [
+    { id: 'salbei', name: 'Salbei (Standard)', ci: '#7f7a74', mint: '#8fe3cf' },
+    { id: 'ozean', name: 'Ozean', ci: '#3867b0', mint: '#8fc7e3' },
+    { id: 'bordeaux', name: 'Bordeaux', ci: '#7a3b3b', mint: '#e3a5a5' },
+    { id: 'wald', name: 'Waldgrün', ci: '#2f6b4f', mint: '#a5e3c0' },
+    { id: 'terrakotta', name: 'Terrakotta', ci: '#a2542f', mint: '#f0c39a' },
+    { id: 'graphit', name: 'Graphit', ci: '#4a5568', mint: '#a8c5e3' },
+    { id: 'aubergine', name: 'Aubergine', ci: '#5b3a6b', mint: '#c9a8e3' },
+    { id: 'senf', name: 'Senfgelb', ci: '#8a6d1f', mint: '#f0dc9a' },
+    { id: 'petrol', name: 'Petrol', ci: '#1d6b6b', mint: '#8fe3d8' },
+    { id: 'anthrazit', name: 'Anthrazit', ci: '#3a3a3a', mint: '#c9c9c9' }
+  ];
+
+  function createColorThemes(themes, storageKey) {
+    const KEY = storageKey || 'carmen_theme_v1';
+    const list = themes || DEFAULT_THEMES;
+    function find(id) {
+      let t = null;
+      for (let i = 0; i < list.length; i++) { if (list[i].id === id) t = list[i]; }
+      return t || list[0];
+    }
+    function apply(id) {
+      const t = find(id);
+      document.documentElement.style.setProperty('--ci', t.ci);
+      document.documentElement.style.setProperty('--mint', t.mint);
+      try { localStorage.setItem(KEY, t.id); } catch (e) { /* storage unavailable */ }
+    }
+    function current() {
+      try { return localStorage.getItem(KEY) || list[0].id; } catch (e) { return list[0].id; }
+    }
+    function init() { apply(current()); }
+    function renderSwatches(selector) {
+      const el = document.querySelector(selector);
+      if (!el) return;
+      el.innerHTML = '';
+      const active = current();
+      list.forEach(function (t) {
+        const btn = document.createElement('div');
+        btn.className = 'themeSwatch' + (t.id === active ? ' active' : '');
+        btn.title = t.name;
+        btn.style.background = 'linear-gradient(135deg, ' + t.ci + ' 50%, ' + t.mint + ' 50%)';
+        btn.onclick = function () { apply(t.id); renderSwatches(selector); };
+        el.appendChild(btn);
+      });
+    }
+    return { apply: apply, current: current, init: init, renderSwatches: renderSwatches, themes: list };
+  }
+
+  // ---------------------------------------------------------------------
   // Team-Report: iteriert alle Mitarbeitenden, lässt das Produkt pro Person
   // eine Tabellenzeile + Zählwerte berechnen (rowFn), summiert automatisch.
   // Der letzte Eintrag in totalsSelectors bekommt immer die Mitarbeiterzahl.
@@ -532,6 +602,8 @@ input[type=text]{width:100%;padding:12px;border:1px solid var(--line);font:inher
     bindFields: bindFields,
     restoreFields: restoreFields,
     createChoices: createChoices,
+    createColorThemes: createColorThemes,
+    DEFAULT_THEMES: DEFAULT_THEMES,
     renderTeamReport: renderTeamReport,
     openModal: openModal,
     closeModal: closeModal
@@ -556,8 +628,11 @@ const manager = MotorEngine.createEmployeeManager({
   }
 });
 const choices = MotorEngine.createChoices(store);
+const theme = MotorEngine.createColorThemes(MotorEngine.DEFAULT_THEMES, "p6_theme_v1");
 const nav = MotorEngine.createNav();
 
+function openThemeModal(){ theme.renderSwatches("#themeSwatches"); MotorEngine.openModal("themeModal"); }
+function closeThemeModal(){ MotorEngine.closeModal("themeModal"); }
 function goTo(n){ nav.goTo(n); }
 function nextSlide(){ nav.next(); }
 function prevSlide(){ nav.prev(); }
@@ -601,6 +676,7 @@ nav.onEnter(49, function(){
 });
 
 document.addEventListener("DOMContentLoaded", function(){
+  theme.init();
   manager.render();
   choices.bindAll();
   MotorEngine.bindFields(store, manager);

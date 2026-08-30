@@ -163,6 +163,20 @@ function assert(cond, msg) {
   const legalText = await page.locator('.slide.active .note').textContent();
   assert(legalText.includes('keine individuelle Rechtsberatung'), 'legal disclaimer present on slide 3');
 
+  // ---- Color theme picker ----
+  await page.click('.themeTrigger');
+  assert(await page.locator('#themeModal').evaluate(el => el.classList.contains('open')), 'theme modal opens');
+  assert((await page.locator('.themeSwatch').count()) === 10, 'exactly 10 theme swatches rendered');
+  const defaultCi = await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--ci').trim());
+  await page.locator('.themeSwatch').nth(2).click(); // pick 3rd preset (Bordeaux)
+  const pickedCi = await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--ci').trim());
+  assert(pickedCi !== defaultCi, 'picking a swatch changes --ci: ' + defaultCi + ' -> ' + pickedCi);
+  await page.click('.dialog button:has-text("Schließen")');
+  assert(!(await page.locator('#themeModal').evaluate(el => el.classList.contains('open'))), 'theme modal closes');
+  await page.reload();
+  const reloadedCi = await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--ci').trim());
+  assert(reloadedCi === pickedCi, 'theme choice persists after reload: ' + reloadedCi);
+
   // ---- Mobile viewport ----
   await context.close();
   context = await browser.newContext({ viewport: { width: 390, height: 844 } });

@@ -1,5 +1,24 @@
 # Status — Carmen Next Motor/Config
 
+## Farbmodelle — neue, generische Motor-Funktion (P6 + P2)
+
+Auf Wunsch jederzeit wechselbare Farbschemata: ein kleiner Kreis-Button
+(🎨) fixiert oben links, auf jeder Slide sichtbar (liegt außerhalb der
+`.slide`-Sections, damit er die Navigation übersteht), öffnet ein Modal mit
+10 fertigen Farbmodellen. Implementiert in `motor/engine.js`
+(`createColorThemes` + `DEFAULT_THEMES`) und `motor/engine.css`
+(`.themeTrigger`, `.themeSwatches`, `.themeSwatch`) — beide Produkte binden
+es in ihrem `initScript` identisch ein, nur der localStorage-Key ist
+produktspezifisch (`p6_theme_v1` / `p2_theme_v1`), damit eine Wahl in P6
+nicht die in P2 überschreibt.
+
+Bewusst begrenzter Eingriff: jedes Modell überschreibt nur `--ci` (Buttons,
+Labels, Marken-Grau) und `--mint` (Akzent/Seitenzahl). `--ink`, `--paper`,
+`--line` sowie die Ampelfarben `--green`/`--orange`/`--red` bleiben über alle
+Modelle hinweg fest, damit Lesbarkeit und die Bedeutung "Erfolg/Warnung/
+Fehler" nicht mit der Marke kippen. Wahl wird wie Mitarbeiterdaten in
+localStorage gespeichert und übersteht Reload.
+
 ## P6 Slides 2, 4 & 6 — bewusste Abweichung vom Original-Prototyp
 
 Auf Wunsch wurden drei Übersichts-Slides umgebaut:
@@ -24,6 +43,15 @@ Das sind die einzigen inhaltlichen Abweichungen von `reference/P6_V3.html` —
 und 6), alles andere ist weiterhin identisch. Funktional (`qa/p6_qa.js`,
 inkl. Klick-Navigation von den Karten-Kacheln zu den jeweiligen Karten-Slides)
 unverändert grün, P2 unberührt.
+
+Zusätzlich Slides 47 (Formulierungs-Bibliothek) und 48 (Notfallkarte) auf
+`.grid1` umgestellt (nur Layout, kein Textinhalt geändert — beide hatten
+bereits je zwei Beispielsätze pro Box). Bewusst **nicht** angefasst: Slide 1
+(Hero) bleibt mehrspaltig, weil es eine Marketing-Kachelreihe und keine
+Schritt-für-Schritt-Erklärung ist; die 40 Karten-Slides (7–46) folgen bereits
+dem "eine Sache pro Slide, mit echtem Beispiel"-Prinzip in ihrem eigenen
+etablierten Format (Vorbereitung/Ziel/Reaktionen/Vereinbarung/Follow-up) und
+wurden daher nicht in das Slide-2/4/6-Muster gepresst.
 
 ## P2 — Onboarding-Prozessbundle (neu gebaut, kein Vorgänger-Prototyp)
 

@@ -112,6 +112,19 @@ function assert(cond, msg) {
   assert(trText.includes('§ 622 Abs. 3 BGB'), 'BGB reference present on Trennung slide');
   assert(trText.includes('ersetzen keine individuelle Rechtsberatung'), 'general disclaimer repeated on Trennung slide');
 
+  // ---- Color theme picker ----
+  await page.click('.themeTrigger');
+  assert(await page.locator('#themeModal').evaluate(el => el.classList.contains('open')), 'theme modal opens');
+  assert((await page.locator('.themeSwatch').count()) === 10, 'exactly 10 theme swatches rendered');
+  const defaultCi = await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--ci').trim());
+  await page.locator('.themeSwatch').nth(2).click();
+  const pickedCi = await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--ci').trim());
+  assert(pickedCi !== defaultCi, 'picking a swatch changes --ci: ' + defaultCi + ' -> ' + pickedCi);
+  await page.click('.dialog button:has-text("Schließen")');
+  await page.reload();
+  const reloadedCi = await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--ci').trim());
+  assert(reloadedCi === pickedCi, 'theme choice persists after reload: ' + reloadedCi);
+
   await context.close();
 
   // ---- Mobile viewport ----

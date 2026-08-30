@@ -213,12 +213,15 @@ const initScript = function (data) {
     '  }\n' +
     '});\n' +
     'const choices = MotorEngine.createChoices(store);\n' +
+    'const theme = MotorEngine.createColorThemes(MotorEngine.DEFAULT_THEMES, "p2_theme_v1");\n' +
     'const nav = MotorEngine.createNav();\n' +
     '\n' +
     'function goTo(n){ nav.goTo(n); }\n' +
     'function nextSlide(){ nav.next(); }\n' +
     'function prevSlide(){ nav.prev(); }\n' +
     'function toggleChoice(el){ choices.toggle(el); }\n' +
+    'function openThemeModal(){ theme.renderSwatches("#themeSwatches"); MotorEngine.openModal("themeModal"); }\n' +
+    'function closeThemeModal(){ MotorEngine.closeModal("themeModal"); }\n' +
     'function openEmpModal(){\n' +
     '  if(manager.isFull()){ const note=document.getElementById("empLimitNote"); if(note) note.style.display="block"; return; }\n' +
     '  document.getElementById("empNameInput").value = "";\n' +
@@ -262,6 +265,7 @@ const initScript = function (data) {
     '});\n' +
     '\n' +
     'document.addEventListener("DOMContentLoaded", function(){\n' +
+    '  theme.init();\n' +
     '  manager.render();\n' +
     '  choices.bindAll();\n' +
     '  MotorEngine.bindFields(store, manager);\n' +

@@ -184,8 +184,11 @@ const initScript = function (cards) {
     '  }\n' +
     '});\n' +
     'const choices = MotorEngine.createChoices(store);\n' +
+    'const theme = MotorEngine.createColorThemes(MotorEngine.DEFAULT_THEMES, "p6_theme_v1");\n' +
     'const nav = MotorEngine.createNav();\n' +
     '\n' +
+    'function openThemeModal(){ theme.renderSwatches("#themeSwatches"); MotorEngine.openModal("themeModal"); }\n' +
+    'function closeThemeModal(){ MotorEngine.closeModal("themeModal"); }\n' +
     'function goTo(n){ nav.goTo(n); }\n' +
     'function nextSlide(){ nav.next(); }\n' +
     'function prevSlide(){ nav.prev(); }\n' +
@@ -229,6 +232,7 @@ const initScript = function (cards) {
     '});\n' +
     '\n' +
     'document.addEventListener("DOMContentLoaded", function(){\n' +
+    '  theme.init();\n' +
     '  manager.render();\n' +
     '  choices.bindAll();\n' +
     '  MotorEngine.bindFields(store, manager);\n' +
