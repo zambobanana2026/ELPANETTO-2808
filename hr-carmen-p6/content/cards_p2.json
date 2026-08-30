@@ -77,8 +77,8 @@
       "frage": "Wo fühlst du dich schon sicher, und wo brauchst du noch Unterstützung?",
       "ziel": "Fachliche Fehlerquote und Selbstständigkeit besprechen.",
       "checks": [
-        "Erste eigenverantwortliche Aufgaben und Kunden-/Projektfälle übernommen",
-        "Buddy-Taktung auf 1–2 feste Check-ins pro Woche reduziert"
+        ["Erste eigenverantwortliche Aufgaben und Kunden-/Projektfälle übernommen", "Bearbeitet die Person inzwischen eigene Aufgaben oder Kundenfälle, ohne dass jeder Schritt abgesprochen werden muss?"],
+        ["Buddy-Taktung auf 1–2 feste Check-ins pro Woche reduziert", "Trifft sich der Buddy nur noch ein- bis zweimal pro Woche mit der Person, statt wie am Anfang täglich?"]
       ],
       "reaktionen": [
         ["Ich mach doch alles wie besprochen.", "Schauen wir uns zwei, drei konkrete Fälle der letzten Wochen gemeinsam an — daran lässt sich am besten festmachen, wo es schon rund läuft und wo noch Fragen offen sind."],
@@ -93,9 +93,9 @@
       ],
       "gespraechsfolge": ["60-Tage-Review mit Fehleranalyse, Schnittstellenkooperation und Selbstständigkeit durchgeführt"],
       "fields": [
-        ["TEILNEHMER", "teilnehmer", "Name(n) eintragen …"],
-        ["DOKUMENTATION", "dok", "Kurz eintragen …"],
-        ["NÄCHSTE SCHRITTE", "next", "Kurz eintragen …"]
+        ["TEILNEHMER", "teilnehmer", "Name(n) eintragen …", "Wer nimmt an diesem Gespräch teil? Meist du und die neue Person — bei Bedarf auch der Buddy."],
+        ["DOKUMENTATION", "dok", "Kurz eintragen …", "Was habt ihr besprochen? Stichpunkte reichen völlig."],
+        ["NÄCHSTE SCHRITTE", "next", "Kurz eintragen …", "Was ist bis zum nächsten Gespräch zu tun — und wer macht was bis wann?"]
       ],
       "docFieldId": "dok"
     },
@@ -110,8 +110,8 @@
       "bewertungsbereiche": ["Fachlichkeit", "Selbststeuerung", "Teamfit", "Kultur"],
       "ziel": "Strukturierte Bewertung von Fachlichkeit, Selbststeuerung, Teamfit und Kultur sowie Spiegelung der vorläufigen Übernahmeperspektive.",
       "checks": [
-        "Volle Prozessautonomie im Blick",
-        "Buddy-Phase spätestens nach 6 Wochen offiziell beendet"
+        ["Volle Prozessautonomie im Blick", "Kann die Person die meisten Aufgaben inzwischen komplett selbstständig erledigen, ohne dich zu fragen?"],
+        ["Buddy-Phase spätestens nach 6 Wochen offiziell beendet", "Ist die Begleitung durch den Buddy inzwischen offiziell beendet?"]
       ],
       "reaktionen": [
         ["Wie stehen meine Chancen auf Übernahme?", "Genau das besprechen wir jetzt strukturiert entlang der vier Bereiche Fachlichkeit, Selbststeuerung, Teamfit und Kultur — danach kann ich dir eine vorläufige Einschätzung geben."],
@@ -126,13 +126,13 @@
       ],
       "gespraechsfolge": ["90-Tage-Standortbestimmung mit Leistungsbeurteilung und erster Übernahmeprognose durchgeführt"],
       "fields": [
-        ["FACHLICHKEIT", "fach", "Kurz eintragen …"],
-        ["SELBSTSTEUERUNG", "selbst", "Kurz eintragen …"],
-        ["TEAMFIT", "teamfit", "Kurz eintragen …"],
-        ["KULTUR", "kultur", "Kurz eintragen …"],
-        ["VORLÄUFIGE ÜBERNAHMEPERSPEKTIVE", "perspektive", "Kurz eintragen …"],
-        ["TEILNEHMER", "teilnehmer", "Name(n) eintragen …"],
-        ["NÄCHSTE SCHRITTE", "next", "Kurz eintragen …"]
+        ["FACHLICHKEIT", "fach", "Kurz eintragen …", "Wie gut beherrscht die Person die fachlichen Aufgaben ihrer Rolle?"],
+        ["SELBSTSTEUERUNG", "selbst", "Kurz eintragen …", "Wie gut organisiert sich die Person selbst — Prioritäten setzen, Termine einhalten, ohne ständige Anleitung?"],
+        ["TEAMFIT", "teamfit", "Kurz eintragen …", "Wie gut hat sich die Person ins Team eingefügt?"],
+        ["KULTUR", "kultur", "Kurz eintragen …", "Trägt die Person die Werte und den Umgangston im Unternehmen mit?"],
+        ["VORLÄUFIGE ÜBERNAHMEPERSPEKTIVE", "perspektive", "Kurz eintragen …", "Wie schätzt du die Chancen auf Übernahme aktuell ein? Das ist noch keine endgültige Entscheidung."],
+        ["TEILNEHMER", "teilnehmer", "Name(n) eintragen …", "Wer nimmt an diesem Gespräch teil? Meist du und die neue Person."],
+        ["NÄCHSTE SCHRITTE", "next", "Kurz eintragen …", "Woran arbeitet ihr bis zum Abschlussgespräch an Tag 150–170?"]
       ],
       "docFieldId": "perspektive"
     },
@@ -147,7 +147,7 @@
       "zweck": "Schönrednerei erkennen und zeigen, ob der Mitarbeiter auch unvermeidbare Reibungspunkte der Firmenkultur mittragen kann.",
       "ziel": "Finale Weichenstellung im Entscheidungs-Korridor.",
       "checks": [
-        "Finale Weichenstellung im Entscheidungs-Korridor erreicht"
+        ["Finale Weichenstellung im Entscheidungs-Korridor erreicht", "Ist die Entscheidung über die Zeit nach der Probezeit gefallen — und mit der Person besprochen?"]
       ],
       "reaktionen": [
         ["Ich fühle mich hier total wohl, alles super.", "Das freut mich zu hören. Gab es trotzdem einen Moment, an dem du dich gefragt hast, worauf du dich hier eigentlich eingelassen hast?"],
@@ -162,9 +162,9 @@
       ],
       "gespraechsfolge": ["Tag 150–170 – Probezeit-Abschlussgespräch durchgeführt", "Goldene Abschlussfrage verwendet"],
       "fields": [
-        ["TEILNEHMER", "teilnehmer", "Name(n) eintragen …"],
-        ["DOKUMENTATION", "dok", "Kurz eintragen …"],
-        ["NÄCHSTE SCHRITTE", "next", "Kurz eintragen …"]
+        ["TEILNEHMER", "teilnehmer", "Name(n) eintragen …", "Wer nimmt an diesem Gespräch teil? Meist du und die neue Person — bei Bedarf auch HR."],
+        ["DOKUMENTATION", "dok", "Kurz eintragen …", "Was habt ihr besprochen? Stichpunkte reichen völlig."],
+        ["NÄCHSTE SCHRITTE", "next", "Kurz eintragen …", "Wie geht es nach der Probezeit weiter — und was ist bis dahin zu klären?"]
       ],
       "docFieldId": "dok"
     }

@@ -141,7 +141,7 @@ function slideMilestoneZielEinstieg(m, num) {
   const frageBox = m.frage ? '<div class="box"><b>' + esc((m.frageLabel || 'FRAGE').toUpperCase()) + '.</b><p class="lead" style="margin:10px 0 0">„' + esc(m.frage) + '“</p></div>' : '';
   const zweckBox = m.zweck ? '<div class="box"><b>WOZU DIENT DIESE FRAGE?</b><p class="lead" style="margin:10px 0 0">' + esc(m.zweck) + '</p></div>' : '';
   const bereicheBox = m.bewertungsbereiche
-    ? '<h2>DAS WIRD HEUTE BEWERTET.</h2><ul class="qlist">' + m.bewertungsbereiche.map(function (b) { return '<li>' + esc(b) + '</li>'; }).join('') + '</ul>'
+    ? '<h2>DAS WIRD HEUTE BEWERTET.</h2><p class="lead">Diese vier Bereiche schaut ihr euch heute gemeinsam an. Was du dazu genau notierst, steht auf der Vereinbarungs-Seite.</p><ul class="qlist">' + m.bewertungsbereiche.map(function (b) { return '<li>' + esc(b) + '</li>'; }).join('') + '</ul>'
     : '';
   return (
     '<section class="slide" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 1) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
