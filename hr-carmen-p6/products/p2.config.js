@@ -25,16 +25,16 @@
    ============================================================================ */
 
 const FIRST_MILESTONE_SLIDE = 7;
-const SLIDES_PER_MILESTONE = 5;
-const BUDDY_FIRST_SLIDE = 27;
+const SLIDES_PER_MILESTONE = 6;
+const BUDDY_FIRST_SLIDE = 31;
 const SLIDES_PER_BUDDY = 5;
-const ESKALATION_FIRST_SLIDE = 32;
+const ESKALATION_FIRST_SLIDE = 36;
 const SLIDES_PER_ESKALATION = 5;
-const TRENNUNG_FIRST_SLIDE = 37;
+const TRENNUNG_FIRST_SLIDE = 41;
 const SLIDES_PER_TRENNUNG = 5;
-const TEAMBERICHT_SLIDE = 42;
+const TEAMBERICHT_SLIDE = 46;
 
-const MILESTONE_SUBTITLES = ['VORBEREITUNG', 'ZIEL & EINSTIEG', 'IM GESPRÄCH', 'VEREINBARUNG', 'FOLLOW-UP'];
+const MILESTONE_SUBTITLES = ['VORBEREITUNG', 'ZIEL & EINSTIEG', 'TYPISCHE REAKTIONEN', 'BESSER SAGEN', 'VEREINBARUNG', 'FOLLOW-UP'];
 const BUDDY_SUBTITLES = ['ROLLE', 'DAUER & TAKTUNG', 'AUFGABEN', 'GRENZEN & TABUS', 'ARBEITSVORLAGE'];
 const ESKALATION_SUBTITLES = ['WANN GREIFT DAS?', 'SCHRITT 1 · FAKTENABGLEICH', 'ZWISCHENZIEL', 'SCHRITT 2 · LERNKURVE', 'SCHRITT 3 · ENTSCHEIDUNG'];
 const TRENNUNG_SUBTITLES = ['LEITPLANKE', 'SCHRITT 1', 'SCHRITT 2', 'SCHRITT 3', 'PROTOKOLL'];
@@ -89,7 +89,7 @@ function slideOverview(data) {
   return (
     '<section class="slide" data-slide="6"><div class="brand">P2 / ÜBERSICHT</div><div class="num">06</div>' +
     '<h1>IHR<br>PROBEZEIT-RADAR.</h1>' +
-    '<p class="lead">Tag 1 → Tag 30 → Tag 60 → Tag 90 → Tag 150–170 → Ende der Probezeit. Klicken Sie eine Phase oder ein Werkzeug an, oder gehen Sie der Reihe nach vor. Jede Station ist in 5 kurze Unterseiten aufgeteilt.</p>' +
+    '<p class="lead">Tag 1 → Tag 30 → Tag 60 → Tag 90 → Tag 150–170 → Ende der Probezeit. Klicken Sie eine Phase oder ein Werkzeug an, oder gehen Sie der Reihe nach vor. Jede Station ist in kurze Unterseiten aufgeteilt.</p>' +
     '<div class="grid">' + phaseTiles + '</div>' +
     '<h2>WEITERE WERKZEUGE.</h2>' +
     '<div class="grid">' + toolTiles + '</div>' +
@@ -102,22 +102,23 @@ function slideOverview(data) {
    MEILENSTEINE — 5 Unterseiten je Gespräch (Tag 30 / 60 / 90 / 150–170)
    ---------------------------------------------------------------------- */
 function milestoneBrand(m, i) {
-  return 'P2 / ' + esc(m.zeitpunkt) + ' · GESPRÄCH ' + m.n + '/4 · ' + (i + 1) + '/5 ' + MILESTONE_SUBTITLES[i];
+  return 'P2 / ' + esc(m.zeitpunkt) + ' · GESPRÄCH ' + m.n + '/4 · ' + (i + 1) + '/6 ' + MILESTONE_SUBTITLES[i];
 }
 
-function slideMilestoneVorbereitung(m, num) {
-  const buddyBox = (m.n < 4)
-    ? '<div class="box"><b>BUDDY-TAKTUNG IN DIESER PHASE.</b><p style="margin:10px 0 0">' + esc(m.buddyTaktung || '') + '</p></div>'
+function slideMilestoneVorbereitung(m, num, phase) {
+  const buddyTaktung = phase ? phase.buddyTaktung : '';
+  const buddyBox = (m.n < 4 && buddyTaktung)
+    ? '<div class="box"><b>WIE OFT TRIFFST DU DEINEN BUDDY GERADE?</b><p style="margin:10px 0 0">Ein Buddy ist eine erfahrene Kollegin oder ein erfahrener Kollege, die/der der neuen Person beim Einleben hilft. In dieser Gesprächsphase gilt: ' + esc(buddyTaktung) + '</p></div>'
     : '';
-  const fokusBox = m.fokus ? '<div class="box"><b>FOKUS DIESER PHASE.</b><p class="lead" style="margin:10px 0 0">' + esc(m.fokus) + '</p></div>' : '';
+  const fokusBox = m.fokus ? '<div class="box"><b>WORUM GEHT ES IN DIESER GESPRÄCHSPHASE?</b><p class="lead" style="margin:10px 0 0">' + esc(m.fokus) + '</p></div>' : '';
   const teilnehmerFields = pickFields(m.fields, ['teilnehmer']);
   return (
     '<section class="slide" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 0) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
     '<h1>' + esc(m.title.toUpperCase()) + '</h1>' +
     fokusBox + buddyBox +
-    '<h2>IST DIESE PHASE ABGESCHLOSSEN?</h2>' +
+    '<h2>IST DIESE GESPRÄCHSPHASE ABGESCHLOSSEN?</h2>' +
     checksList('m' + m.n + '_chk', m.checks) +
-    '<div class="weeklyCheck"><div class="weeklyCheckIntro"><b>WER NIMMT TEIL?</b></div>' + fieldsGrid('m' + m.n, teilnehmerFields) + '</div>' +
+    '<div class="weeklyCheck"><div class="weeklyCheckIntro"><b>WER NIMMT AM GESPRÄCH TEIL?</b></div>' + fieldsGrid('m' + m.n, teilnehmerFields) + '</div>' +
     navBar('Weiter') +
     '</section>'
   );
@@ -125,33 +126,43 @@ function slideMilestoneVorbereitung(m, num) {
 
 function slideMilestoneZielEinstieg(m, num) {
   const frageBox = m.frage ? '<div class="box"><b>' + esc((m.frageLabel || 'FRAGE').toUpperCase()) + '.</b><p class="lead" style="margin:10px 0 0">„' + esc(m.frage) + '“</p></div>' : '';
-  const zweckBox = m.zweck ? '<div class="box"><b>ZWECK.</b><p class="lead" style="margin:10px 0 0">' + esc(m.zweck) + '</p></div>' : '';
+  const zweckBox = m.zweck ? '<div class="box"><b>WOZU DIENT DIESE FRAGE?</b><p class="lead" style="margin:10px 0 0">' + esc(m.zweck) + '</p></div>' : '';
   const bereicheBox = m.bewertungsbereiche
     ? '<h2>DAS WIRD HEUTE BEWERTET.</h2><ul class="qlist">' + m.bewertungsbereiche.map(function (b) { return '<li>' + esc(b) + '</li>'; }).join('') + '</ul>'
     : '';
   return (
     '<section class="slide" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 1) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
     '<h1>' + esc(m.title.toUpperCase()) + '</h1>' +
-    '<div class="box"><b>MEIN GESPRÄCHSZIEL.</b><p class="lead" style="margin:10px 0 0">„' + esc(m.ziel) + '“</p></div>' +
+    '<div class="box"><b>DARUM GEHT ES MIR IN DIESEM GESPRÄCH.</b><p class="lead" style="margin:10px 0 0">„' + esc(m.ziel) + '“</p></div>' +
     frageBox + zweckBox + bereicheBox +
     navBar('Weiter') +
     '</section>'
   );
 }
 
-function slideMilestoneImGespraech(m, num) {
+function slideMilestoneReaktionen(m, num) {
   const qaHtml = m.reaktionen.map(function (pair) {
     return '<div class="qa"><b>„' + esc(pair[0]) + '“</b><p>' + esc(pair[1]) + '</p></div>';
-  }).join('');
-  const compareHtml = m.compare.map(function (pair) {
-    return '<div class="compareRow"><div class="no">„' + esc(pair[0]) + '“</div><div class="yes">„' + esc(pair[1]) + '“</div></div>';
   }).join('');
   return (
     '<section class="slide" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 2) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
     '<h1>' + esc(m.title.toUpperCase()) + '</h1>' +
-    '<h2>TYPISCHE REAKTIONEN — UND MEINE ANTWORT.</h2>' +
+    '<h2>WAS DIE NEUE PERSON SAGEN KÖNNTE — UND WIE DU ANTWORTEST.</h2>' +
     qaHtml +
+    navBar('Weiter') +
+    '</section>'
+  );
+}
+
+function slideMilestoneBesserSagen(m, num) {
+  const compareHtml = m.compare.map(function (pair) {
+    return '<div class="compareRow"><div class="no">„' + esc(pair[0]) + '“</div><div class="yes">„' + esc(pair[1]) + '“</div></div>';
+  }).join('');
+  return (
+    '<section class="slide" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 3) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
+    '<h1>' + esc(m.title.toUpperCase()) + '</h1>' +
     '<h2>SAG DAS NICHT — SAG LIEBER DAS.</h2>' +
+    '<p class="lead">Manche Sätze klingen schnell falsch, auch wenn sie nicht böse gemeint sind. Hier siehst du bessere Alternativen.</p>' +
     '<div class="compareHead"><span>Nicht sagen</span><span>Besser sagen</span></div>' +
     compareHtml +
     navBar('Weiter') +
@@ -162,10 +173,10 @@ function slideMilestoneImGespraech(m, num) {
 function slideMilestoneVereinbarung(m, num) {
   const restFields = omitFields(m.fields, ['teilnehmer']);
   return (
-    '<section class="slide" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 3) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
+    '<section class="slide" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 4) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
     '<h1>' + esc(m.title.toUpperCase()) + '</h1>' +
-    '<p class="lead">Nach Carmens Gesprächsvorlage.</p>' +
-    '<div class="weeklyCheck"><div class="weeklyCheckIntro"><b>DOKUMENTATION.</b></div>' + fieldsGrid('m' + m.n, restFields) + '</div>' +
+    '<p class="lead">Trage hier fest, was ihr im Gespräch besprochen und vereinbart habt — nach Carmens Gesprächsvorlage.</p>' +
+    '<div class="weeklyCheck"><div class="weeklyCheckIntro"><b>WAS WURDE BESPROCHEN UND VEREINBART?</b></div>' + fieldsGrid('m' + m.n, restFields) + '</div>' +
     navBar('Weiter') +
     '</section>'
   );
@@ -176,9 +187,9 @@ function slideMilestoneFollowUp(m, num, nextPhase, isLast) {
     ? '<div class="box"><b>WAS ALS NÄCHSTES ANSTEHT.</b><p class="lead" style="margin:10px 0 0"><b>' + esc(nextPhase.zeitraum) + ' — ' + esc(nextPhase.phase.toUpperCase()) + '.</b><br>' + esc(nextPhase.fokus) + '</p></div>'
     : '<div class="box"><b>ENDE DER PROBEZEIT.</b><p class="lead" style="margin:10px 0 0">Mit diesem Gespräch endet der Entscheidungs-Korridor. Einmal bauen. Immer wieder nutzen — für die nächste neue Mitarbeiterin oder den nächsten neuen Mitarbeiter.</p></div>';
   return (
-    '<section class="slide" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 4) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
+    '<section class="slide" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 5) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
     '<h1>' + esc(m.title.toUpperCase()) + '</h1>' +
-    '<h2>GESPRÄCHSFOLGE.</h2>' +
+    '<h2>HAKE AB: IST DIESES GESPRÄCH ERLEDIGT?</h2>' +
     checksList('m' + m.n + '_gf', m.gespraechsfolge) +
     nextBox +
     navBar(isLast ? 'Weiter zum Buddy-Framework' : 'Nächste Station') +
@@ -190,13 +201,15 @@ function buildMilestoneSlides(data) {
   const out = [];
   data.milestones.forEach(function (m, i) {
     const base = FIRST_MILESTONE_SLIDE + i * SLIDES_PER_MILESTONE;
+    const phase = data.phases[i] || null;
     const nextPhase = data.phases[i + 1] || null;
     const isLast = i === data.milestones.length - 1;
-    out.push(slideMilestoneVorbereitung(m, base));
+    out.push(slideMilestoneVorbereitung(m, base, phase));
     out.push(slideMilestoneZielEinstieg(m, base + 1));
-    out.push(slideMilestoneImGespraech(m, base + 2));
-    out.push(slideMilestoneVereinbarung(m, base + 3));
-    out.push(slideMilestoneFollowUp(m, base + 4, nextPhase, isLast));
+    out.push(slideMilestoneReaktionen(m, base + 2));
+    out.push(slideMilestoneBesserSagen(m, base + 3));
+    out.push(slideMilestoneVereinbarung(m, base + 4));
+    out.push(slideMilestoneFollowUp(m, base + 5, nextPhase, isLast));
   });
   return out.join('\n');
 }
