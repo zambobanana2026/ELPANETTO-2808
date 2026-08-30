@@ -118,7 +118,7 @@ function slideMilestoneVorbereitung(m, num, phase) {
     '<h1>' + esc(m.title.toUpperCase()) + '</h1>' +
     fokusBox + buddyBox +
     '<h2>IST DIESE GESPRÄCHSPHASE ABGESCHLOSSEN?</h2>' +
-    '<p class="lead">Geh vor dem Gespräch kurz durch, was in ' + esc(zeitraum || 'dieser Zeit') + ' schon lief. Ist etwas noch offen, sprecht ihr genau darüber im Gespräch.</p>' +
+    '<p class="lead">Diese Liste zeigt, was in ' + esc(zeitraum || 'dieser Zeit') + ' eigentlich passiert sein sollte. Geh sie vor dem Gespräch kurz durch: Was passt schon? Was fehlt noch? Ein offener Punkt ist kein Problem — er wird einfach zum Thema im Gespräch.</p>' +
     checksList('m' + m.n + '_chk', m.checks) +
     '<div class="weeklyCheck"><div class="weeklyCheckIntro"><b>WER NIMMT AM GESPRÄCH TEIL?</b></div>' + fieldsGrid('m' + m.n, teilnehmerFields) + '</div>' +
     navBar('Weiter') +
