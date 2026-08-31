@@ -25,12 +25,17 @@ function assert(cond, msg) {
   assert((await page.locator('.slide.active').getAttribute('data-slide')) === '1', 'starts on slide 1');
   assert((await page.locator('.slide').count()) === TOTAL_SLIDES, 'exactly ' + TOTAL_SLIDES + ' slides in DOM');
 
-  // ---- Welcome slide (1/44): brand, video placeholder, hook/problem/lösung ----
+  // ---- Welcome slide (1/44): brand, video placeholder, pitch section (shared P6 template) ----
   assert((await page.locator('.slide.active .brand').textContent()) === 'P2 / WILLKOMMEN', 'slide 1 is the Willkommen slide');
+  assert((await page.locator('.slide.active').evaluate(el => el.classList.contains('textCenter'))), 'slide 1 uses the shared .textCenter class');
   assert((await page.locator('.slide.active .videoPlaceholder').count()) === 1, 'slide 1 has a video placeholder (9:16)');
+  assert((await page.locator('.slide.active .videoPlaceholder .playIcon').count()) === 1, 'video placeholder has the shared play icon');
   assert((await page.locator('.slide.active').evaluate(el => getComputedStyle(el).textAlign)) === 'center', 'slide 1 text is centered');
+  assert((await page.locator('.slide.active .pitchSection').count()) === 1, 'slide 1 has the shared pitch section');
+  assert((await page.locator('.slide.active .pitchHook').count()) === 1, 'slide 1 has a pitch hook sentence');
+  assert((await page.locator('.slide.active .pitchTile').count()) === 2, 'slide 1 has 2 pitch tiles (Problem/Lösung)');
   const welcomeText = await page.locator('.slide.active').innerText();
-  assert(welcomeText.includes('180 Tage') && welcomeText.includes('nebenbei') && welcomeText.includes('wiederholbaren System'), 'slide 1 covers Hook, Problem, Lösung as flowing text (no labeled headings)');
+  assert(welcomeText.includes('180 Tage') && welcomeText.includes('DAS PROBLEM') && welcomeText.includes('DIE LÖSUNG'), 'slide 1 covers Hook, Problem, Lösung via the shared pitch template');
 
   async function addEmployee(name, position, abteilung) {
     await page.click('button:has-text("MITARBEITER HINZUFÜGEN")');

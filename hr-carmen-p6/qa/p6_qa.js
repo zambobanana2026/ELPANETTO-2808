@@ -22,15 +22,15 @@ function assert(cond, msg) {
 
   await page.goto(FILE_URL);
   assert(await page.locator('.slide.active').count() === 1, 'exactly one active slide on load');
-  assert((await page.locator('.slide.active').getAttribute('data-slide')) === '1', 'starts on slide 1');
+  assert((await page.locator('.slide.active').getAttribute('data-slide')) === '1', 'starts on slide 1 (Willkommen)');
 
-  // Navigate slides 1 -> 6 (intro) to reach employee slide
-  for (let i = 0; i < 5; i++) {
+  // Navigate slides 1 -> 7 (intro: Willkommen, Hero, So funktioniert's, Für wen, System, Mitarbeiter, Übersicht)
+  for (let i = 0; i < 6; i++) {
     await page.click('.slide.active .nav button.btn:not(.alt)');
   }
-  assert((await page.locator('.slide.active').getAttribute('data-slide')) === '6', 'reached slide 6 (overview) after 5 clicks');
+  assert((await page.locator('.slide.active').getAttribute('data-slide')) === '7', 'reached slide 7 (overview) after 6 clicks');
   await page.click('.slide.active .nav button.btn.alt:has-text("Zurück")');
-  assert((await page.locator('.slide.active').getAttribute('data-slide')) === '5', 'back-nav works, on slide 5 (employees)');
+  assert((await page.locator('.slide.active').getAttribute('data-slide')) === '6', 'back-nav works, on slide 6 (employees)');
 
   // ---- Employee CRUD + license limit ----
   async function addEmployee(name) {
@@ -47,20 +47,20 @@ function assert(cond, msg) {
   await page.click('.tile:has-text("Anna Testperson")');
   assert(await page.locator('.tile.activeEmp b').textContent() === 'Anna Testperson', 'can switch active employee by click');
 
-  // jump straight to card 1 prep slide (slide 7) via goTo
-  await page.evaluate(() => window.goTo(7));
-  assert((await page.locator('.slide.active').getAttribute('data-slide')) === '7', 'card 1 slide 7 reached via goTo');
+  // jump straight to card 1 prep slide (slide 8) via goTo
+  await page.evaluate(() => window.goTo(8));
+  assert((await page.locator('.slide.active').getAttribute('data-slide')) === '8', 'card 1 slide 8 reached via goTo');
 
   await page.fill('textarea[data-field="k1_f1"]', 'Anna-Notiz');
-  await page.evaluate(() => window.goTo(5)); // employees
+  await page.evaluate(() => window.goTo(6)); // employees
   await page.click('.tile:has-text("Ben Testperson")');
-  await page.evaluate(() => window.goTo(7));
+  await page.evaluate(() => window.goTo(8));
   const benValue = await page.inputValue('textarea[data-field="k1_f1"]');
   assert(benValue === '', 'field is empty for Ben (data not leaked from Anna): got "' + benValue + '"');
   await page.fill('textarea[data-field="k1_f1"]', 'Ben-Notiz');
-  await page.evaluate(() => window.goTo(5));
+  await page.evaluate(() => window.goTo(6));
   await page.click('.tile:has-text("Anna Testperson")');
-  await page.evaluate(() => window.goTo(7));
+  await page.evaluate(() => window.goTo(8));
   const annaValue = await page.inputValue('textarea[data-field="k1_f1"]');
   assert(annaValue === 'Anna-Notiz', 'Anna field restored correctly after switching back: got "' + annaValue + '"');
 
@@ -69,7 +69,7 @@ function assert(cond, msg) {
   assert(await page.locator('.choice[data-toggle="k1_chk1"]').evaluate(el => el.classList.contains('on')), 'choice toggled on');
 
   // ---- License limit: add up to 20 total, then verify 21st blocked ----
-  await page.evaluate(() => window.goTo(5)); // employees
+  await page.evaluate(() => window.goTo(6)); // employees
   for (let i = 3; i <= 20; i++) {
     await addEmployee('MA ' + i);
   }
@@ -94,35 +94,36 @@ function assert(cond, msg) {
   page.on('pageerror', err => pageErrors.push(String(err)));
   page.on('dialog', async dialog => { await dialog.accept(); });
   await page.goto(FILE_URL);
-  await page.evaluate(() => window.goTo(5));
+  await page.evaluate(() => window.goTo(6));
   await addEmployee('PersistCheck');
-  await page.evaluate(() => window.goTo(7));
+  await page.evaluate(() => window.goTo(8));
   await page.fill('textarea[data-field="k1_f1"]', 'Reload-Test-Wert');
   await page.reload();
   assert((await page.locator('#empCount').textContent()) !== null, 'page reloaded');
   const empCountAfterReload = await page.locator('#empCount').textContent();
   assert(empCountAfterReload === '1', 'employee persisted after reload: count=' + empCountAfterReload);
-  await page.evaluate(() => window.goTo(5));
+  await page.evaluate(() => window.goTo(6));
   await page.click('.tile:has-text("PersistCheck")');
-  await page.evaluate(() => window.goTo(7));
+  await page.evaluate(() => window.goTo(8));
   const reloadedValue = await page.inputValue('textarea[data-field="k1_f1"]');
   assert(reloadedValue === 'Reload-Test-Wert', 'field value persisted after reload: got "' + reloadedValue + '"');
 
   // ---- Full navigation, verify last-card forwarding ----
-  // Slides 1-6 are sequential via "Weiter". Slide 6's "Weiter zur Bibliothek" is an
-  // intentional skip straight to slide 47 (matches the original prototype: the overview
-  // is entered via its 8 card tiles, not sequential "Weiter"). Slides 7-51 are sequential.
+  // Slides 1-7 are sequential via "Weiter" (Willkommen, Hero, So funktioniert's, Für wen,
+  // System, Mitarbeiter, Übersicht). Slide 7's "Weiter zur Bibliothek" is an intentional
+  // skip straight to slide 48 (the overview is entered via its 8 card tiles, not
+  // sequential "Weiter"). Slides 8-52 are sequential.
   await page.goto(FILE_URL);
-  for (let n = 1; n <= 6; n++) {
+  for (let n = 1; n <= 7; n++) {
     const activeSlide = await page.locator('.slide.active').getAttribute('data-slide');
     assert(activeSlide === String(n), 'sequential nav at slide ' + n + ' matches (got ' + activeSlide + ')');
-    if (n < 6) await page.click('.slide.active .nav button.btn:not(.alt)');
+    if (n < 7) await page.click('.slide.active .nav button.btn:not(.alt)');
   }
-  await page.evaluate(() => window.goTo(7));
-  for (let n = 7; n <= 51; n++) {
+  await page.evaluate(() => window.goTo(8));
+  for (let n = 8; n <= 52; n++) {
     const activeSlide = await page.locator('.slide.active').getAttribute('data-slide');
     assert(activeSlide === String(n), 'sequential nav at slide ' + n + ' matches (got ' + activeSlide + ')');
-    if (n < 51) {
+    if (n < 52) {
       const nextBtn = page.locator('.slide.active .nav button.btn:not(.alt)');
       await nextBtn.click();
     }
@@ -131,37 +132,37 @@ function assert(cond, msg) {
   await page.click('.slide.active .nav .homeBtn');
   assert((await page.locator('.slide.active').getAttribute('data-slide')) === '1', '"Von vorn" returns to slide 1');
 
-  // Verify card-8 (last card) follow-up slide (46) says "Weiter zur Bibliothek" and slide47 is Bibliothek
-  await page.evaluate(() => window.goTo(46));
+  // Verify card-8 (last card) follow-up slide (47) says "Weiter zur Bibliothek" and slide48 is Bibliothek
+  await page.evaluate(() => window.goTo(47));
   const lastCardBtnText = await page.locator('.slide.active .nav button.btn:not(.alt)').textContent();
   assert(lastCardBtnText.includes('Bibliothek'), 'card 8 follow-up next-button says "Weiter zur Bibliothek": got "' + lastCardBtnText + '"');
   await page.click('.slide.active .nav button.btn:not(.alt)');
-  assert((await page.locator('.slide.active').getAttribute('data-slide')) === '47', 'card 8 forwards correctly to slide 47 (Bibliothek)');
+  assert((await page.locator('.slide.active').getAttribute('data-slide')) === '48', 'card 8 forwards correctly to slide 48 (Bibliothek)');
 
-  // Verify card 1 (non-last) follow-up slide (11) says "Nächste Gesprächskarte" and forwards to slide 12
-  await page.evaluate(() => window.goTo(11));
+  // Verify card 1 (non-last) follow-up slide (12) says "Nächste Gesprächskarte" and forwards to slide 13
+  await page.evaluate(() => window.goTo(12));
   const firstCardBtnText = await page.locator('.slide.active .nav button.btn:not(.alt)').textContent();
   assert(firstCardBtnText.includes('Nächste Gesprächskarte'), 'card 1 follow-up next-button says "Nächste Gesprächskarte": got "' + firstCardBtnText + '"');
   await page.click('.slide.active .nav button.btn:not(.alt)');
-  assert((await page.locator('.slide.active').getAttribute('data-slide')) === '12', 'card 1 forwards correctly to slide 12 (card 2)');
+  assert((await page.locator('.slide.active').getAttribute('data-slide')) === '13', 'card 1 forwards correctly to slide 13 (card 2)');
 
   // ---- Team report slide populates ----
-  await page.evaluate(() => window.goTo(5));
+  await page.evaluate(() => window.goTo(6));
   await addEmployee('ReportPerson');
-  await page.evaluate(() => window.goTo(7));
+  await page.evaluate(() => window.goTo(8));
   await page.fill('textarea[data-field="k1_f1"]', 'x');
-  await page.evaluate(() => window.goTo(10)); // Vereinbarung sub-slide holds k1_massnahme
+  await page.evaluate(() => window.goTo(11)); // Vereinbarung sub-slide holds k1_massnahme
   await page.fill('textarea[data-field="k1_massnahme"]', 'y');
-  await page.evaluate(() => window.goTo(49));
+  await page.evaluate(() => window.goTo(50));
   const teamRows = await page.locator('#teamTableBody tr').count();
   assert(teamRows >= 1, 'team report table has rows: ' + teamRows);
   const cntMA = await page.locator('#cntTeamMA').textContent();
   assert(Number(cntMA) >= 1, 'team report employee count > 0: ' + cntMA);
 
-  // ---- rechtlicher Hinweis legal disclaimer present (slide 3) ----
-  await page.evaluate(() => window.goTo(3));
+  // ---- rechtlicher Hinweis legal disclaimer present (slide 4, "Für wen") ----
+  await page.evaluate(() => window.goTo(4));
   const legalText = await page.locator('.slide.active .note').textContent();
-  assert(legalText.includes('keine individuelle Rechtsberatung'), 'legal disclaimer present on slide 3');
+  assert(legalText.includes('keine individuelle Rechtsberatung'), 'legal disclaimer present on slide 4');
 
   // ---- Color theme picker ----
   await page.click('.themeTrigger');
@@ -196,6 +197,12 @@ function assert(cond, msg) {
   await page.click('.themeTrigger');
   await page.locator('.themeSwatch').nth(0).click();
   await page.click('.dialog button:has-text("Schließen")');
+
+  // ---- Welcome slide content (video placeholder, problem/solution tiles) ----
+  await page.evaluate(() => window.goTo(1));
+  assert(await page.locator('.slide.active .videoPlaceholder').count() === 1, 'welcome slide has a 9:16 video placeholder');
+  assert((await page.locator('.slide.active .tile:has-text("DAS PROBLEM.")').count()) === 1, 'welcome slide has a "Das Problem" tile');
+  assert((await page.locator('.slide.active .tile:has-text("DIE LÖSUNG.")').count()) === 1, 'welcome slide has a "Die Lösung" tile');
 
   // ---- Mobile viewport ----
   await context.close();

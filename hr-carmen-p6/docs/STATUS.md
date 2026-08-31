@@ -1,5 +1,42 @@
 # Status — Carmen Next Motor/Config
 
+## P2 — Willkommens-Slide auf das gemeinsame P6-Template umgestellt (v4)
+
+Parallel zu dieser P2-Fassung wurde auf `claude/hr-p6-app-s38hm7` unabhängig
+eine eigene Willkommens-Slide für P6 gebaut — mit eigenen, saubereren
+Motor-Klassen (`.textCenter`, `.videoPlaceholder`/`.playIcon`,
+`.pitchSection`/`.pitchHook`/`.pitchTile`). Martin hat den P6-Screenshot als
+verbindliche Vorlage für **Design/Aufbau** vorgegeben (nicht Inhalt). Dieser
+Durchgang:
+
+1. Hat die inzwischen divergierten Motor-Änderungen beider Branches gemerged
+   (P6 hatte in der Zwischenzeit eigene `.videoPlaceholder`/`.wave`-Klassen
+   sowie eine eigene Willkommens-Slide bekommen — P6 ist jetzt 52 statt 51
+   Slides).
+2. Hat P2s zuvor selbst gebaute, abweichende `.videoPlaceholder`/
+   `.videoPlaceholderInner`/`.videoPlaceholderIcon`-Klassen aus
+   `motor/engine.css` **entfernt** (waren nach dem Merge doppelt vorhanden,
+   Selektor-Kollision mit P6s Version) und durch die eine gemeinsame,
+   kanonische Version ersetzt — jetzt nutzen P2 und P6 exakt dieselben
+   Motor-Klassen für dieses Muster, keine Duplikate mehr.
+3. Hat P2s Willkommens-Slide inhaltlich unverändert gelassen (Hook-Satz,
+   Problem-/Lösung-Text bleiben P2-spezifisch), aber strukturell auf das
+   P6-Muster umgestellt: `.textCenter` auf der Section statt Inline-Styles,
+   `.pitchSection` als umschließender Kasten um Hook + zwei `.pitchTile`-
+   Kacheln ("DAS PROBLEM." / "DIE LÖSUNG." — mit Labels, wie bei P6, anders
+   als die vorherige P2-Zwischenfassung ohne Labels), Video-Platzhalter mit
+   rundem `.playIcon` statt eigenem Icon-Stil, Button-Beschriftung "Weiter"
+   statt "Los geht's" (Konsistenz mit P6).
+
+`qa/p2_qa.js` entsprechend angepasst (prüft jetzt `.textCenter`,
+`.pitchSection`, `.pitchHook`, 2× `.pitchTile`, `.playIcon`) — alle Checks
+grün. `qa/p6_qa.js` (93 Checks) und `qa/p6_diff.js` weiterhin grün bzw.
+erwartungsgemäß (P6 hat jetzt 52 statt 51 Slides, Diff zeigt entsprechend
+mehr Abweichungen zur alten Referenz — dokumentiert bereits im P6-Eintrag
+weiter unten als neuer Normalzustand).
+
+---
+
 ## P2 — Neue Willkommens-Slide vor Slide 1 (v3)
 
 Auf Wunsch eine neue Slide 1 „WILLKOMMEN" vor die bisherige erste Slide gesetzt
@@ -95,6 +132,49 @@ Nebenbei in beiden P6-QA-Skripten sowie `p2_qa.js` den Playwright-
 `executablePath` an den in dieser Umgebung tatsächlich vorhandenen Chromium-
 Pfad (`/opt/pw-browsers/chromium`) angepasst — reine Tooling-Korrektur ohne
 Auswirkung auf die Produkte selbst.
+
+---
+
+## P6 — Willkommens-Slide: Pitch-Bereich dominanter, gesamte Slide zentriert
+
+Feedback zur neuen Slide 1: der Hook-Satz und die beiden Kacheln
+("DAS PROBLEM." / "DIE LÖSUNG.") sollten deutlich mehr Gewicht bekommen,
+und der gesamte Slide-Text sollte zentriert sein statt linksbündig.
+
+Umgesetzt in `motor/engine.css` (generisch, für alle Produkte nutzbar):
+- `.textCenter` — zentriert Überschrift, Lead-Text, Grids/Boxen und deren
+  Inhalte; auf die `<section class="slide">` von Slide 1 gesetzt.
+- `.pitchSection` — neuer umschließender Kasten (eigener Hintergrund-Ton,
+  Rahmen, großzügiges Padding) um Hook-Satz + Problem/Lösung-Kacheln, damit
+  dieser Block sich sichtbar vom Rest der Slide absetzt.
+- `.pitchTile` — Kacheln jetzt mit weißer Fläche, farbigem Top-Rahmen,
+  leichtem Schatten und größerer Überschrift (23px, in Akzentfarbe) statt
+  der neutralen Standard-`.tile`-Optik.
+
+Nur Slide 1 in `products/p6/intro.slides.html` nutzt die neuen Klassen;
+P2 und die übrigen P6-Slides sind unverändert. `qa/p6_qa.js` (93 Checks)
+und `qa/p2_qa.js` laufen weiterhin vollständig grün, 0 Konsolen-/Seitenfehler.
+
+## P6 — neue Willkommens-Slide (jetzt Slide 1, alles rückt um 1 nach hinten)
+
+Neue erste Slide vor dem bisherigen Hero: Begrüßungstext, 9:16-Video-
+Platzhalter (`.videoPlaceholder`, neue generische Motor-Klasse — noch kein
+echtes Video, klar als Platzhalter markiert mit "[hier kommt dein Video]"),
+darunter eine kurze Hook/Problem/Lösung-Beschreibung als zwei Kacheln
+("DAS PROBLEM." / "DIE LÖSUNG."). Statt eines externen GIFs (würde die
+Ein-Datei-ohne-externe-Abhängigkeiten-Anforderung brechen) eine kleine
+CSS-Wink-Animation (`.wave`, 👋-Emoji) als augenzwinkernder Ersatz.
+
+**Alle Slide-Nummern haben sich dadurch um 1 verschoben** — P6 hat jetzt
+52 statt 51 Slides. Betroffen: `FIRST_CARD_SLIDE` in `products/p6.config.js`
+(7→8), die zentrale `navBar()`-Funktion (Übersicht-Button `goTo(6)`→`goTo(7)`,
+gilt für alle 40 generierten Karten-Slides auf einen Schlag), der
+Team-Bericht-Hook (`nav.onEnter(49,...)`→`nav.onEnter(50,...)`), sowie in
+`products/p6/intro.slides.html` und `outro.slides.html` alle `data-slide`-
+Werte, `.num`-Anzeigen und die 8 fest verdrahteten `goTo()`-Ziele der
+Karten-Übersicht-Kacheln. `qa/p6_qa.js` komplett auf die neue Nummerierung
+angepasst (52 Slides, alle Ziel-Slides +1) — 93 Checks, alle grün. P2
+unberührt (eigene Datei, eigene Nummerierung, nicht betroffen).
 
 ---
 
