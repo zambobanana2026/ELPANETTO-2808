@@ -44,6 +44,8 @@ input[type=text]{width:100%;padding:12px;border:1px solid var(--line);background
 .textCenter{text-align:center}
 .textCenter h1,.textCenter .lead,.textCenter .grid,.textCenter .note,.textCenter .box{margin-left:auto;margin-right:auto}
 .textCenter .tile,.textCenter .box{text-align:center}
+#app[data-product="p2"] h1{text-align:center;margin-left:auto;margin-right:auto}
+#app[data-product="p2"] h1 + .lead{text-align:center;margin-left:auto;margin-right:auto}
 .pitchSection{background:var(--pagebg);border:1px solid var(--line);padding:34px 30px;margin:26px 0}
 .pitchHook{font-size:24px;font-weight:800;line-height:1.4;max-width:750px;margin:0 auto 22px}
 .pitchSection .grid{margin:0}
@@ -120,7 +122,7 @@ input[type=text]{width:100%;padding:12px;border:1px solid var(--line);background
 
 </style>
 </head>
-<body><div id="app">
+<body><div id="app" data-product="p2">
 
 <section class="slide active textCenter" data-slide="1"><div class="brand">P2 / WILLKOMMEN</div><div class="num">01</div>
 <h1>SCHÖN, DASS DU<br>HIER BIST. <span class="wave">👋</span></h1>
@@ -136,7 +138,14 @@ input[type=text]{width:100%;padding:12px;border:1px solid var(--line);background
 <div class="nav"><span></span><span></span><button class="btn" onclick="nextSlide()">Weiter</button></div>
 </section>
 
-<section class="slide" data-slide="2"><div class="brand">P2 / ONBOARDING-PROZESSBUNDLE</div><div class="num">02</div>
+<section class="slide" data-slide="2"><div class="brand">P2 / FÜR WEN</div><div class="num">02</div>
+<h1>FÜR WEN IST<br>DIESES PROZESSBUNDLE?</h1>
+<p class="lead">Für Geschäftsführungen, Inhaberinnen und Inhaber, Teamleitungen und Führungskräfte in deutschen KMU, die die Integration und Probezeit neuer Mitarbeitender systematisch steuern wollen — vom ersten Arbeitstag bis zum Ende der Probezeit. Bis zu 20 Mitarbeitende können einzeln angelegt und begleitet werden.</p>
+<div class="note" style="border-left-color:var(--red)"><b>HINWEIS ZUR VERWENDUNG.</b><br>Die arbeitsrechtlichen Hinweise in diesem Produkt stammen aus dem bereitgestellten Carmen-Fachwissen-Archiv. Sie wurden nicht erweitert oder eigenständig interpretiert. Die arbeitsrechtlichen Hinweise dienen der allgemeinen Orientierung und ersetzen keine individuelle Rechtsberatung. Bei konkreten Einzelfällen sollte fachkundige arbeitsrechtliche Beratung eingeholt werden.</div>
+<div class="nav"><span></span><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div>
+</section>
+
+<section class="slide" data-slide="3"><div class="brand">P2 / ONBOARDING-PROZESSBUNDLE</div><div class="num">03</div>
 <h1>INTEGRATION &amp; PROBEZEIT.<br>SYSTEMATISCH GESTEUERT.</h1>
 <p class="lead">Vom ersten Arbeitstag bis zum Ende der Probezeit — ein wiederholbarer Prozess für KMU. Fünf Module führen durch die Begleitung neuer Mitarbeitender bis zum Ende der Probezeit.</p>
 <div class="note"><b>ERSTELLT VON CARMEN GRUSE-LATEGAHN.</b><br>HR-Generalistin mit 18 Jahren Praxiserfahrung.</div>
@@ -149,7 +158,7 @@ input[type=text]{width:100%;padding:12px;border:1px solid var(--line);background
 <div class="nav"><span></span><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Los geht's</button></div>
 </section>
 
-<section class="slide" data-slide="3"><div class="brand">P2 / SO FUNKTIONIERT'S</div><div class="num">03</div>
+<section class="slide" data-slide="4"><div class="brand">P2 / SO FUNKTIONIERT'S</div><div class="num">04</div>
 <h1>DREI SCHRITTE.<br>KEIN RÄTSELRATEN.</h1>
 <p class="lead">Das Prozessbundle führt Sie in drei Schritten durch die Probezeit einer neuen Mitarbeiterin oder eines neuen Mitarbeiters.</p>
 <div class="grid">
@@ -158,13 +167,6 @@ input[type=text]{width:100%;padding:12px;border:1px solid var(--line);background
 <div class="tile"><b>3. WENN ES HAKT</b><small>Bei einer sichtbaren Leistungslücke: die Karte „Wenn es hakt – 14-Tage-Eskalationsprotokoll“ nutzen.</small></div>
 </div>
 <div class="note"><b>WEITERE WERKZEUGE.</b><br>Das KMU-Buddy-Framework und der Trennungs-Leitfaden liegen zusätzlich als eigene Werkzeuge in dieser Toolbox bereit.</div>
-<div class="nav"><span></span><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div>
-</section>
-
-<section class="slide" data-slide="4"><div class="brand">P2 / FÜR WEN</div><div class="num">04</div>
-<h1>FÜR WEN IST<br>DIESES PROZESSBUNDLE?</h1>
-<p class="lead">Für Geschäftsführungen, Inhaberinnen und Inhaber, Teamleitungen und Führungskräfte in deutschen KMU, die die Integration und Probezeit neuer Mitarbeitender systematisch steuern wollen — vom ersten Arbeitstag bis zum Ende der Probezeit. Bis zu 20 Mitarbeitende können einzeln angelegt und begleitet werden.</p>
-<div class="note" style="border-left-color:var(--red)"><b>HINWEIS ZUR VERWENDUNG.</b><br>Die arbeitsrechtlichen Hinweise in diesem Produkt stammen aus dem bereitgestellten Carmen-Fachwissen-Archiv. Sie wurden nicht erweitert oder eigenständig interpretiert. Die arbeitsrechtlichen Hinweise dienen der allgemeinen Orientierung und ersetzen keine individuelle Rechtsberatung. Bei konkreten Einzelfällen sollte fachkundige arbeitsrechtliche Beratung eingeholt werden.</div>
 <div class="nav"><span></span><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div>
 </section>
 

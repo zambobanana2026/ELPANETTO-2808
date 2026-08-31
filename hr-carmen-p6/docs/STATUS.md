@@ -1,5 +1,46 @@
 # Status — Carmen Next Motor/Config
 
+## P2 — Slide-Reihenfolge angepasst + alle Überschriften/Unterüberschriften zentriert (v5)
+
+Zwei Änderungen auf Wunsch:
+
+1. **Slide-Reihenfolge:** „FÜR WEN" (vorher Slide 4) steht jetzt direkt nach
+   der Willkommens-Slide auf Slide 2. Der Hero („INTEGRATION & PROBEZEIT.")
+   und „SO FUNKTIONIERT'S" rutschen dafür von 2/3 auf 3/4 — reine
+   Positionstausch, Slides 5 (System) und 6 (Mitarbeiter) unverändert.
+   Gesamtzahl bleibt bei 44 Slides.
+2. **Jede Überschrift + ihre Unterüberschrift zentriert, produktweit:**
+   Neue, generische Motor-Regel in `motor/engine.css`:
+   `#app[data-product="p2"] h1` sowie `#app[data-product="p2"] h1 + .lead`
+   (nur `.lead`-Elemente, die **direkt** auf ein `h1` folgen — also echte
+   Unterüberschriften). Dafür bekommt `#app` in `build/build.js` jetzt
+   generisch `data-product="<id>"` (z. B. `p2`/`p6`) — eine reine
+   Infrastruktur-Erweiterung ohne Effekt, solange keine CSS-Regel darauf
+   reagiert.
+
+   Bewusst **nicht** per Klasse à la `.textCenter` gelöst (das würde auch
+   Grids/Boxen/Kacheln zentrieren) und bewusst **nicht** jedes `.lead`
+   überall zentriert: Auf den funktionalen Slides (Meilensteine, Buddy,
+   Eskalation, Trennung) taucht `.lead` auch verschachtelt in `.box`-Kästen
+   auf (z. B. das zitierte Gesprächsziel) — genau diese bleiben unangetastet
+   links, weil sie kein direktes Geschwisterelement von `h1` sind. Nur die
+   Überschrift selbst und ein echtes „subheading" direkt darunter zentrieren
+   sich; Checklisten, Textfelder, Tabellen und Kacheln bleiben unverändert
+   linksbündig nutzbar.
+
+   Betrifft ausschließlich P2 (`[data-product="p2"]`-Selektor) — P6 bekommt
+   zwar ebenfalls das neue `data-product`-Attribut (harmlos, da keine
+   passende CSS-Regel dafür existiert), bleibt aber optisch unverändert.
+
+`qa/p2_qa.js` erweitert: neue Assertions für die verschobene Slide-
+Reihenfolge, für zentrierte Hero-Überschrift/-Unterüberschrift, für
+zentrierte Überschrift auf einer funktionalen Slide ohne dass die
+Checkliste mitzentriert wird, und dass ein `.lead` innerhalb einer `.box`
+explizit **nicht** zentriert wird — alle grün. `qa/p6_qa.js` (93 Checks)
+und `qa/p6_diff.js` unverändert grün bzw. identisch zum Stand davor.
+
+---
+
 ## P2 — Willkommens-Slide auf das gemeinsame P6-Template umgestellt (v4)
 
 Parallel zu dieser P2-Fassung wurde auf `claude/hr-p6-app-s38hm7` unabhängig

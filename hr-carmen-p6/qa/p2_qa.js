@@ -37,6 +37,24 @@ function assert(cond, msg) {
   const welcomeText = await page.locator('.slide.active').innerText();
   assert(welcomeText.includes('180 Tage') && welcomeText.includes('DAS PROBLEM') && welcomeText.includes('DIE LÖSUNG'), 'slide 1 covers Hook, Problem, Lösung via the shared pitch template');
 
+  // ---- Slide reorder: "Für wen" is now slide 2, hero moved to slide 3 ----
+  await page.evaluate(() => window.goTo(2));
+  assert((await page.locator('.slide.active .brand').textContent()) === 'P2 / FÜR WEN', '"Für wen" is now slide 2');
+  await page.evaluate(() => window.goTo(3));
+  assert((await page.locator('.slide.active .brand').textContent()) === 'P2 / ONBOARDING-PROZESSBUNDLE', 'hero slide moved to slide 3');
+
+  // ---- Every heading + its adjacent subheading is centered (data-product="p2" scoped), without disrupting functional content ----
+  assert((await page.locator('#app').getAttribute('data-product')) === 'p2', 'app root carries data-product="p2"');
+  await page.evaluate(() => window.goTo(3));
+  assert((await page.locator('.slide.active h1').evaluate(el => getComputedStyle(el).textAlign)) === 'center', 'hero h1 is centered');
+  assert((await page.locator('.slide.active .lead').first().evaluate(el => getComputedStyle(el).textAlign)) === 'center', 'hero subheading (.lead directly after h1) is centered');
+  await page.evaluate(() => window.goTo(8)); // Tag30 Vorbereitung (functional slide, h1 has no adjacent .lead)
+  assert((await page.locator('.slide.active h1').evaluate(el => getComputedStyle(el).textAlign)) === 'center', 'functional-slide h1 is centered too');
+  assert((await page.locator('.slide.active .checks').evaluate(el => getComputedStyle(el).textAlign)) !== 'center', 'checklist below the heading stays left-aligned, not swept into centering');
+  await page.evaluate(() => window.goTo(19)); // Tag90 Ziel & Einstieg (has a .lead nested inside a .box, not adjacent to h1)
+  assert((await page.locator('.slide.active .box .lead').evaluate(el => getComputedStyle(el).textAlign)) !== 'center', '.lead nested inside a .box (quoted goal text) is NOT swept into centering, only true h1-adjacent subheadings are');
+  await page.evaluate(() => window.goTo(1));
+
   async function addEmployee(name, position, abteilung) {
     await page.click('button:has-text("MITARBEITER HINZUFÜGEN")');
     await page.fill('#empNameInput', name);
@@ -168,8 +186,8 @@ function assert(cond, msg) {
   assert(Number(cntMA) === 20, 'team report employee count = 20: got ' + cntMA);
 
   // ---- Legal disclaimers present ----
-  await page.evaluate(() => window.goTo(4));
-  assert((await page.locator('.slide.active .note').textContent()).includes('keine individuelle Rechtsberatung'), 'general legal disclaimer on slide 4');
+  await page.evaluate(() => window.goTo(2));
+  assert((await page.locator('.slide.active .note').textContent()).includes('keine individuelle Rechtsberatung'), 'general legal disclaimer on slide 2 (Für wen)');
 
   // ---- Color theme picker ----
   await page.click('.themeTrigger');

@@ -36,7 +36,7 @@ function buildProduct(id) {
     '<title>' + config.title + '</title>\n' +
     '<style>\n' + engineCss + '\n</style>\n' +
     '</head>\n' +
-    '<body><div id="app">\n\n' +
+    '<body><div id="app" data-product="' + config.id + '">\n\n' +
     introHtml.trim() + '\n' +
     cardSlidesHtml + '\n' +
     outroHtml.trim() + '\n' +

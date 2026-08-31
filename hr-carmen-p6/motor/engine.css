@@ -37,6 +37,8 @@ input[type=text]{width:100%;padding:12px;border:1px solid var(--line);background
 .textCenter{text-align:center}
 .textCenter h1,.textCenter .lead,.textCenter .grid,.textCenter .note,.textCenter .box{margin-left:auto;margin-right:auto}
 .textCenter .tile,.textCenter .box{text-align:center}
+#app[data-product="p2"] h1{text-align:center;margin-left:auto;margin-right:auto}
+#app[data-product="p2"] h1 + .lead{text-align:center;margin-left:auto;margin-right:auto}
 .pitchSection{background:var(--pagebg);border:1px solid var(--line);padding:34px 30px;margin:26px 0}
 .pitchHook{font-size:24px;font-weight:800;line-height:1.4;max-width:750px;margin:0 auto 22px}
 .pitchSection .grid{margin:0}
