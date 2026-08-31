@@ -14,7 +14,7 @@
    Storage/Navigation/Mitarbeiterverwaltung kommen komplett aus motor/engine.js.
    ============================================================================ */
 
-const FIRST_CARD_SLIDE = 7;
+const FIRST_CARD_SLIDE = 8;
 const SLIDES_PER_CARD = 5;
 const SUBTITLES = ['VORBEREITUNG', 'ZIEL &amp; EINSTIEG', 'IM GESPRÄCH', 'VEREINBARUNG', 'FOLLOW-UP'];
 
@@ -26,7 +26,7 @@ function esc(s) {
 function pad2(n) { return String(n).padStart(2, '0'); }
 function ctxbar() { return '<div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div>'; }
 function navBar(nextLabel) {
-  return '<div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button>' +
+  return '<div class="nav"><button class="btn alt homeBtn" onclick="goTo(7)">◂ Übersicht</button>' +
     '<button class="btn alt" onclick="prevSlide()">Zurück</button>' +
     '<button class="btn" onclick="nextSlide()">' + nextLabel + '</button></div>';
 }
@@ -209,7 +209,7 @@ const initScript = function (cards) {
     'function removeEmployee(id, ev){ manager.remove(id, ev); }\n' +
     'function restoreFieldsForActive(){ MotorEngine.restoreFields(manager); }\n' +
     '\n' +
-    'nav.onEnter(49, function(){\n' +
+    'nav.onEnter(50, function(){\n' +
     '  MotorEngine.renderTeamReport({\n' +
     '    manager: manager,\n' +
     '    tbodySelector: "#teamTableBody",\n' +

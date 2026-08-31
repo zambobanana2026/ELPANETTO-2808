@@ -1,5 +1,26 @@
 # Status — Carmen Next Motor/Config
 
+## P6 — neue Willkommens-Slide (jetzt Slide 1, alles rückt um 1 nach hinten)
+
+Neue erste Slide vor dem bisherigen Hero: Begrüßungstext, 9:16-Video-
+Platzhalter (`.videoPlaceholder`, neue generische Motor-Klasse — noch kein
+echtes Video, klar als Platzhalter markiert mit "[hier kommt dein Video]"),
+darunter eine kurze Hook/Problem/Lösung-Beschreibung als zwei Kacheln
+("DAS PROBLEM." / "DIE LÖSUNG."). Statt eines externen GIFs (würde die
+Ein-Datei-ohne-externe-Abhängigkeiten-Anforderung brechen) eine kleine
+CSS-Wink-Animation (`.wave`, 👋-Emoji) als augenzwinkernder Ersatz.
+
+**Alle Slide-Nummern haben sich dadurch um 1 verschoben** — P6 hat jetzt
+52 statt 51 Slides. Betroffen: `FIRST_CARD_SLIDE` in `products/p6.config.js`
+(7→8), die zentrale `navBar()`-Funktion (Übersicht-Button `goTo(6)`→`goTo(7)`,
+gilt für alle 40 generierten Karten-Slides auf einen Schlag), der
+Team-Bericht-Hook (`nav.onEnter(49,...)`→`nav.onEnter(50,...)`), sowie in
+`products/p6/intro.slides.html` und `outro.slides.html` alle `data-slide`-
+Werte, `.num`-Anzeigen und die 8 fest verdrahteten `goTo()`-Ziele der
+Karten-Übersicht-Kacheln. `qa/p6_qa.js` komplett auf die neue Nummerierung
+angepasst (52 Slides, alle Ziel-Slides +1) — 93 Checks, alle grün. P2
+unberührt (eigene Datei, eigene Nummerierung, nicht betroffen).
+
 ## Farbmodelle — neue, generische Motor-Funktion (P6 + P2)
 
 Auf Wunsch jederzeit wechselbare Farbschemata: ein kleiner Kreis-Button
