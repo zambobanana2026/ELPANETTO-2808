@@ -1,5 +1,30 @@
 # Status — Carmen Next Motor/Config
 
+## P6 — Neue Brücken-Slide zwischen Mitarbeiter (6) und Übersicht (7/8)
+
+Auf Wunsch eine neue Slide zwischen der bisherigen Mitarbeiter-Slide (6) und
+der Gesprächskarten-Übersicht: erklärt, was ab der nächsten Slide passiert
+und was der Nutzer jetzt tun kann — bevor er die passende Gesprächskarte
+auswählt. Aufbau wie die anderen Marketing-/Erklär-Slides: `.headCenter`
+(Überschrift + Unterüberschrift zentriert), `.videoPlaceholder` (9:16,
+"[hier kommt dein Video]") und drei Kacheln, die den nächsten Ablauf in
+drei Schritten zusammenfassen (Gesprächskarte wählen → fünf Schritte
+durchlaufen → jederzeit zu Bibliothek/Notfallkarte/Team-Bericht wechseln).
+
+**Alle Slide-Nummern ab der neuen Slide haben sich um 1 verschoben** — P6
+hat jetzt 53 statt 52 Slides. Neue Reihenfolge: 1 Willkommen, 2 Für wen,
+3 Hero, 4 So funktioniert's, 5 System, 6 Mitarbeiter, **7 So geht's weiter
+(neu)**, 8 Übersicht, 9-48 die 40 Karten-Unterseiten, 49 Bibliothek,
+50 Notfallkarte, 51 Team-Bericht, 52 Checkliste, 53 Abschluss. Betroffen:
+`FIRST_CARD_SLIDE` in `products/p6.config.js` (8→9), die zentrale
+`navBar()`-Funktion (Übersicht-Button `goTo(7)`→`goTo(8)`, für alle 40
+Karten-Slides), der Team-Bericht-Hook (`nav.onEnter(50,...)`→`onEnter(51,...)`),
+sowie in `products/p6/intro.slides.html` und `outro.slides.html` alle
+`data-slide`-Werte, `.num`-Anzeigen und die 8 fest verdrahteten `goTo()`-Ziele
+der Karten-Übersicht-Kacheln. `qa/p6_qa.js` komplett auf die neue Nummerierung
+angepasst (96 Checks, alle grün, inkl. neuer Assertions für die Brücken-Slide).
+P2 unberührt.
+
 ## P6 — Slide "Für wen" von Slide 4 auf Slide 2 verschoben, Überschriften zentriert
 
 Zwei Änderungen auf Wunsch:
