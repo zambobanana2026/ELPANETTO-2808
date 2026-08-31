@@ -1,5 +1,140 @@
 # Status — Carmen Next Motor/Config
 
+## P2 — Willkommens-Slide auf das gemeinsame P6-Template umgestellt (v4)
+
+Parallel zu dieser P2-Fassung wurde auf `claude/hr-p6-app-s38hm7` unabhängig
+eine eigene Willkommens-Slide für P6 gebaut — mit eigenen, saubereren
+Motor-Klassen (`.textCenter`, `.videoPlaceholder`/`.playIcon`,
+`.pitchSection`/`.pitchHook`/`.pitchTile`). Martin hat den P6-Screenshot als
+verbindliche Vorlage für **Design/Aufbau** vorgegeben (nicht Inhalt). Dieser
+Durchgang:
+
+1. Hat die inzwischen divergierten Motor-Änderungen beider Branches gemerged
+   (P6 hatte in der Zwischenzeit eigene `.videoPlaceholder`/`.wave`-Klassen
+   sowie eine eigene Willkommens-Slide bekommen — P6 ist jetzt 52 statt 51
+   Slides).
+2. Hat P2s zuvor selbst gebaute, abweichende `.videoPlaceholder`/
+   `.videoPlaceholderInner`/`.videoPlaceholderIcon`-Klassen aus
+   `motor/engine.css` **entfernt** (waren nach dem Merge doppelt vorhanden,
+   Selektor-Kollision mit P6s Version) und durch die eine gemeinsame,
+   kanonische Version ersetzt — jetzt nutzen P2 und P6 exakt dieselben
+   Motor-Klassen für dieses Muster, keine Duplikate mehr.
+3. Hat P2s Willkommens-Slide inhaltlich unverändert gelassen (Hook-Satz,
+   Problem-/Lösung-Text bleiben P2-spezifisch), aber strukturell auf das
+   P6-Muster umgestellt: `.textCenter` auf der Section statt Inline-Styles,
+   `.pitchSection` als umschließender Kasten um Hook + zwei `.pitchTile`-
+   Kacheln ("DAS PROBLEM." / "DIE LÖSUNG." — mit Labels, wie bei P6, anders
+   als die vorherige P2-Zwischenfassung ohne Labels), Video-Platzhalter mit
+   rundem `.playIcon` statt eigenem Icon-Stil, Button-Beschriftung "Weiter"
+   statt "Los geht's" (Konsistenz mit P6).
+
+`qa/p2_qa.js` entsprechend angepasst (prüft jetzt `.textCenter`,
+`.pitchSection`, `.pitchHook`, 2× `.pitchTile`, `.playIcon`) — alle Checks
+grün. `qa/p6_qa.js` (93 Checks) und `qa/p6_diff.js` weiterhin grün bzw.
+erwartungsgemäß (P6 hat jetzt 52 statt 51 Slides, Diff zeigt entsprechend
+mehr Abweichungen zur alten Referenz — dokumentiert bereits im P6-Eintrag
+weiter unten als neuer Normalzustand).
+
+---
+
+## P2 — Neue Willkommens-Slide vor Slide 1 (v3)
+
+Auf Wunsch eine neue Slide 1 „WILLKOMMEN" vor die bisherige erste Slide gesetzt
+— alle 43 folgenden Slides rücken um eins nach hinten (Produkt hat jetzt 44
+Slides statt 43). Aufbau der neuen Slide: Willkommenstext, darunter ein
+Video-Platzhalter im Format 9:16 (gestrichelter Rahmen, Play-Icon, Hinweistext
+„VIDEO FOLGT" — kein echtes eingebettetes Video, weil das Endprodukt laut
+CLAUDE.md eine einzelne Offline-HTML-Datei ohne externe Abhängigkeiten bleiben
+muss; Carmen fügt ihr eigenes Video später selbst ein), darunter drei Kacheln
+Hook/Problem/Lösung als kurze Produkt-Einordnung.
+
+**Kein echtes GIF eingebaut** (angeboten, aber bewusst anders gelöst): ein
+extern geladenes GIF wäre eine externe Abhängigkeit und hätte den
+Offline-Anspruch des Produkts verletzt. Stattdessen ein rein CSS-basiertes,
+selbst gebautes Wink-Icon (👋 mit `@keyframes wave`-Animation) für die lockere
+Note — kein zusätzliches Asset, keine Abhängigkeit.
+
+**Motor nur generisch erweitert:** `motor/engine.css` bekam die neuen,
+produktunabhängigen Klassen `.videoPlaceholder`/`.videoPlaceholderInner`/
+`.videoPlaceholderIcon` sowie `.wave`/`@keyframes wave` rein additiv dazu
+(nichts Bestehendes verändert) — damit könnte z. B. auch P6 später eine
+eigene Willkommens-Slide im gleichen Stil bekommen. `qa/p6_qa.js` und
+`qa/p6_diff.js` bleiben unverändert grün, da P6 diese neuen Klassen nicht
+nutzt.
+
+**Slide-Nummern verschoben:** `FIRST_MILESTONE_SLIDE` 7→8,
+`BUDDY_FIRST_SLIDE` 27→28, `ESKALATION_FIRST_SLIDE` 32→33,
+`TRENNUNG_FIRST_SLIDE` 37→38, `TEAMBERICHT_SLIDE` 42→43, Outro-Slide 43→44.
+`qa/p2_qa.js` komplett auf die neue Nummerierung angepasst plus neue
+Assertions für die Willkommens-Slide (Video-Platzhalter, drei Hook/Problem/
+Lösung-Kacheln) — alle grün.
+
+---
+
+## P2 — Onboarding-Prozessbundle, Ausbau auf 5 Unterseiten je Station (v2)
+
+Martin fand die erste P2-Fassung (16 Slides, 1 Slide je Meilenstein) zu dünn
+für ein 49€-Produkt. Dieser Durchgang baut sie auf **43 Slides** aus: Jede der
+4 Meilenstein-Stationen (Tag 30/60/90/150–170) sowie Buddy-Framework,
+Eskalationsprotokoll und Trennungs-Leitfaden bekommen je **5 Unterseiten**,
+analog zu P6s Muster (ein Thema pro Seite, kurz und klar statt vollgestopft).
+Motor (`motor/engine.js`/`.css`) blieb dabei erneut **unverändert** — nur ein
+kleiner, generischer Helfer (`toggleYesNo`) kam lokal in `p2.config.js` dazu,
+für das Ja/Nein-Feld der Lernkurven-Prüfung; er nutzt ausschließlich die
+bereits vorhandene generische Choice-Toggle-Logik des Motors.
+
+**Wie die 5 Unterseiten gefüllt sind:**
+- **Buddy-Framework, Eskalationsprotokoll, Trennungs-Leitfaden:** vollständig
+  aus dem PDF (Rolle/Dauer/Aufgaben/Grenzen/Checkliste bzw. die 3 Eskalations-
+  Schritte + Checkliste bzw. die 3 Trennungs-Schritte + Checkliste). Keine
+  Zeile erfunden — nur sauberer auf 5 Seiten verteilt statt wie vorher auf
+  1–2 Seiten zusammengedrängt. Neu ins JSON übernommen (vorher nicht
+  extrahiert): die vollständige Buddy-Checkliste (13 Punkte, PDF-Abschnitt
+  10.2), die vollständige Eskalations-Checkliste (10 Punkte, Abschnitt 10.3)
+  und das Ja/Nein-Feld „Sichtbare Verbesserung innerhalb von 14 Tagen"
+  (Abschnitt 12, Arbeitsvorlage).
+- **Die 4 Meilenstein-Gespräche:** Vorbereitung (Kontext + Checkliste je
+  Phase aus dem Probezeit-Radar, Abschnitt 10.1), Ziel & Einstieg (Frage/
+  Zweck/Ziel, bei Tag 90 zusätzlich die vier Bewertungsbereiche), **Im
+  Gespräch**, Vereinbarung/Dokumentation (die Original-Arbeitsfelder) und
+  Follow-up (Gesprächsfolge-Haken aus Abschnitt 10.4 + Vorschau auf die
+  nächste Phase).
+
+**Transparente Lücke — mit Martin geklärt, nicht eigenmächtig entschieden:**
+Anders als P6 ist das P2-Quell-PDF ein reines Prozess-/Checklisten-Dokument
+ohne Gesprächsskripte. Für die Seite „Im Gespräch" (typische Mitarbeiter-
+Reaktionen + „Nicht sagen/besser sagen"-Vergleichstabelle je Meilenstein)
+gab das PDF keinen Stoff her. Auf Nachfrage hat Martin sich für die Option
+entschieden, die auch beim P6-Sonderfall Karte 8 „Lob und Anerkennung" schon
+angewendet wurde: Diese vier Seiten (eine je Meilenstein) hat Carmen Next
+selbst geschrieben, passend zum jeweiligen Gesprächsthema und in Carmens
+sachlichem Ton, aber **nicht** aus dem Original-Fachwissen-Archiv extrahiert.
+Wie bei „Lob" ist das im ausgelieferten Produkt nicht sichtbar gekennzeichnet
+(würde bei einem verkauften Produkt eher verunsichern), sondern hier
+dokumentiert: betroffen sind ausschließlich `reaktionen` und `compare` in
+`content/cards_p2.json` für alle vier Meilensteine (Tag 30/60/90/150–170).
+Alle anderen neuen Inhalte in dieser Fassung sind wörtlich bzw. sachlich
+unverändert aus dem PDF.
+
+**localStorage-Version angehoben:** `p2_data_v1` → `p2_data_v2`, weil sich
+Feld-IDs und Slide-Nummern strukturell geändert haben (analog zu P6s eigenem
+`p6_data_v2`) — alte gespeicherte Testdaten aus der v1-Fassung werden beim
+nächsten Laden verworfen, das betrifft aber nur lokale Entwicklungsstände,
+nicht ausgelieferte Käuferdaten (Produkt war noch nicht im Verkauf).
+
+**QA:** `qa/p2_qa.js` komplett erweitert (43 statt 16 Slides sequentiell
+geprüft, neue Assertions für Checklisten-Längen je Station, Reaktionen/
+Vergleichstabelle, Ja/Nein-Exklusivität, Follow-up-Vorschau der nächsten
+Phase, Übersicht-Verlinkung auf die richtige erste Unterseite) — alle grün.
+`qa/p6_qa.js` und `qa/p6_diff.js` bleiben unverändert grün (P6 wurde nicht
+angefasst, siehe Diff-Ergebnis „NO TEXT DIFFERENCES ACROSS ALL SLIDES").
+Nebenbei in beiden P6-QA-Skripten sowie `p2_qa.js` den Playwright-
+`executablePath` an den in dieser Umgebung tatsächlich vorhandenen Chromium-
+Pfad (`/opt/pw-browsers/chromium`) angepasst — reine Tooling-Korrektur ohne
+Auswirkung auf die Produkte selbst.
+
+---
+
 ## P6 — Willkommens-Slide: Pitch-Bereich dominanter, gesamte Slide zentriert
 
 Feedback zur neuen Slide 1: der Hook-Satz und die beiden Kacheln
@@ -40,6 +175,8 @@ Werte, `.num`-Anzeigen und die 8 fest verdrahteten `goTo()`-Ziele der
 Karten-Übersicht-Kacheln. `qa/p6_qa.js` komplett auf die neue Nummerierung
 angepasst (52 Slides, alle Ziel-Slides +1) — 93 Checks, alle grün. P2
 unberührt (eigene Datei, eigene Nummerierung, nicht betroffen).
+
+---
 
 ## Farbmodelle — neue, generische Motor-Funktion (P6 + P2)
 
@@ -133,6 +270,8 @@ hinaus weiterentwickelt wird, wächst diese Zahl mit jeder gewollten
 Änderung nur dort auftaucht, wo sie hingehört (und nicht versehentlich noch
 woanders) — nicht mehr als Nachweis "nichts hat sich verändert". Funktional
 (`qa/p6_qa.js`) weiterhin grün, P2 unberührt.
+
+---
 
 ## P2 — Onboarding-Prozessbundle (neu gebaut, kein Vorgänger-Prototyp)
 

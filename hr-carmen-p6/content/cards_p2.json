@@ -43,6 +43,23 @@
       "frageLabel": "Frage",
       "frage": "Wo hakt es technisch oder organisatorisch noch?",
       "ziel": "Onboarding-Zufriedenheit, Werkzeuge und Teamintegration besprechen.",
+      "checks": [
+        "Systemzugänge, Prozesse und Teamkultur berücksichtigt",
+        "Erste zwei Wochen: täglicher 10-Minuten-Check-in durchgeführt",
+        "Technische und soziale Hürden beseitigt"
+      ],
+      "reaktionen": [
+        ["Ehrlich gesagt läuft alles super, ich hab keine Fragen.", "Das freut mich. Trotzdem schauen wir kurz gemeinsam auf Systemzugänge, Ansprechpartner und Arbeitsabläufe — manchmal fällt einem erst beim gezielten Nachfragen auf, wo doch noch etwas fehlt."],
+        ["Ich wusste am Anfang gar nicht, an wen ich mich bei welcher Frage wenden soll.", "Gut, dass du das ansprichst. Lass uns konkret durchgehen: Wer ist dein Ansprechpartner für IT, wer für Fachfragen, wer für organisatorische Themen?"],
+        ["Manche Abläufe wirken noch chaotisch.", "Kannst du mir ein konkretes Beispiel nennen? Dann können wir gezielt klären, ob es an der Kommunikation, am Prozess oder an fehlender Information lag."],
+        ["Ich will nicht direkt am Anfang schon negativ auffallen.", "Dieses Gespräch dient dazu, offene Punkte früh zu klären, nicht dich zu bewerten. Je konkreter du bist, desto besser können wir dir helfen."]
+      ],
+      "compare": [
+        ["Läuft doch alles, oder?", "Wo hakt es technisch oder organisatorisch noch?"],
+        ["Sie werden sich schon einleben.", "Welche Systemzugänge oder Abläufe sind dir noch nicht ganz klar?"],
+        ["Melden Sie sich, falls was ist.", "Wir vereinbaren jetzt konkret: Wer ist Ihr Ansprechpartner, und bis wann klären wir das offene Thema?"]
+      ],
+      "gespraechsfolge": ["30-Tage-Check-in mit Erwartungsabgleich durchgeführt"],
       "fields": [
         ["TEILNEHMER", "teilnehmer", "Name(n) eintragen …"],
         ["DOKUMENTATION", "dok", "Kurz eintragen …"],
@@ -59,6 +76,22 @@
       "frageLabel": "Frage",
       "frage": "Wo fühlst du dich schon sicher, und wo brauchst du noch Unterstützung?",
       "ziel": "Fachliche Fehlerquote und Selbstständigkeit besprechen.",
+      "checks": [
+        "Erste eigenverantwortliche Aufgaben und Kunden-/Projektfälle übernommen",
+        "Buddy-Taktung auf 1–2 feste Check-ins pro Woche reduziert"
+      ],
+      "reaktionen": [
+        ["Ich mach doch alles wie besprochen.", "Schauen wir uns zwei, drei konkrete Fälle der letzten Wochen gemeinsam an — daran lässt sich am besten festmachen, wo es schon rund läuft und wo noch Fragen offen sind."],
+        ["Bei den Kundenfällen bin ich mir oft unsicher.", "Gut, das jetzt zu klären. Woran genau merkst du die Unsicherheit — fehlt Information, Erfahrung oder eine klare Abstimmung mit dem Team?"],
+        ["Die Zusammenarbeit mit der anderen Abteilung funktioniert nicht gut.", "Was genau ist an dieser Schnittstelle schwierig? Lass uns das konkret machen, damit wir es gezielt ansprechen können."],
+        ["Ich wollte nicht extra nachfragen, um nicht unselbstständig zu wirken.", "Nachfragen ist in dieser Phase genau richtig. Woran hättest du in den letzten Wochen gemerkt, dass eine Rückfrage gut gewesen wäre?"]
+      ],
+      "compare": [
+        ["Passt schon.", "Wo fühlst du dich schon sicher, und wo brauchst du noch Unterstützung?"],
+        ["Sie machen zu viele Fehler.", "Bei den letzten zwei Kundenfällen fehlte jeweils die Rückmeldung an die Schnittstelle — wie ist dir das aufgefallen?"],
+        ["Sie müssen selbstständiger werden.", "Welche Aufgabe könntest du ab jetzt ohne Rückfrage übernehmen, und wo brauchst du noch eine Freigabe?"]
+      ],
+      "gespraechsfolge": ["60-Tage-Review mit Fehleranalyse, Schnittstellenkooperation und Selbstständigkeit durchgeführt"],
       "fields": [
         ["TEILNEHMER", "teilnehmer", "Name(n) eintragen …"],
         ["DOKUMENTATION", "dok", "Kurz eintragen …"],
@@ -74,7 +107,24 @@
       "fokus": "Strukturierte Bewertung von Fachlichkeit, Selbststeuerung, Teamfit und Kultur sowie Spiegelung der vorläufigen Übernahmeperspektive.",
       "frageLabel": null,
       "frage": null,
+      "bewertungsbereiche": ["Fachlichkeit", "Selbststeuerung", "Teamfit", "Kultur"],
       "ziel": "Strukturierte Bewertung von Fachlichkeit, Selbststeuerung, Teamfit und Kultur sowie Spiegelung der vorläufigen Übernahmeperspektive.",
+      "checks": [
+        "Volle Prozessautonomie im Blick",
+        "Buddy-Phase spätestens nach 6 Wochen offiziell beendet"
+      ],
+      "reaktionen": [
+        ["Wie stehen meine Chancen auf Übernahme?", "Genau das besprechen wir jetzt strukturiert entlang der vier Bereiche Fachlichkeit, Selbststeuerung, Teamfit und Kultur — danach kann ich dir eine vorläufige Einschätzung geben."],
+        ["Ich dachte, das läuft schon alles rund.", "Lass uns die vier Bereiche einzeln durchgehen. Wo siehst du selbst die größten Fortschritte, wo noch offene Punkte?"],
+        ["Bei der Teamkultur bin ich mir nicht sicher, ob ich reinpasse.", "Was genau löst diese Unsicherheit aus? Woran würdest du merken, dass du gut ins Team passt?"],
+        ["Ist das schon die endgültige Entscheidung?", "Nein, das ist eine vorläufige Einschätzung, keine endgültige Entscheidung. Die fällt erst im Abschlussgespräch an Tag 150–170."]
+      ],
+      "compare": [
+        ["Grundsätzlich passt das.", "In der Fachlichkeit bist du schon selbstständig, bei der Teamabstimmung sehe ich noch Luft nach oben."],
+        ["Mal schauen, wie's weitergeht.", "Meine vorläufige Einschätzung ist [konkrete Einschätzung]. Das können wir bis Tag 150 gemeinsam noch verändern."],
+        ["Sie müssen sich noch beweisen.", "Bis zum Abschlussgespräch an Tag 150 wollen wir gemeinsam an [konkretem Punkt] arbeiten."]
+      ],
+      "gespraechsfolge": ["90-Tage-Standortbestimmung mit Leistungsbeurteilung und erster Übernahmeprognose durchgeführt"],
       "fields": [
         ["FACHLICHKEIT", "fach", "Kurz eintragen …"],
         ["SELBSTSTEUERUNG", "selbst", "Kurz eintragen …"],
@@ -96,6 +146,21 @@
       "frage": "Wenn du auf die letzten sechs Monate zurückblickst: An welchem Punkt dachtest du ‚Genau hier will ich die nächsten drei Jahre arbeiten‘ – und was war die Situation, in der du dich am meisten gefragt hast, worauf du dich hier eigentlich eingelassen hast?",
       "zweck": "Schönrednerei erkennen und zeigen, ob der Mitarbeiter auch unvermeidbare Reibungspunkte der Firmenkultur mittragen kann.",
       "ziel": "Finale Weichenstellung im Entscheidungs-Korridor.",
+      "checks": [
+        "Finale Weichenstellung im Entscheidungs-Korridor erreicht"
+      ],
+      "reaktionen": [
+        ["Ich fühle mich hier total wohl, alles super.", "Das freut mich zu hören. Gab es trotzdem einen Moment, an dem du dich gefragt hast, worauf du dich hier eigentlich eingelassen hast?"],
+        ["Ehrlich, am Anfang habe ich an manchem gezweifelt.", "Was genau war der Punkt, an dem du gezweifelt hast — und was hat den Ausschlag gegeben, dass du geblieben bist?"],
+        ["Manche Dinge in der Firmenkultur finde ich immer noch schwierig.", "Das ist eine wichtige Rückmeldung. Kannst du das konkret machen, damit wir wissen, woran wir arbeiten sollten?"],
+        ["Kann ich jetzt einfach so weitermachen wie bisher?", "Ja, mit den vereinbarten nächsten Schritten aus diesem Gespräch als Grundlage für die Zeit nach der Probezeit."]
+      ],
+      "compare": [
+        ["Wie fandest du die letzten sechs Monate?", "Wenn du zurückblickst: An welchem Punkt warst du dir am sichersten, hier richtig zu sein?"],
+        ["Passen Sie ins Team, oder?", "Welchen Reibungspunkt der Firmenkultur trägst du mit, und welchen nicht?"],
+        ["Wir sind zufrieden.", "Das sind die konkreten nächsten Schritte, auf die wir uns jetzt einigen."]
+      ],
+      "gespraechsfolge": ["Tag 150–170 – Probezeit-Abschlussgespräch durchgeführt", "Goldene Abschlussfrage verwendet"],
       "fields": [
         ["TEILNEHMER", "teilnehmer", "Name(n) eintragen …"],
         ["DOKUMENTATION", "dok", "Kurz eintragen …"],
@@ -112,20 +177,32 @@
       ["Woche 1–2", "täglich"],
       ["Woche 3–6", "punktuell 1–2x pro Woche"]
     ],
-    "checks": [
+    "aufgaben": [
+      "Tools zeigen",
+      "Ungeschriebene Regeln erklären",
+      "Im Team vernetzen",
+      "Kollegiale Tipps zur Arbeitsorganisation geben",
+      "Erklären, an wen man sich bei HR-Fragen wendet"
+    ],
+    "tabus": [
+      "Keine Leistungsbeurteilung oder fachliche Defizite bewerten.",
+      "Keine HR-/Vertragsthemen übernehmen, insbesondere Urlaub, Überstunden, Gehalt und Krankmeldungen.",
+      "Keine Arbeit stellvertretend übernehmen."
+    ],
+    "checkliste": [
+      "Buddy als kultureller Wegweiser benannt",
+      "Dauer auf 4 bis maximal 6 Wochen festgelegt",
+      "Woche 1–2: tägliche Begleitung vorgesehen",
+      "Woche 3–6: punktuell 1–2x pro Woche vorgesehen",
       "Tools gezeigt",
       "Ungeschriebene Regeln erklärt",
       "Im Team vernetzt",
       "Kollegiale Tipps zur Arbeitsorganisation gegeben",
       "Weg zu HR-Fragen erklärt",
       "Keine Leistungsbeurteilung oder Bewertung fachlicher Defizite",
-      "Keine HR-/Vertragsthemen übernommen (Urlaub, Überstunden, Gehalt, Krankmeldungen)",
-      "Keine Arbeit stellvertretend übernommen"
-    ],
-    "tabus": [
-      "Keine Leistungsbeurteilung oder fachliche Defizite bewerten.",
-      "Keine HR-/Vertragsthemen übernehmen, insbesondere Urlaub, Überstunden, Gehalt und Krankmeldungen.",
-      "Keine Arbeit stellvertretend übernehmen."
+      "Keine HR-/Vertragsthemen übernommen",
+      "Keine Arbeit stellvertretend übernommen",
+      "Buddy-Phase spätestens nach 6 Wochen beendet"
     ],
     "fields": [
       ["NAME BUDDY", "name", "Name eintragen …"],
@@ -137,16 +214,29 @@
     "intro": "Das 14-Tage-Eskalationsprotokoll ist ein Führungsinstrument für eine sichtbare Leistungslücke.",
     "grundsatz": "Kein Vorwurf und keine emotionalen Phrasen.",
     "schluesselfrage": "Welche Unterstützung oder Schulung fehlt dir genau dafür?",
-    "steps": [
-      "Sichtbare Leistungslücke",
-      "Faktenabgleich im 1:1-Gespräch innerhalb Tag 1–14",
-      "Kein Vorwurf / keine emotionalen Phrasen",
-      "Sachlicher Abgleich mit Zielerwartung",
-      "Verbindliches Zwischenziel",
-      "„Welche Unterstützung oder Schulung fehlt dir genau dafür?“",
-      "Tag 15–28 Lernkurven-Prüfung",
-      "Bei fehlender sichtbarer Verbesserung: Eskalation an HR",
-      "Entscheidung: schriftliche Zielvereinbarung mit 14-tägiger Bewährungsfrist oder Einleitung des Trennungsprozesses",
+    "schritt1": {
+      "titel": "Faktenabgleich im 1:1-Gespräch",
+      "text": "Bei einer sichtbaren Leistungslücke erfolgt innerhalb von Tag 1–14 ein Faktenabgleich im 1:1-Gespräch. Das Arbeitsergebnis wird sachlich mit der Zielerwartung abgeglichen."
+    },
+    "schritt2": {
+      "titel": "Tag 15–28: Lernkurven-Prüfung",
+      "text": "Von Tag 15 bis Tag 28 erfolgt die Lernkurven-Prüfung. Zeigt sich innerhalb von 14 Tagen nach dem Gespräch keine sichtbare Verbesserung, erfolgt die Eskalation an HR."
+    },
+    "schritt3": {
+      "titel": "Entscheidungskonsequenz",
+      "text": "Als Entscheidungskonsequenz gilt: entweder eine schriftliche Zielvereinbarung mit 14-tägiger Bewährungsfrist, oder die Einleitung des Trennungsprozesses.",
+      "rechtshinweis": "Kein Mitschleppen bis kurz vor Probezeitende."
+    },
+    "checkliste": [
+      "Sichtbare Leistungslücke festgestellt",
+      "Faktenabgleich innerhalb von Tag 1–14 im 1:1-Gespräch durchgeführt",
+      "Kein Vorwurf und keine emotionalen Phrasen verwendet",
+      "Arbeitsergebnis sachlich mit Zielerwartung abgeglichen",
+      "Verbindliches Zwischenziel für die folgende Woche vereinbart",
+      "Schlüsselfrage zur fehlenden Unterstützung oder Schulung gestellt",
+      "Tag 15–28: Lernkurven-Prüfung durchgeführt",
+      "Bei fehlender sichtbarer Verbesserung innerhalb von 14 Tagen an HR eskaliert",
+      "Entscheidung zwischen schriftlicher Zielvereinbarung mit 14-tägiger Bewährungsfrist und Einleitung des Trennungsprozesses getroffen",
       "Kein Mitschleppen bis kurz vor Probezeitende"
     ],
     "fields": [
