@@ -1,5 +1,25 @@
 # Status — Carmen Next Motor/Config
 
+## P6 — Willkommens-Slide: Pitch-Bereich dominanter, gesamte Slide zentriert
+
+Feedback zur neuen Slide 1: der Hook-Satz und die beiden Kacheln
+("DAS PROBLEM." / "DIE LÖSUNG.") sollten deutlich mehr Gewicht bekommen,
+und der gesamte Slide-Text sollte zentriert sein statt linksbündig.
+
+Umgesetzt in `motor/engine.css` (generisch, für alle Produkte nutzbar):
+- `.textCenter` — zentriert Überschrift, Lead-Text, Grids/Boxen und deren
+  Inhalte; auf die `<section class="slide">` von Slide 1 gesetzt.
+- `.pitchSection` — neuer umschließender Kasten (eigener Hintergrund-Ton,
+  Rahmen, großzügiges Padding) um Hook-Satz + Problem/Lösung-Kacheln, damit
+  dieser Block sich sichtbar vom Rest der Slide absetzt.
+- `.pitchTile` — Kacheln jetzt mit weißer Fläche, farbigem Top-Rahmen,
+  leichtem Schatten und größerer Überschrift (23px, in Akzentfarbe) statt
+  der neutralen Standard-`.tile`-Optik.
+
+Nur Slide 1 in `products/p6/intro.slides.html` nutzt die neuen Klassen;
+P2 und die übrigen P6-Slides sind unverändert. `qa/p6_qa.js` (93 Checks)
+und `qa/p2_qa.js` laufen weiterhin vollständig grün, 0 Konsolen-/Seitenfehler.
+
 ## P6 — neue Willkommens-Slide (jetzt Slide 1, alles rückt um 1 nach hinten)
 
 Neue erste Slide vor dem bisherigen Hero: Begrüßungstext, 9:16-Video-

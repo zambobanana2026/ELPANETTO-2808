@@ -34,6 +34,18 @@ input[type=text]{width:100%;padding:12px;border:1px solid var(--line);background
 .choice{border:1px solid var(--line);background:var(--surface);padding:12px 14px;cursor:pointer;font-size:14px}
 .choice.on{border-color:var(--green);background:#eafbf3;outline:1px solid var(--green)}
 .note{border-left:4px solid var(--mint);padding:14px 16px;background:var(--surface);margin:18px 0;line-height:1.5}
+.textCenter{text-align:center}
+.textCenter h1,.textCenter .lead,.textCenter .grid,.textCenter .note,.textCenter .box{margin-left:auto;margin-right:auto}
+.textCenter .tile,.textCenter .box{text-align:center}
+.pitchSection{background:var(--pagebg);border:1px solid var(--line);padding:34px 30px;margin:26px 0}
+.pitchHook{font-size:24px;font-weight:800;line-height:1.4;max-width:750px;margin:0 auto 22px}
+.pitchSection .grid{margin:0}
+.pitchTile{background:var(--surface);border-top:5px solid var(--ci);padding:28px 26px;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.pitchTile b{display:block;font-size:23px;letter-spacing:-.3px;color:var(--ci)}
+.pitchTile small{display:block;font-size:16px;line-height:1.65;color:var(--ink);margin-top:14px}
+@media(max-width:700px){
+ .pitchSection{padding:26px 18px}
+}
 .nav{display:flex;justify-content:space-between;gap:10px;margin-top:34px}
 .nav .homeBtn{flex:0 0 auto}
 .qa{background:var(--surface);border:1px solid var(--line);padding:12px 14px;margin:8px 0;font-size:14px;line-height:1.5}

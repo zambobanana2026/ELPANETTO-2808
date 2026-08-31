@@ -41,6 +41,18 @@ input[type=text]{width:100%;padding:12px;border:1px solid var(--line);background
 .choice{border:1px solid var(--line);background:var(--surface);padding:12px 14px;cursor:pointer;font-size:14px}
 .choice.on{border-color:var(--green);background:#eafbf3;outline:1px solid var(--green)}
 .note{border-left:4px solid var(--mint);padding:14px 16px;background:var(--surface);margin:18px 0;line-height:1.5}
+.textCenter{text-align:center}
+.textCenter h1,.textCenter .lead,.textCenter .grid,.textCenter .note,.textCenter .box{margin-left:auto;margin-right:auto}
+.textCenter .tile,.textCenter .box{text-align:center}
+.pitchSection{background:var(--pagebg);border:1px solid var(--line);padding:34px 30px;margin:26px 0}
+.pitchHook{font-size:24px;font-weight:800;line-height:1.4;max-width:750px;margin:0 auto 22px}
+.pitchSection .grid{margin:0}
+.pitchTile{background:var(--surface);border-top:5px solid var(--ci);padding:28px 26px;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.pitchTile b{display:block;font-size:23px;letter-spacing:-.3px;color:var(--ci)}
+.pitchTile small{display:block;font-size:16px;line-height:1.65;color:var(--ink);margin-top:14px}
+@media(max-width:700px){
+ .pitchSection{padding:26px 18px}
+}
 .nav{display:flex;justify-content:space-between;gap:10px;margin-top:34px}
 .nav .homeBtn{flex:0 0 auto}
 .qa{background:var(--surface);border:1px solid var(--line);padding:12px 14px;margin:8px 0;font-size:14px;line-height:1.5}
@@ -110,14 +122,16 @@ input[type=text]{width:100%;padding:12px;border:1px solid var(--line);background
 </head>
 <body><div id="app">
 
-<section class="slide active" data-slide="1"><div class="brand">P6 / WILLKOMMEN</div><div class="num">01</div>
+<section class="slide active textCenter" data-slide="1"><div class="brand">P6 / WILLKOMMEN</div><div class="num">01</div>
 <h1>WILLKOMMEN. <span class="wave">👋</span><br>SCHÖN, DASS DU DA BIST.</h1>
 <p class="lead">Bevor es losgeht, ein kurzes Video von mir — und du weißt in drei Minuten genau, wie diese Toolbox funktioniert und wie du am besten startest.</p>
 <div class="videoPlaceholder"><div class="playIcon">▶</div><b>BEGRÜSSUNGSVIDEO</b><small>Format 9:16<br>[hier kommt dein Video]</small></div>
-<p class="lead">Schwierige Gespräche mit Mitarbeitenden gehören zum Führungsalltag — trotzdem fühlen sich die wenigsten wirklich darauf vorbereitet.</p>
+<div class="pitchSection">
+<p class="lead pitchHook">Schwierige Gespräche mit Mitarbeitenden gehören zum Führungsalltag — trotzdem fühlen sich die wenigsten wirklich darauf vorbereitet.</p>
 <div class="grid grid1">
-<div class="tile"><b>DAS PROBLEM.</b><small>Die meisten Führungskräfte überlegen sich im letzten Moment, was sie sagen sollen — und landen dann doch bei Vorwürfen, Bauchgefühl oder einem Gespräch, das noch ein bisschen länger aufgeschoben wird, obwohl es dadurch nicht leichter wird.</small></div>
-<div class="tile"><b>DIE LÖSUNG.</b><small>Diese Toolbox nimmt dir das Überlegen ab: acht typische Situationen, klare Gesprächsleitfäden und fertige Formulierungen — damit du dich im Gespräch auf dein Gegenüber konzentrieren kannst statt auf die Worte.</small></div>
+<div class="tile pitchTile"><b>DAS PROBLEM.</b><small>Die meisten Führungskräfte überlegen sich im letzten Moment, was sie sagen sollen — und landen dann doch bei Vorwürfen, Bauchgefühl oder einem Gespräch, das noch ein bisschen länger aufgeschoben wird, obwohl es dadurch nicht leichter wird.</small></div>
+<div class="tile pitchTile"><b>DIE LÖSUNG.</b><small>Diese Toolbox nimmt dir das Überlegen ab: acht typische Situationen, klare Gesprächsleitfäden und fertige Formulierungen — damit du dich im Gespräch auf dein Gegenüber konzentrieren kannst statt auf die Worte.</small></div>
+</div>
 </div>
 <div class="nav"><span></span><span></span><button class="btn" onclick="nextSlide()">Weiter</button></div>
 </section>
