@@ -1,5 +1,37 @@
 # Status — Carmen Next Motor/Config
 
+## P6 — Slide "Für wen" von Slide 4 auf Slide 2 verschoben, Überschriften zentriert
+
+Zwei Änderungen auf Wunsch:
+
+1. **Reihenfolge:** Die Slide "FÜR WEN IST DIESE TOOLBOX?" (inkl. rechtlichem
+   Hinweis) stand bisher an Position 4, direkt vor dem Carmen-KLAR-System.
+   Jetzt steht sie an Position 2, direkt nach der Willkommens-Slide — Leser
+   erfahren sofort, ob das Produkt zu ihnen passt, bevor der Marketing-Hero
+   und "So funktioniert's" folgen. Neue Reihenfolge: 1 Willkommen, 2 Für wen,
+   3 Hero, 4 So funktioniert's, 5 System, 6 Mitarbeiter, 7 Übersicht. Nur die
+   drei betroffenen Slides in `products/p6/intro.slides.html` mussten
+   `data-slide`/`.num` bekommen — Slides 5-7 und alle Karten-Slides (8-52)
+   behalten ihre Nummern, da nur innerhalb des Blocks 2-4 getauscht wurde.
+   `qa/p6_qa.js` prüft jetzt zusätzlich per `.brand`-Text, dass Slide 2/3/4
+   tatsächlich die erwarteten Inhalte nach dem Tausch zeigen, und der
+   Rechtshinweis-Check zielt jetzt auf Slide 2 statt 4.
+
+2. **Zentrierte Überschriften:** Neue generische Motor-Klasse `.headCenter`
+   in `motor/engine.css` — zentriert `<h1>` und die direkt darauffolgende
+   `.lead`-Unterüberschrift (Text-Align + Auto-Margins), lässt den Rest der
+   Slide (Grids, Kacheln, Formulare) unverändert. Auf alle P6-Slides ab
+   Slide 2 angewendet: die 7 statischen Intro-/Outro-Slides sowie alle 5
+   generierten Karten-Slide-Vorlagen in `products/p6.config.js` (also
+   effektiv jede Überschrift/Unterüberschrift im gesamten Produkt). Slide 1
+   bleibt bei ihrer bestehenden `.textCenter`-Klasse (zentriert dort die
+   gesamte Slide, nicht nur die Überschrift). P2 ist unberührt — die Klasse
+   wird nur in P6-Markup gesetzt.
+
+`qa/p6_qa.js` (95 Checks, inkl. 2 neuer Assertions für Zentrierung und
+Reihenfolge) und `qa/p2_qa.js` laufen vollständig grün, 0 Konsolen-/
+Seitenfehler.
+
 ## P6 — Willkommens-Slide: Pitch-Bereich dominanter, gesamte Slide zentriert
 
 Feedback zur neuen Slide 1: der Hook-Satz und die beiden Kacheln

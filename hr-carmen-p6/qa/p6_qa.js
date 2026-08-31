@@ -24,7 +24,7 @@ function assert(cond, msg) {
   assert(await page.locator('.slide.active').count() === 1, 'exactly one active slide on load');
   assert((await page.locator('.slide.active').getAttribute('data-slide')) === '1', 'starts on slide 1 (Willkommen)');
 
-  // Navigate slides 1 -> 7 (intro: Willkommen, Hero, So funktioniert's, Für wen, System, Mitarbeiter, Übersicht)
+  // Navigate slides 1 -> 7 (intro: Willkommen, Für wen, Hero, So funktioniert's, System, Mitarbeiter, Übersicht)
   for (let i = 0; i < 6; i++) {
     await page.click('.slide.active .nav button.btn:not(.alt)');
   }
@@ -109,14 +109,19 @@ function assert(cond, msg) {
   assert(reloadedValue === 'Reload-Test-Wert', 'field value persisted after reload: got "' + reloadedValue + '"');
 
   // ---- Full navigation, verify last-card forwarding ----
-  // Slides 1-7 are sequential via "Weiter" (Willkommen, Hero, So funktioniert's, Für wen,
+  // Slides 1-7 are sequential via "Weiter" (Willkommen, Für wen, Hero, So funktioniert's,
   // System, Mitarbeiter, Übersicht). Slide 7's "Weiter zur Bibliothek" is an intentional
   // skip straight to slide 48 (the overview is entered via its 8 card tiles, not
   // sequential "Weiter"). Slides 8-52 are sequential.
   await page.goto(FILE_URL);
+  const expectedBrand = { 2: 'FÜR WEN', 3: 'GESPRÄCHS-TOOLBOX', 4: "SO FUNKTIONIERT'S" };
   for (let n = 1; n <= 7; n++) {
     const activeSlide = await page.locator('.slide.active').getAttribute('data-slide');
     assert(activeSlide === String(n), 'sequential nav at slide ' + n + ' matches (got ' + activeSlide + ')');
+    if (expectedBrand[n]) {
+      const brandText = await page.locator('.slide.active .brand').textContent();
+      assert(brandText.includes(expectedBrand[n]), 'slide ' + n + ' has expected content after reorder: ' + brandText);
+    }
     if (n < 7) await page.click('.slide.active .nav button.btn:not(.alt)');
   }
   await page.evaluate(() => window.goTo(8));
@@ -159,10 +164,10 @@ function assert(cond, msg) {
   const cntMA = await page.locator('#cntTeamMA').textContent();
   assert(Number(cntMA) >= 1, 'team report employee count > 0: ' + cntMA);
 
-  // ---- rechtlicher Hinweis legal disclaimer present (slide 4, "Für wen") ----
-  await page.evaluate(() => window.goTo(4));
+  // ---- rechtlicher Hinweis legal disclaimer present (slide 2, "Für wen") ----
+  await page.evaluate(() => window.goTo(2));
   const legalText = await page.locator('.slide.active .note').textContent();
-  assert(legalText.includes('keine individuelle Rechtsberatung'), 'legal disclaimer present on slide 4');
+  assert(legalText.includes('keine individuelle Rechtsberatung'), 'legal disclaimer present on slide 2');
 
   // ---- Color theme picker ----
   await page.click('.themeTrigger');
@@ -197,6 +202,13 @@ function assert(cond, msg) {
   await page.click('.themeTrigger');
   await page.locator('.themeSwatch').nth(0).click();
   await page.click('.dialog button:has-text("Schließen")');
+
+  // ---- Heading + subheading centered (.headCenter) on a regular slide ----
+  await page.evaluate(() => window.goTo(3));
+  const h1Align = await page.locator('.slide.active h1').evaluate(el => getComputedStyle(el).textAlign);
+  const leadAlign = await page.locator('.slide.active .lead').first().evaluate(el => getComputedStyle(el).textAlign);
+  assert(h1Align === 'center', 'heading is centered on slide 3 (headCenter): got ' + h1Align);
+  assert(leadAlign === 'center', 'subheading (.lead) is centered on slide 3 (headCenter): got ' + leadAlign);
 
   // ---- Welcome slide content (video placeholder, problem/solution tiles) ----
   await page.evaluate(() => window.goTo(1));
