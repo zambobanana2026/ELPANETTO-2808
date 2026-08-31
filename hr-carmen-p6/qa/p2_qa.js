@@ -28,9 +28,9 @@ function assert(cond, msg) {
   // ---- Welcome slide (1/44): brand, video placeholder, hook/problem/lösung ----
   assert((await page.locator('.slide.active .brand').textContent()) === 'P2 / WILLKOMMEN', 'slide 1 is the Willkommen slide');
   assert((await page.locator('.slide.active .videoPlaceholder').count()) === 1, 'slide 1 has a video placeholder (9:16)');
-  assert((await page.locator('.slide.active .tile').count()) === 3, 'slide 1 has 3 tiles (Hook/Problem/Lösung)');
+  assert((await page.locator('.slide.active').evaluate(el => getComputedStyle(el).textAlign)) === 'center', 'slide 1 text is centered');
   const welcomeText = await page.locator('.slide.active').innerText();
-  assert(welcomeText.includes('DER HOOK') && welcomeText.includes('DAS PROBLEM') && welcomeText.includes('DIE LÖSUNG'), 'slide 1 covers Hook, Problem, Lösung');
+  assert(welcomeText.includes('180 Tage') && welcomeText.includes('nebenbei') && welcomeText.includes('wiederholbaren System'), 'slide 1 covers Hook, Problem, Lösung as flowing text (no labeled headings)');
 
   async function addEmployee(name, position, abteilung) {
     await page.click('button:has-text("MITARBEITER HINZUFÜGEN")');
