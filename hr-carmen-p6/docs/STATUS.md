@@ -1,5 +1,39 @@
 # Status — Carmen Next Motor/Config
 
+## P2 — Neue Willkommens-Slide vor Slide 1 (v3)
+
+Auf Wunsch eine neue Slide 1 „WILLKOMMEN" vor die bisherige erste Slide gesetzt
+— alle 43 folgenden Slides rücken um eins nach hinten (Produkt hat jetzt 44
+Slides statt 43). Aufbau der neuen Slide: Willkommenstext, darunter ein
+Video-Platzhalter im Format 9:16 (gestrichelter Rahmen, Play-Icon, Hinweistext
+„VIDEO FOLGT" — kein echtes eingebettetes Video, weil das Endprodukt laut
+CLAUDE.md eine einzelne Offline-HTML-Datei ohne externe Abhängigkeiten bleiben
+muss; Carmen fügt ihr eigenes Video später selbst ein), darunter drei Kacheln
+Hook/Problem/Lösung als kurze Produkt-Einordnung.
+
+**Kein echtes GIF eingebaut** (angeboten, aber bewusst anders gelöst): ein
+extern geladenes GIF wäre eine externe Abhängigkeit und hätte den
+Offline-Anspruch des Produkts verletzt. Stattdessen ein rein CSS-basiertes,
+selbst gebautes Wink-Icon (👋 mit `@keyframes wave`-Animation) für die lockere
+Note — kein zusätzliches Asset, keine Abhängigkeit.
+
+**Motor nur generisch erweitert:** `motor/engine.css` bekam die neuen,
+produktunabhängigen Klassen `.videoPlaceholder`/`.videoPlaceholderInner`/
+`.videoPlaceholderIcon` sowie `.wave`/`@keyframes wave` rein additiv dazu
+(nichts Bestehendes verändert) — damit könnte z. B. auch P6 später eine
+eigene Willkommens-Slide im gleichen Stil bekommen. `qa/p6_qa.js` und
+`qa/p6_diff.js` bleiben unverändert grün, da P6 diese neuen Klassen nicht
+nutzt.
+
+**Slide-Nummern verschoben:** `FIRST_MILESTONE_SLIDE` 7→8,
+`BUDDY_FIRST_SLIDE` 27→28, `ESKALATION_FIRST_SLIDE` 32→33,
+`TRENNUNG_FIRST_SLIDE` 37→38, `TEAMBERICHT_SLIDE` 42→43, Outro-Slide 43→44.
+`qa/p2_qa.js` komplett auf die neue Nummerierung angepasst plus neue
+Assertions für die Willkommens-Slide (Video-Platzhalter, drei Hook/Problem/
+Lösung-Kacheln) — alle grün.
+
+---
+
 ## P2 — Onboarding-Prozessbundle, Ausbau auf 5 Unterseiten je Station (v2)
 
 Martin fand die erste P2-Fassung (16 Slides, 1 Slide je Meilenstein) zu dünn

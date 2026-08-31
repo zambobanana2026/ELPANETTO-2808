@@ -24,15 +24,15 @@
    bzw. sachlich unverändert aus dem PDF.
    ============================================================================ */
 
-const FIRST_MILESTONE_SLIDE = 7;
+const FIRST_MILESTONE_SLIDE = 8;
 const SLIDES_PER_MILESTONE = 5;
-const BUDDY_FIRST_SLIDE = 27;
+const BUDDY_FIRST_SLIDE = 28;
 const SLIDES_PER_BUDDY = 5;
-const ESKALATION_FIRST_SLIDE = 32;
+const ESKALATION_FIRST_SLIDE = 33;
 const SLIDES_PER_ESKALATION = 5;
-const TRENNUNG_FIRST_SLIDE = 37;
+const TRENNUNG_FIRST_SLIDE = 38;
 const SLIDES_PER_TRENNUNG = 5;
-const TEAMBERICHT_SLIDE = 42;
+const TEAMBERICHT_SLIDE = 43;
 
 const MILESTONE_SUBTITLES = ['VORBEREITUNG', 'ZIEL & EINSTIEG', 'IM GESPRÄCH', 'VEREINBARUNG', 'FOLLOW-UP'];
 const BUDDY_SUBTITLES = ['ROLLE', 'DAUER & TAKTUNG', 'AUFGABEN', 'GRENZEN & TABUS', 'ARBEITSVORLAGE'];
@@ -47,7 +47,7 @@ function esc(s) {
 function pad2(n) { return String(n).padStart(2, '0'); }
 function ctxbar() { return '<div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div>'; }
 function navBar(nextLabel) {
-  return '<div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button>' +
+  return '<div class="nav"><button class="btn alt homeBtn" onclick="goTo(7)">◂ Übersicht</button>' +
     '<button class="btn alt" onclick="prevSlide()">Zurück</button>' +
     '<button class="btn" onclick="nextSlide()">' + nextLabel + '</button></div>';
 }
@@ -87,7 +87,7 @@ function slideOverview(data) {
     return '<div class="tile" style="cursor:pointer" onclick="goTo(' + t[2] + ')"><b>' + t[0] + '</b><small>' + t[1] + '</small></div>';
   }).join('');
   return (
-    '<section class="slide" data-slide="6"><div class="brand">P2 / ÜBERSICHT</div><div class="num">06</div>' +
+    '<section class="slide" data-slide="7"><div class="brand">P2 / ÜBERSICHT</div><div class="num">07</div>' +
     '<h1>IHR<br>PROBEZEIT-RADAR.</h1>' +
     '<p class="lead">Tag 1 → Tag 30 → Tag 60 → Tag 90 → Tag 150–170 → Ende der Probezeit. Klicken Sie eine Phase oder ein Werkzeug an, oder gehen Sie der Reihe nach vor. Jede Station ist in 5 kurze Unterseiten aufgeteilt.</p>' +
     '<div class="grid">' + phaseTiles + '</div>' +
