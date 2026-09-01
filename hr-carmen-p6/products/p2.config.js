@@ -504,5 +504,9 @@ module.exports = {
   introFile: './p2/intro.slides.html',
   outroFile: './p2/outro.slides.html',
   buildCardSlides: buildCardSlides,
-  initScript: initScript
+  initScript: initScript,
+  // Product-only style tweak (not a motor change): centers every headline
+  // and sub-headline. build/build.js appends this after engine.css only
+  // when a config exports it, so P6 (no extraCss) renders unaffected.
+  extraCss: '#app h1, #app h2 { text-align: center; margin-left: auto; margin-right: auto; }'
 };

@@ -34,7 +34,7 @@ function buildProduct(id) {
     '<meta charset="utf-8">\n' +
     '<meta name="viewport" content="width=device-width,initial-scale=1">\n' +
     '<title>' + config.title + '</title>\n' +
-    '<style>\n' + engineCss + '\n</style>\n' +
+    '<style>\n' + engineCss + (config.extraCss ? '\n' + config.extraCss + '\n' : '') + '\n</style>\n' +
     '</head>\n' +
     '<body><div id="app">\n\n' +
     introHtml.trim() + '\n' +
