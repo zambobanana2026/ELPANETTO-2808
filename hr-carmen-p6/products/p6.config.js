@@ -199,6 +199,9 @@ const initScript = function (cards) {
     '    let docCount = 0;\n' +
     '    CARD_META.forEach(function(c){ if((bucket.fields[c.docFieldId]||"").trim()) docCount++; });\n' +
     '    return docCount + " von " + CARD_META.length + " Gespräche dokumentiert";\n' +
+    '  },\n' +
+    '  tileSubtitle: function(emp){\n' +
+    '    return [emp.position, emp.abteilung].filter(function(v){ return (v||"").trim(); }).join(" — ");\n' +
     '  }\n' +
     '});\n' +
     'const choices = MotorEngine.createChoices(store);\n' +
@@ -214,13 +217,17 @@ const initScript = function (cards) {
     'function openEmpModal(){\n' +
     '  if(manager.isFull()){ const note=document.getElementById("empLimitNote"); if(note) note.style.display="block"; return; }\n' +
     '  document.getElementById("empNameInput").value = "";\n' +
+    '  document.getElementById("empPositionInput").value = "";\n' +
+    '  document.getElementById("empAbteilungInput").value = "";\n' +
     '  MotorEngine.openModal("empModal");\n' +
     '  document.getElementById("empNameInput").focus();\n' +
     '}\n' +
     'function closeEmpModal(){ MotorEngine.closeModal("empModal"); }\n' +
     'function confirmAddEmployee(){\n' +
     '  const name = document.getElementById("empNameInput").value;\n' +
-    '  const id = manager.add(name);\n' +
+    '  const position = document.getElementById("empPositionInput").value.trim();\n' +
+    '  const abteilung = document.getElementById("empAbteilungInput").value.trim();\n' +
+    '  const id = manager.add(name, { position: position, abteilung: abteilung });\n' +
     '  if(id){ closeEmpModal(); }\n' +
     '  else if((name||"").trim()){ closeEmpModal(); const note=document.getElementById("empLimitNote"); if(note) note.style.display="block"; }\n' +
     '}\n' +
@@ -256,7 +263,10 @@ const initScript = function (cards) {
     '      (followupHtml ? \'<div class="summarySection"><b>FOLLOW-UP</b>\'+followupHtml+\'</div>\' : "") +\n' +
     '      "</div>";\n' +
     '  }).join("");\n' +
-    '  const metaHtml = \'<div class="summaryMeta"><b>Mitarbeiter:</b> \'+MotorEngine.escapeHtml(emp.name)+\'<br><b>Erstellt am:</b> \'+dateStr+\'</div>\';\n' +
+    '  const posAbt = [emp.position, emp.abteilung].filter(function(v){ return (v||"").trim(); }).join(" — ");\n' +
+    '  const metaHtml = \'<div class="summaryMeta"><b>Mitarbeiter:</b> \'+MotorEngine.escapeHtml(emp.name)+\n' +
+    '    (posAbt ? \'<br><b>Position:</b> \'+MotorEngine.escapeHtml(posAbt) : "")+\n' +
+    '    \'<br><b>Erstellt am:</b> \'+dateStr+\'</div>\';\n' +
     '  out.innerHTML = cardsHtml\n' +
     '    ? (metaHtml + cardsHtml)\n' +
     '    : (metaHtml + \'<div class="summaryEmpty">Für \'+MotorEngine.escapeHtml(emp.name)+\' wurden noch keine Notizen erfasst.</div>\');\n' +

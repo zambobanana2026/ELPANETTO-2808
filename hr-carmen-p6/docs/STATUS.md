@@ -1,5 +1,19 @@
 # Status — Carmen Next Motor/Config
 
+## P6 — Position &amp; Abteilung im "Mitarbeiter hinzufügen"-Fenster
+
+Gleiche Ergänzung wie zuvor in P2: das "MITARBEITER HINZUFÜGEN"-Modal auf
+Slide 6 hat jetzt zusätzlich zu Name auch Position und Abteilung (beide
+optional, im selben Fenster). Wird als Kachel-Unterzeile angezeigt
+("Teamleitung Vertrieb — Vertrieb Nord") und — wenn vorhanden — auch im Kopf
+der neuen Gesprächs-Zusammenfassung. `MotorEngine.createEmployeeManager`
+unterstützte `tileSubtitle` und `add(name, extra)` bereits generisch (aus der
+P2-Umsetzung); in P6 nur `products/p6.config.js` (`tileSubtitle`,
+`openEmpModal`-Reset, `confirmAddEmployee`) und das Modal-Markup in
+`products/p6/outro.slides.html` ergänzt — 1:1 nach dem P2-Muster, keine
+Änderung an motor/engine.js nötig. `qa/p6_qa.js` (108 Checks) und
+`qa/p2_qa.js` laufen vollständig grün.
+
 ## P6 — Neue "Gesprächs-Zusammenfassung" pro Mitarbeiter (als PDF druckbar)
 
 Auf die Frage, ob es eine schön formatierte Zusammenfassung aller Eintragungen

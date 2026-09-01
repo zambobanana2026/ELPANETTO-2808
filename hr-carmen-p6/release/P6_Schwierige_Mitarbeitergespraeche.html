@@ -334,6 +334,8 @@ input[type=text]{width:100%;padding:12px;border:1px solid var(--line);background
 <div class="modal" id="empModal"><div class="dialog">
 <h2>MITARBEITER HINZUFÜGEN</h2>
 <label>Name<input type="text" id="empNameInput" placeholder="z. B. Julia Berger"></label>
+<label>Position<input type="text" id="empPositionInput" placeholder="z. B. Teamleitung Vertrieb"></label>
+<label>Abteilung<input type="text" id="empAbteilungInput" placeholder="z. B. Vertrieb"></label>
 <div class="row"><button class="btn alt" onclick="closeEmpModal()">Abbrechen</button><button class="btn" onclick="confirmAddEmployee()">Hinzufügen</button></div>
 </div></div>
 
@@ -700,6 +702,9 @@ const manager = MotorEngine.createEmployeeManager({
     let docCount = 0;
     CARD_META.forEach(function(c){ if((bucket.fields[c.docFieldId]||"").trim()) docCount++; });
     return docCount + " von " + CARD_META.length + " Gespräche dokumentiert";
+  },
+  tileSubtitle: function(emp){
+    return [emp.position, emp.abteilung].filter(function(v){ return (v||"").trim(); }).join(" — ");
   }
 });
 const choices = MotorEngine.createChoices(store);
@@ -715,13 +720,17 @@ function toggleChoice(el){ choices.toggle(el); }
 function openEmpModal(){
   if(manager.isFull()){ const note=document.getElementById("empLimitNote"); if(note) note.style.display="block"; return; }
   document.getElementById("empNameInput").value = "";
+  document.getElementById("empPositionInput").value = "";
+  document.getElementById("empAbteilungInput").value = "";
   MotorEngine.openModal("empModal");
   document.getElementById("empNameInput").focus();
 }
 function closeEmpModal(){ MotorEngine.closeModal("empModal"); }
 function confirmAddEmployee(){
   const name = document.getElementById("empNameInput").value;
-  const id = manager.add(name);
+  const position = document.getElementById("empPositionInput").value.trim();
+  const abteilung = document.getElementById("empAbteilungInput").value.trim();
+  const id = manager.add(name, { position: position, abteilung: abteilung });
   if(id){ closeEmpModal(); }
   else if((name||"").trim()){ closeEmpModal(); const note=document.getElementById("empLimitNote"); if(note) note.style.display="block"; }
 }
@@ -757,7 +766,10 @@ function renderZusammenfassung(){
       (followupHtml ? '<div class="summarySection"><b>FOLLOW-UP</b>'+followupHtml+'</div>' : "") +
       "</div>";
   }).join("");
-  const metaHtml = '<div class="summaryMeta"><b>Mitarbeiter:</b> '+MotorEngine.escapeHtml(emp.name)+'<br><b>Erstellt am:</b> '+dateStr+'</div>';
+  const posAbt = [emp.position, emp.abteilung].filter(function(v){ return (v||"").trim(); }).join(" — ");
+  const metaHtml = '<div class="summaryMeta"><b>Mitarbeiter:</b> '+MotorEngine.escapeHtml(emp.name)+
+    (posAbt ? '<br><b>Position:</b> '+MotorEngine.escapeHtml(posAbt) : "")+
+    '<br><b>Erstellt am:</b> '+dateStr+'</div>';
   out.innerHTML = cardsHtml
     ? (metaHtml + cardsHtml)
     : (metaHtml + '<div class="summaryEmpty">Für '+MotorEngine.escapeHtml(emp.name)+' wurden noch keine Notizen erfasst.</div>');

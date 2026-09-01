@@ -42,15 +42,19 @@ function assert(cond, msg) {
   assert((await page.locator('.slide.active').getAttribute('data-slide')) === '6', 'back-nav works again, on slide 6 (employees)');
 
   // ---- Employee CRUD + license limit ----
-  async function addEmployee(name) {
+  async function addEmployee(name, position, abteilung) {
     await page.click('button:has-text("MITARBEITER HINZUFÜGEN")');
     await page.fill('#empNameInput', name);
+    if (position) await page.fill('#empPositionInput', position);
+    if (abteilung) await page.fill('#empAbteilungInput', abteilung);
     await page.click('.dialog button:has-text("Hinzufügen")');
   }
-  await addEmployee('Anna Testperson');
+  await addEmployee('Anna Testperson', 'Teamleitung Vertrieb', 'Vertrieb Nord');
   await addEmployee('Ben Testperson');
   assert((await page.locator('#empCount').textContent()) === '2', 'employee count = 2 after adding two');
   assert(await page.locator('.tile.activeEmp b').textContent() === 'Ben Testperson', 'last-added employee is active');
+  assert((await page.locator('.tile:has-text("Anna Testperson") .tileSubtitle').textContent()) === 'Teamleitung Vertrieb — Vertrieb Nord', 'Anna tile shows position — Abteilung');
+  assert((await page.locator('.tile:has-text("Ben Testperson") .tileSubtitle').count()) === 0, 'Ben tile has no subtitle (fields left blank)');
 
   // Data separation: fill a field for Ben on card 1 prep slide, switch to Anna, verify empty, switch back verify persisted
   await page.click('.tile:has-text("Anna Testperson")');
