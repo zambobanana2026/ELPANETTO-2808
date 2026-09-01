@@ -24,6 +24,12 @@ function assert(cond, msg) {
   assert(await page.locator('.slide.active').count() === 1, 'exactly one active slide on load');
   assert((await page.locator('.slide.active').getAttribute('data-slide')) === '1', 'starts on slide 1 (Willkommen)');
 
+  // ---- Gesprächs-Zusammenfassung: empty state (no employee selected yet) ----
+  await page.evaluate(() => window.goTo(52));
+  assert((await page.locator('.slide.active .summaryEmpty').count()) === 1, 'summary shows empty-state box when no employee is active');
+  assert((await page.locator('.slide.active .summaryCard').count()) === 0, 'summary shows no cards when no employee is active');
+  await page.evaluate(() => window.goTo(1));
+
   // Navigate slides 1 -> 8 (intro: Willkommen, Für wen, Hero, So funktioniert's, System,
   // Mitarbeiter, So geht's weiter, Übersicht)
   for (let i = 0; i < 7; i++) {
@@ -115,7 +121,7 @@ function assert(cond, msg) {
   // Slides 1-8 are sequential via "Weiter" (Willkommen, Für wen, Hero, So funktioniert's,
   // System, Mitarbeiter, So geht's weiter, Übersicht). Slide 8's "Weiter zur Bibliothek" is
   // an intentional skip straight to slide 49 (the overview is entered via its 8 card tiles,
-  // not sequential "Weiter"). Slides 9-53 are sequential.
+  // not sequential "Weiter"). Slides 9-54 are sequential.
   await page.goto(FILE_URL);
   const expectedBrand = { 2: 'FÜR WEN', 3: 'GESPRÄCHS-TOOLBOX', 4: "SO FUNKTIONIERT'S", 7: "SO GEHT'S WEITER" };
   for (let n = 1; n <= 8; n++) {
@@ -128,10 +134,10 @@ function assert(cond, msg) {
     if (n < 8) await page.click('.slide.active .nav button.btn:not(.alt)');
   }
   await page.evaluate(() => window.goTo(9));
-  for (let n = 9; n <= 53; n++) {
+  for (let n = 9; n <= 54; n++) {
     const activeSlide = await page.locator('.slide.active').getAttribute('data-slide');
     assert(activeSlide === String(n), 'sequential nav at slide ' + n + ' matches (got ' + activeSlide + ')');
-    if (n < 53) {
+    if (n < 54) {
       const nextBtn = page.locator('.slide.active .nav button.btn:not(.alt)');
       await nextBtn.click();
     }
@@ -166,6 +172,28 @@ function assert(cond, msg) {
   assert(teamRows >= 1, 'team report table has rows: ' + teamRows);
   const cntMA = await page.locator('#cntTeamMA').textContent();
   assert(Number(cntMA) >= 1, 'team report employee count > 0: ' + cntMA);
+
+  // ---- Gesprächs-Zusammenfassung shows the just-entered data for the active employee ----
+  // ReportPerson (added above) is the active employee at this point, with k1_f1="x" and
+  // k1_massnahme="y" — exactly one documented Gesprächskarte, nothing else.
+  await page.click('.slide.active button:has-text("Einzel-Zusammenfassung")');
+  assert((await page.locator('.slide.active').getAttribute('data-slide')) === '52', 'Team-Bericht link navigates to the summary slide (52)');
+  const summaryMetaText = await page.locator('.slide.active .summaryMeta').textContent();
+  assert(summaryMetaText.includes('ReportPerson'), 'summary header shows the active employee\'s name: ' + summaryMetaText);
+  assert((await page.locator('.slide.active .summaryCard').count()) === 1, 'summary shows exactly one documented Gesprächskarte');
+  const summaryCardText = await page.locator('.slide.active .summaryCard').first().textContent();
+  assert(summaryCardText.includes('GESPRÄCHSKARTE 1'), 'summary card is labelled with the correct Gesprächskarte: ' + summaryCardText);
+  assert(summaryCardText.includes('VORBEREITUNG') && summaryCardText.includes('x'), 'summary shows the entered Vorbereitung value');
+  assert(summaryCardText.includes('VEREINBARUNG') && summaryCardText.includes('y'), 'summary shows the entered Vereinbarung value');
+  assert((await page.locator('.slide.active .pdfBtn').count()) === 1, 'summary slide has an "Als PDF drucken" button');
+
+  // ---- Print output shows only the active slide, not the whole 54-slide product ----
+  await page.emulateMedia({ media: 'print' });
+  const printVisible = await page.$$eval('.slide', els => els.filter(el => getComputedStyle(el).display !== 'none').length);
+  assert(printVisible === 1, 'print media shows exactly one slide (the active one), not the whole product: ' + printVisible);
+  const pdfBtnVisible = await page.$$eval('.pdfBtn', els => els.some(el => getComputedStyle(el).display !== 'none'));
+  assert(!pdfBtnVisible, '"Als PDF drucken" button itself is hidden in the printed output');
+  await page.emulateMedia({ media: 'screen' });
 
   // ---- rechtlicher Hinweis legal disclaimer present (slide 2, "Für wen") ----
   await page.evaluate(() => window.goTo(2));

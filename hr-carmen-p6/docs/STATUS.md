@@ -1,5 +1,46 @@
 # Status — Carmen Next Motor/Config
 
+## P6 — Neue "Gesprächs-Zusammenfassung" pro Mitarbeiter (als PDF druckbar)
+
+Auf die Frage, ob es eine schön formatierte Zusammenfassung aller Eintragungen
+gibt, die man als PDF speichern bzw. per E-Mail an den Mitarbeitenden schicken
+kann: neue Slide 52 "GESPRÄCHS-ZUSAMMENFASSUNG" — zeigt für den aktuell
+aktiven Mitarbeiter alle bisher dokumentierten Gesprächskarten Schritt für
+Schritt (nummerierte Karten-Blöcke mit Vorbereitung/Vereinbarung/Follow-up,
+jeweils nur die Abschnitte mit tatsächlich eingetragenen Daten), professionell
+formatiert mit zentrierter Überschrift/Unterüberschrift (`.headCenter`) und
+klaren, sauber abgesetzten Karten (`.summaryCard`, `.summaryField` — neue
+generische Motor-Klassen in `motor/engine.css`). Kopfzeile nennt Mitarbeiter
+und Erstellungsdatum. Ohne aktiven Mitarbeiter bzw. ohne Notizen zeigt die
+Slide einen freundlichen Leerzustand statt einer leeren Seite.
+
+Erreichbar über zwei Wege: einen neuen Button auf der Mitarbeiter-Slide (6)
+"📄 ZUSAMMENFASSUNG DES AKTIVEN MITARBEITERS" und einen Link auf der
+Team-Bericht-Slide (51) "📄 Einzel-Zusammenfassung ansehen" — sowie im
+normalen Sequenzfluss direkt nach dem Team-Bericht.
+
+**E-Mail-Versand:** Da P6 eine reine Offline-Datei ohne Server/Backend ist,
+kann kein automatischer Mail-Versand eingebaut werden. Der "🖨 ALS PDF
+DRUCKEN"-Button nutzt den Browser-Druckdialog ("Als PDF speichern"); die
+erzeugte Datei muss der Nutzer manuell an eine E-Mail anhängen.
+
+**Nebenbei gefundener und behobener Bug:** Der bestehende Druck-Mechanismus
+(`@media print`) zeigte bisher versehentlich ALLE 54 Slides gestapelt an,
+sobald irgendein "Als PDF drucken"-Button (Team-Bericht in P6, Zusammenfassung
+in P6, das Pendant in P2) geklickt wurde — nicht nur die aktuell sichtbare
+Seite. Behoben in `motor/engine.css`: im Druck-Modus wird jetzt ausschließlich
+`.slide.active` angezeigt (plus weißer statt getönter Hintergrund und
+versteckter Druck-Button selbst), betrifft P6 und P2 gleichermaßen.
+`qa/p6_qa.js` hat dafür eine neue Assertion (`page.emulateMedia({media:'print'})`
+→ genau 1 sichtbare Slide).
+
+**Slide-Nummern ab Team-Bericht verschieben sich um 1** — P6 hat jetzt 54
+statt 53 Slides (neue Slide 52 eingefügt, Checkliste 52→53, Abschluss 53→54;
+`FIRST_CARD_SLIDE`, `navBar()` und der Team-Bericht-Hook bei Slide 51 sind
+unverändert, da die neue Slide erst danach eingefügt wurde).
+`qa/p6_qa.js` (106 Checks, alle grün) und `qa/p2_qa.js` laufen vollständig
+grün, 0 Konsolen-/Seitenfehler.
+
 ## P6 — Neue Brücken-Slide zwischen Mitarbeiter (6) und Übersicht (7/8)
 
 Auf Wunsch eine neue Slide zwischen der bisherigen Mitarbeiter-Slide (6) und

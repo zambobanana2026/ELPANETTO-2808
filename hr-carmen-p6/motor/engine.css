@@ -89,6 +89,19 @@ input[type=text]{width:100%;padding:12px;border:1px solid var(--line);background
 .teamTable{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
 .teamTable th{text-align:left;font-size:10px;letter-spacing:1px;color:var(--ci);padding:8px 6px;border-bottom:2px solid var(--line)}
 .teamTable td{padding:9px 6px;border-bottom:1px solid var(--line)}
+.summaryMeta{background:var(--surface);border:1px solid var(--line);padding:16px 18px;margin:22px 0;font-size:14px;line-height:1.6;text-align:left}
+.summaryEmpty{border:1px dashed var(--line);padding:36px 24px;text-align:center;color:var(--muted);margin:22px 0}
+.summaryEmpty .btn{margin-top:16px}
+.summaryCard{border:1px solid var(--line);background:var(--surface);margin:20px 0;padding:26px 28px;text-align:left}
+.summaryCardHead{display:flex;align-items:center;gap:14px;margin-bottom:18px;border-bottom:2px solid var(--ci);padding-bottom:14px}
+.summaryCardNum{flex:0 0 auto;width:32px;height:32px;border-radius:999px;background:var(--ci);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px}
+.summaryCardHead h3{margin:0;font-size:16px;letter-spacing:-.2px}
+.summarySection{margin-top:20px}
+.summarySection:first-of-type{margin-top:0}
+.summarySection>b{display:block;font-size:11px;letter-spacing:1.2px;color:var(--ci)}
+.summaryField{margin-top:14px}
+.summaryField label{display:block;font-size:12px;font-weight:800;color:var(--muted);margin-bottom:3px}
+.summaryField p{margin:0;font-size:14px;line-height:1.55;white-space:pre-wrap}
 .themeTrigger{position:fixed;left:16px;top:16px;z-index:9;width:42px;height:42px;border-radius:999px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-size:18px;box-shadow:0 2px 6px rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;padding:0}
 .themeSwatches{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-top:14px}
 .themeSwatch{aspect-ratio:1;border-radius:8px;cursor:pointer;border:2px solid var(--line)}
@@ -109,6 +122,9 @@ input[type=text]{width:100%;padding:12px;border:1px solid var(--line);background
  .themeTrigger{display:none!important}
  body{background:#fff}
  #app{max-width:100%;padding:0}
- .slide{display:block!important;min-height:0;border:0;page-break-after:always;padding:20px}
- .nav,.num,.modal,.videoPlaceholder{display:none!important}
+ .slide{display:none!important}
+ .slide.active{display:block!important;min-height:0;border:0;padding:20px;background:#fff}
+ .nav,.num,.modal,.videoPlaceholder,.pdfBtn{display:none!important}
+ .summaryMeta,.summaryCard,.summaryEmpty{background:#fff;border-color:#ccc}
+ .summaryCard{page-break-inside:avoid}
 }

@@ -96,6 +96,19 @@ input[type=text]{width:100%;padding:12px;border:1px solid var(--line);background
 .teamTable{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
 .teamTable th{text-align:left;font-size:10px;letter-spacing:1px;color:var(--ci);padding:8px 6px;border-bottom:2px solid var(--line)}
 .teamTable td{padding:9px 6px;border-bottom:1px solid var(--line)}
+.summaryMeta{background:var(--surface);border:1px solid var(--line);padding:16px 18px;margin:22px 0;font-size:14px;line-height:1.6;text-align:left}
+.summaryEmpty{border:1px dashed var(--line);padding:36px 24px;text-align:center;color:var(--muted);margin:22px 0}
+.summaryEmpty .btn{margin-top:16px}
+.summaryCard{border:1px solid var(--line);background:var(--surface);margin:20px 0;padding:26px 28px;text-align:left}
+.summaryCardHead{display:flex;align-items:center;gap:14px;margin-bottom:18px;border-bottom:2px solid var(--ci);padding-bottom:14px}
+.summaryCardNum{flex:0 0 auto;width:32px;height:32px;border-radius:999px;background:var(--ci);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px}
+.summaryCardHead h3{margin:0;font-size:16px;letter-spacing:-.2px}
+.summarySection{margin-top:20px}
+.summarySection:first-of-type{margin-top:0}
+.summarySection>b{display:block;font-size:11px;letter-spacing:1.2px;color:var(--ci)}
+.summaryField{margin-top:14px}
+.summaryField label{display:block;font-size:12px;font-weight:800;color:var(--muted);margin-bottom:3px}
+.summaryField p{margin:0;font-size:14px;line-height:1.55;white-space:pre-wrap}
 .themeTrigger{position:fixed;left:16px;top:16px;z-index:9;width:42px;height:42px;border-radius:999px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-size:18px;box-shadow:0 2px 6px rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;padding:0}
 .themeSwatches{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-top:14px}
 .themeSwatch{aspect-ratio:1;border-radius:8px;cursor:pointer;border:2px solid var(--line)}
@@ -116,8 +129,11 @@ input[type=text]{width:100%;padding:12px;border:1px solid var(--line);background
  .themeTrigger{display:none!important}
  body{background:#fff}
  #app{max-width:100%;padding:0}
- .slide{display:block!important;min-height:0;border:0;page-break-after:always;padding:20px}
- .nav,.num,.modal,.videoPlaceholder{display:none!important}
+ .slide{display:none!important}
+ .slide.active{display:block!important;min-height:0;border:0;padding:20px;background:#fff}
+ .nav,.num,.modal,.videoPlaceholder,.pdfBtn{display:none!important}
+ .summaryMeta,.summaryCard,.summaryEmpty{background:#fff;border-color:#ccc}
+ .summaryCard{page-break-inside:avoid}
 }
 
 </style>
@@ -188,6 +204,7 @@ input[type=text]{width:100%;padding:12px;border:1px solid var(--line);background
 <h1>IHRE MITARBEITENDEN.</h1>
 <p class="lead"><span id="empCount">0</span> / 20 Plätze belegt. Jede Person bekommt ihre eigene Gesprächs-Dokumentation. Klicken Sie eine Person an, um sie als aktiv auszuwählen.</p>
 <button class="btn" onclick="openEmpModal()">+ MITARBEITER HINZUFÜGEN</button>
+<button class="btn alt" onclick="goTo(52)">📄 ZUSAMMENFASSUNG DES AKTIVEN MITARBEITERS</button>
 <div id="empLimitNote" class="note" style="border-left-color:var(--red);display:none">⚠️ Lizenzgrenze erreicht: Dieses Paket erlaubt maximal 20 Mitarbeitende.</div>
 <div class="grid" id="empGrid" style="margin-top:18px"></div>
 <div class="nav"><span></span><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div>
@@ -286,10 +303,19 @@ input[type=text]{width:100%;padding:12px;border:1px solid var(--line);background
 </div>
 <table class="teamTable"><thead><tr><th>MITARBEITER</th><th>VORBEREITET</th><th>DOKUMENTIERT</th></tr></thead><tbody id="teamTableBody"></tbody></table>
 <button class="pdfBtn" onclick="window.print()">🖨 ALS PDF DRUCKEN</button>
+<button class="btn alt" onclick="goTo(52)">📄 Einzel-Zusammenfassung ansehen</button>
 <div class="nav"><button class="btn alt homeBtn" onclick="goTo(8)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div>
 </section>
 
-<section class="slide headCenter" data-slide="52"><div class="brand">P6 / CHECKLISTE</div><div class="num">52</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div>
+<section class="slide headCenter" data-slide="52"><div class="brand">P6 / ZUSAMMENFASSUNG</div><div class="num">52</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div>
+<h1>GESPRÄCHS-<br>ZUSAMMENFASSUNG.</h1>
+<p class="lead">Alle Notizen zum aktiven Mitarbeiter, Schritt für Schritt — zum Ausdrucken, als PDF speichern oder per E-Mail an den Mitarbeitenden weitergeben.</p>
+<div id="summaryOutput"></div>
+<button class="pdfBtn" onclick="window.print()">🖨 ALS PDF DRUCKEN</button>
+<div class="nav"><button class="btn alt homeBtn" onclick="goTo(8)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div>
+</section>
+
+<section class="slide headCenter" data-slide="53"><div class="brand">P6 / CHECKLISTE</div><div class="num">53</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div>
 <h1>VOR UND NACH<br>DEM GESPRÄCH.</h1>
 <h2>VOR DEM GESPRÄCH</h2>
 <div class="checks"><div class="choice" data-toggle="pre1" onclick="toggleChoice(this)">Fakten geklärt</div><div class="choice" data-toggle="pre2" onclick="toggleChoice(this)">Ziel definiert</div><div class="choice" data-toggle="pre3" onclick="toggleChoice(this)">Beispiele vorbereitet</div><div class="choice" data-toggle="pre4" onclick="toggleChoice(this)">Einstieg vorbereitet</div><div class="choice" data-toggle="pre5" onclick="toggleChoice(this)">Sichtweise der Mitarbeitenden eingeplant</div><div class="choice" data-toggle="pre6" onclick="toggleChoice(this)">Gewünschte Vereinbarung definiert</div><div class="choice" data-toggle="pre7" onclick="toggleChoice(this)">Termin und ruhiger Rahmen organisiert</div></div>
@@ -298,7 +324,7 @@ input[type=text]{width:100%;padding:12px;border:1px solid var(--line);background
 <div class="nav"><button class="btn alt homeBtn" onclick="goTo(8)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div>
 </section>
 
-<section class="slide headCenter" data-slide="53"><div class="brand">P6 / ABSCHLUSS</div><div class="num">53</div>
+<section class="slide headCenter" data-slide="54"><div class="brand">P6 / ABSCHLUSS</div><div class="num">54</div>
 <h1>ERFOLGREICH IST NICHT:<br>ALLE EINER MEINUNG.</h1>
 <p class="lead">Ein schwieriges Gespräch ist nicht dann erfolgreich, wenn alle einer Meinung sind. Es ist erfolgreich, wenn das Thema klar benannt, die nächste Handlung vereinbart und die Prüfung terminiert ist.</p>
 <div class="ctaHero"><b>ÜBER CARMEN GRUSE-LATEGAHN</b><p style="margin:10px 0 0;line-height:1.5">Carmen Gruse-Lategahn ist HR-Generalistin mit 18 Jahren Praxiserfahrung. Sie übersetzt typische HR- und Führungssituationen in klare, praxistaugliche Werkzeuge für kleine und mittlere Unternehmen. Schwierige Mitarbeitergespräche ist eine praktische Gesprächs-Toolbox. Sie ersetzt kein individuelles Coaching und keine Rechtsberatung.</p></div>
@@ -659,7 +685,7 @@ input[type=text]{width:100%;padding:12px;border:1px solid var(--line);background
   };
 })(window);
 
-const CARD_META = [{"n":1,"title":"Leistung bleibt hinter den Erwartungen zurück","prepFieldIds":["k1_f1","k1_f2","k1_f3","k1_f4","k1_f5","k1_f6"],"docFieldId":"k1_massnahme"},{"n":2,"title":"Problematisches Verhalten","prepFieldIds":["k2_f1","k2_f2","k2_f3","k2_f4","k2_f5"],"docFieldId":"k2_massnahme"},{"n":3,"title":"Konflikt im Team","prepFieldIds":["k3_f1","k3_f2","k3_f3","k3_f4","k3_f5"],"docFieldId":"k3_massnahme"},{"n":4,"title":"Dauernde Unzufriedenheit und Widerstand","prepFieldIds":["k4_f1","k4_f2","k4_f3","k4_f4","k4_f5"],"docFieldId":"k4_massnahme"},{"n":5,"title":"Motivation und Engagement lassen nach","prepFieldIds":["k5_f1","k5_f2","k5_f3","k5_f4","k5_f5"],"docFieldId":"k5_massnahme"},{"n":6,"title":"Wiederholte Fehlzeiten","prepFieldIds":["k6_f1","k6_f2","k6_f3","k6_f4","k6_f5"],"docFieldId":"k6_massnahme"},{"n":7,"title":"Das seit Wochen aufgeschobene Gespräch","prepFieldIds":["k7_f1","k7_f2","k7_f3","k7_f4","k7_f5"],"docFieldId":"k7_massnahme"},{"n":8,"title":"Lob und Anerkennung, die wirklich wirkt","prepFieldIds":["k8_f1","k8_f2","k8_f3","k8_f4","k8_f5"],"docFieldId":"k8_massnahme"}];
+const CARD_META = [{"n":1,"title":"Leistung bleibt hinter den Erwartungen zurück","prepFieldIds":["k1_f1","k1_f2","k1_f3","k1_f4","k1_f5","k1_f6"],"prepEntries":[{"id":"k1_f1","label":"WAS WEISS ICH?"},{"id":"k1_f2","label":"WAS BEOBACHTE ICH KONKRET?"},{"id":"k1_f3","label":"WAS VERMUTE ICH NUR?"},{"id":"k1_f4","label":"WAS MUSS ICH NOCH KLÄREN?"},{"id":"k1_f5","label":"WAS WILL ICH ERREICHEN?"},{"id":"k1_f6","label":"WELCHE BEISPIELE BRINGE ICH MIT?"}],"vereinbarungEntries":[{"id":"k1_massnahme","label":"MASSNAHME"},{"id":"k1_verantw","label":"VERANTWORTLICH &amp; TERMIN"},{"id":"k1_erf","label":"WORAN ERKENNEN WIR ERFOLG?"},{"id":"k1_unt","label":"WELCHE UNTERSTÜTZUNG IST VEREINBART?"},{"id":"k1_hindernis","label":"WAS TUN WIR, WENN EIN HINDERNIS AUFTRITT?"},{"id":"k1_zsf","label":"ZUSAMMENFASSUNG, DIE BEIDE SEITEN VERSTANDEN HABEN"}],"followupEntries":[{"id":"k1_fu1","label":"WAS WURDE UMGESETZT? WAS HAT SICH VERBESSERT?"},{"id":"k1_fu2","label":"WAS IST NOCH OFFEN? WELCHE HINDERNISSE BESTEHEN?"},{"id":"k1_fu3","label":"WELCHE UNTERSTÜTZUNG WIRD JETZT BENÖTIGT? NÄCHSTER SCHRITT?"},{"id":"k1_fu4","label":"WANN PRÜFEN WIR ERNEUT?"}],"docFieldId":"k1_massnahme"},{"n":2,"title":"Problematisches Verhalten","prepFieldIds":["k2_f1","k2_f2","k2_f3","k2_f4","k2_f5"],"prepEntries":[{"id":"k2_f1","label":"WAS IST PASSIERT?"},{"id":"k2_f2","label":"WELCHE VEREINBARUNG ODER GRENZE WAR BETROFFEN?"},{"id":"k2_f3","label":"WELCHE WIRKUNG HATTE ES?"},{"id":"k2_f4","label":"WAS IST VERMUTUNG UND NOCH NICHT GEKLÄRT?"},{"id":"k2_f5","label":"WELCHE ERWARTUNG FORMULIERE ICH?"}],"vereinbarungEntries":[{"id":"k2_massnahme","label":"MASSNAHME"},{"id":"k2_verantw","label":"VERANTWORTLICH &amp; TERMIN"},{"id":"k2_erf","label":"WORAN ERKENNEN WIR ERFOLG?"},{"id":"k2_unt","label":"WELCHE UNTERSTÜTZUNG IST VEREINBART?"},{"id":"k2_hindernis","label":"WAS TUN WIR, WENN EIN HINDERNIS AUFTRITT?"},{"id":"k2_zsf","label":"ZUSAMMENFASSUNG, DIE BEIDE SEITEN VERSTANDEN HABEN"}],"followupEntries":[{"id":"k2_fu1","label":"WAS WURDE UMGESETZT? WAS HAT SICH VERBESSERT?"},{"id":"k2_fu2","label":"WAS IST NOCH OFFEN? WELCHE HINDERNISSE BESTEHEN?"},{"id":"k2_fu3","label":"WELCHE UNTERSTÜTZUNG WIRD JETZT BENÖTIGT? NÄCHSTER SCHRITT?"},{"id":"k2_fu4","label":"WANN PRÜFEN WIR ERNEUT?"}],"docFieldId":"k2_massnahme"},{"n":3,"title":"Konflikt im Team","prepFieldIds":["k3_f1","k3_f2","k3_f3","k3_f4","k3_f5"],"prepEntries":[{"id":"k3_f1","label":"MEINE BEOBACHTUNGEN"},{"id":"k3_f2","label":"AUSWIRKUNG AUF DIE ARBEIT"},{"id":"k3_f3","label":"WAS WEISS ICH SICHER?"},{"id":"k3_f4","label":"WELCHE PERSPEKTIVE MUSS ICH HÖREN?"},{"id":"k3_f5","label":"WELCHE MINDESTREGEL SOLL DANACH GELTEN?"}],"vereinbarungEntries":[{"id":"k3_massnahme","label":"MASSNAHME"},{"id":"k3_verantw","label":"VERANTWORTLICH &amp; TERMIN"},{"id":"k3_erf","label":"WORAN ERKENNEN WIR ERFOLG?"},{"id":"k3_unt","label":"WELCHE UNTERSTÜTZUNG IST VEREINBART?"},{"id":"k3_hindernis","label":"WAS TUN WIR, WENN EIN HINDERNIS AUFTRITT?"},{"id":"k3_zsf","label":"ZUSAMMENFASSUNG, DIE BEIDE SEITEN VERSTANDEN HABEN"}],"followupEntries":[{"id":"k3_fu1","label":"WAS WURDE UMGESETZT? WAS HAT SICH VERBESSERT?"},{"id":"k3_fu2","label":"WAS IST NOCH OFFEN? WELCHE HINDERNISSE BESTEHEN?"},{"id":"k3_fu3","label":"WELCHE UNTERSTÜTZUNG WIRD JETZT BENÖTIGT? NÄCHSTER SCHRITT?"},{"id":"k3_fu4","label":"WANN PRÜFEN WIR ERNEUT?"}],"docFieldId":"k3_massnahme"},{"n":4,"title":"Dauernde Unzufriedenheit und Widerstand","prepFieldIds":["k4_f1","k4_f2","k4_f3","k4_f4","k4_f5"],"prepEntries":[{"id":"k4_f1","label":"WELCHE REAKTIONEN BEOBACHTE ICH?"},{"id":"k4_f2","label":"WELCHE EINWÄNDE SIND KONKRET?"},{"id":"k4_f3","label":"WAS IST BEREITS ENTSCHIEDEN?"},{"id":"k4_f4","label":"WAS IST NOCH VERÄNDERBAR?"},{"id":"k4_f5","label":"WELCHE BETEILIGUNG ERWARTE ICH?"}],"vereinbarungEntries":[{"id":"k4_massnahme","label":"MASSNAHME"},{"id":"k4_verantw","label":"VERANTWORTLICH &amp; TERMIN"},{"id":"k4_erf","label":"WORAN ERKENNEN WIR ERFOLG?"},{"id":"k4_unt","label":"WELCHE UNTERSTÜTZUNG IST VEREINBART?"},{"id":"k4_hindernis","label":"WAS TUN WIR, WENN EIN HINDERNIS AUFTRITT?"},{"id":"k4_zsf","label":"ZUSAMMENFASSUNG, DIE BEIDE SEITEN VERSTANDEN HABEN"}],"followupEntries":[{"id":"k4_fu1","label":"WAS WURDE UMGESETZT? WAS HAT SICH VERBESSERT?"},{"id":"k4_fu2","label":"WAS IST NOCH OFFEN? WELCHE HINDERNISSE BESTEHEN?"},{"id":"k4_fu3","label":"WELCHE UNTERSTÜTZUNG WIRD JETZT BENÖTIGT? NÄCHSTER SCHRITT?"},{"id":"k4_fu4","label":"WANN PRÜFEN WIR ERNEUT?"}],"docFieldId":"k4_massnahme"},{"n":5,"title":"Motivation und Engagement lassen nach","prepFieldIds":["k5_f1","k5_f2","k5_f3","k5_f4","k5_f5"],"prepEntries":[{"id":"k5_f1","label":"FRÜHERE BEOBACHTUNG"},{"id":"k5_f2","label":"AKTUELLE VERÄNDERUNG"},{"id":"k5_f3","label":"KONKRETE BEISPIELE"},{"id":"k5_f4","label":"WAS VERMUTE ICH NICHT SICHER?"},{"id":"k5_f5","label":"WELCHE UNTERSTÜTZUNG UND ERWARTUNG SIND NÖTIG?"}],"vereinbarungEntries":[{"id":"k5_massnahme","label":"MASSNAHME"},{"id":"k5_verantw","label":"VERANTWORTLICH &amp; TERMIN"},{"id":"k5_erf","label":"WORAN ERKENNEN WIR ERFOLG?"},{"id":"k5_unt","label":"WELCHE UNTERSTÜTZUNG IST VEREINBART?"},{"id":"k5_hindernis","label":"WAS TUN WIR, WENN EIN HINDERNIS AUFTRITT?"},{"id":"k5_zsf","label":"ZUSAMMENFASSUNG, DIE BEIDE SEITEN VERSTANDEN HABEN"}],"followupEntries":[{"id":"k5_fu1","label":"WAS WURDE UMGESETZT? WAS HAT SICH VERBESSERT?"},{"id":"k5_fu2","label":"WAS IST NOCH OFFEN? WELCHE HINDERNISSE BESTEHEN?"},{"id":"k5_fu3","label":"WELCHE UNTERSTÜTZUNG WIRD JETZT BENÖTIGT? NÄCHSTER SCHRITT?"},{"id":"k5_fu4","label":"WANN PRÜFEN WIR ERNEUT?"}],"docFieldId":"k5_massnahme"},{"n":6,"title":"Wiederholte Fehlzeiten","prepFieldIds":["k6_f1","k6_f2","k6_f3","k6_f4","k6_f5"],"prepEntries":[{"id":"k6_f1","label":"ARBEITSBEZOGENE BEOBACHTUNG"},{"id":"k6_f2","label":"ZEITRAUM / HÄUFIGKEIT, SOWEIT ZULÄSSIG UND ERFORDERLICH"},{"id":"k6_f3","label":"AUSWIRKUNG AUF AUFGABEN ODER TEAM"},{"id":"k6_f4","label":"WAS WEISS ICH NICHT UND FRAGE ICH NICHT AUS?"},{"id":"k6_f5","label":"WELCHE UNTERSTÜTZUNG UND NÄCHSTEN SCHRITTE WILL ICH KLÄREN?"}],"vereinbarungEntries":[{"id":"k6_massnahme","label":"MASSNAHME"},{"id":"k6_verantw","label":"VERANTWORTLICH &amp; TERMIN"},{"id":"k6_erf","label":"WORAN ERKENNEN WIR ERFOLG?"},{"id":"k6_unt","label":"WELCHE UNTERSTÜTZUNG IST VEREINBART?"},{"id":"k6_hindernis","label":"WAS TUN WIR, WENN EIN HINDERNIS AUFTRITT?"},{"id":"k6_zsf","label":"ZUSAMMENFASSUNG, DIE BEIDE SEITEN VERSTANDEN HABEN"}],"followupEntries":[{"id":"k6_fu1","label":"WAS WURDE UMGESETZT? WAS HAT SICH VERBESSERT?"},{"id":"k6_fu2","label":"WAS IST NOCH OFFEN? WELCHE HINDERNISSE BESTEHEN?"},{"id":"k6_fu3","label":"WELCHE UNTERSTÜTZUNG WIRD JETZT BENÖTIGT? NÄCHSTER SCHRITT?"},{"id":"k6_fu4","label":"WANN PRÜFEN WIR ERNEUT?"}],"docFieldId":"k6_massnahme"},{"n":7,"title":"Das seit Wochen aufgeschobene Gespräch","prepFieldIds":["k7_f1","k7_f2","k7_f3","k7_f4","k7_f5"],"prepEntries":[{"id":"k7_f1","label":"DAS SCHIEBE ICH AUF"},{"id":"k7_f2","label":"KONKRETE BEOBACHTUNG"},{"id":"k7_f3","label":"WARUM IST JETZT DER RICHTIGE ZEITPUNKT?"},{"id":"k7_f4","label":"WAS WILL ICH NICHT UNTERSTELLEN?"},{"id":"k7_f5","label":"WAS SOLL DANACH KONKRET VEREINBART SEIN?"}],"vereinbarungEntries":[{"id":"k7_massnahme","label":"MASSNAHME"},{"id":"k7_verantw","label":"VERANTWORTLICH &amp; TERMIN"},{"id":"k7_erf","label":"WORAN ERKENNEN WIR ERFOLG?"},{"id":"k7_unt","label":"WELCHE UNTERSTÜTZUNG IST VEREINBART?"},{"id":"k7_hindernis","label":"WAS TUN WIR, WENN EIN HINDERNIS AUFTRITT?"},{"id":"k7_zsf","label":"ZUSAMMENFASSUNG, DIE BEIDE SEITEN VERSTANDEN HABEN"}],"followupEntries":[{"id":"k7_fu1","label":"WAS WURDE UMGESETZT? WAS HAT SICH VERBESSERT?"},{"id":"k7_fu2","label":"WAS IST NOCH OFFEN? WELCHE HINDERNISSE BESTEHEN?"},{"id":"k7_fu3","label":"WELCHE UNTERSTÜTZUNG WIRD JETZT BENÖTIGT? NÄCHSTER SCHRITT?"},{"id":"k7_fu4","label":"WANN PRÜFEN WIR ERNEUT?"}],"docFieldId":"k7_massnahme"},{"n":8,"title":"Lob und Anerkennung, die wirklich wirkt","prepFieldIds":["k8_f1","k8_f2","k8_f3","k8_f4","k8_f5"],"prepEntries":[{"id":"k8_f1","label":"WELCHE KONKRETE LEISTUNG ODER WELCHES VERHALTEN WÜRDIGE ICH?"},{"id":"k8_f2","label":"WAS GENAU WAR DARAN BESONDERS — NICHT NUR „GUT“, SONDERN WARUM?"},{"id":"k8_f3","label":"WELCHE WIRKUNG HATTE ES AUF TEAM, KUNDEN ODER ERGEBNIS?"},{"id":"k8_f4","label":"WER SOLLTE ES NOCH ERFAHREN: NUR DIE PERSON, DAS TEAM, WEITERE EBENEN?"},{"id":"k8_f5","label":"WIE STELLE ICH SICHER, DASS ES NICHT AUFGESETZT KLINGT?"}],"vereinbarungEntries":[{"id":"k8_massnahme","label":"MASSNAHME"},{"id":"k8_verantw","label":"VERANTWORTLICH &amp; TERMIN"},{"id":"k8_erf","label":"WORAN ERKENNEN WIR ERFOLG?"},{"id":"k8_unt","label":"WELCHE UNTERSTÜTZUNG IST VEREINBART?"},{"id":"k8_hindernis","label":"WAS TUN WIR, WENN EIN HINDERNIS AUFTRITT?"},{"id":"k8_zsf","label":"ZUSAMMENFASSUNG, DIE BEIDE SEITEN VERSTANDEN HABEN"}],"followupEntries":[{"id":"k8_fu1","label":"WAS WURDE UMGESETZT? WAS HAT SICH VERBESSERT?"},{"id":"k8_fu2","label":"WAS IST NOCH OFFEN? WELCHE HINDERNISSE BESTEHEN?"},{"id":"k8_fu3","label":"WELCHE UNTERSTÜTZUNG WIRD JETZT BENÖTIGT? NÄCHSTER SCHRITT?"},{"id":"k8_fu4","label":"WANN PRÜFEN WIR ERNEUT?"}],"docFieldId":"k8_massnahme"}];
 const store = MotorEngine.createStore("p6_data_v2", function(){ return { employees:{}, employeeOrder:[], activeEmployeeId:null, byEmployee:{}, choices:{} }; });
 const manager = MotorEngine.createEmployeeManager({
   store: store,
@@ -702,6 +728,41 @@ function confirmAddEmployee(){
 function removeEmployee(id, ev){ manager.remove(id, ev); }
 function restoreFieldsForActive(){ MotorEngine.restoreFields(manager); }
 
+function renderZusammenfassung(){
+  const out = document.getElementById("summaryOutput");
+  if(!out) return;
+  const id = manager.data.activeEmployeeId;
+  const emp = id ? manager.data.employees[id] : null;
+  if(!emp){
+    out.innerHTML = '<div class="summaryEmpty">Bitte wählen Sie zuerst einen Mitarbeiter aus, um dessen Zusammenfassung zu sehen.<br><button class="btn" onclick="goTo(6)">Zu den Mitarbeitenden</button></div>';
+    return;
+  }
+  const bucket = manager.bucketFor(id);
+  const dateStr = new Date().toLocaleDateString("de-DE", { day: "numeric", month: "long", year: "numeric" });
+  let step = 0;
+  function entriesHtml(entries){
+    return entries.filter(function(e){ return (bucket.fields[e.id]||"").trim().length>0; })
+      .map(function(e){ return '<div class="summaryField"><label>'+e.label+'</label><p>'+MotorEngine.escapeHtml(bucket.fields[e.id])+'</p></div>'; })
+      .join("");
+  }
+  const cardsHtml = CARD_META.map(function(c){
+    const prepHtml = entriesHtml(c.prepEntries);
+    const vereinbarungHtml = entriesHtml(c.vereinbarungEntries);
+    const followupHtml = entriesHtml(c.followupEntries);
+    if(!prepHtml && !vereinbarungHtml && !followupHtml) return "";
+    step++;
+    return '<div class="summaryCard"><div class="summaryCardHead"><span class="summaryCardNum">'+step+'</span><h3>GESPRÄCHSKARTE '+c.n+' — '+MotorEngine.escapeHtml(c.title.toUpperCase())+'</h3></div>' +
+      (prepHtml ? '<div class="summarySection"><b>VORBEREITUNG</b>'+prepHtml+'</div>' : "") +
+      (vereinbarungHtml ? '<div class="summarySection"><b>VEREINBARUNG</b>'+vereinbarungHtml+'</div>' : "") +
+      (followupHtml ? '<div class="summarySection"><b>FOLLOW-UP</b>'+followupHtml+'</div>' : "") +
+      "</div>";
+  }).join("");
+  const metaHtml = '<div class="summaryMeta"><b>Mitarbeiter:</b> '+MotorEngine.escapeHtml(emp.name)+'<br><b>Erstellt am:</b> '+dateStr+'</div>';
+  out.innerHTML = cardsHtml
+    ? (metaHtml + cardsHtml)
+    : (metaHtml + '<div class="summaryEmpty">Für '+MotorEngine.escapeHtml(emp.name)+' wurden noch keine Notizen erfasst.</div>');
+}
+
 nav.onEnter(51, function(){
   MotorEngine.renderTeamReport({
     manager: manager,
@@ -723,6 +784,7 @@ nav.onEnter(51, function(){
     }
   });
 });
+nav.onEnter(52, renderZusammenfassung);
 
 document.addEventListener("DOMContentLoaded", function(){
   theme.init();

@@ -18,6 +18,24 @@ const FIRST_CARD_SLIDE = 9;
 const SLIDES_PER_CARD = 5;
 const SUBTITLES = ['VORBEREITUNG', 'ZIEL &amp; EINSTIEG', 'IM GESPRÄCH', 'VEREINBARUNG', 'FOLLOW-UP'];
 
+// Shared zwischen den Vereinbarung-/Follow-up-Slide-Vorlagen und der
+// Gesprächs-Zusammenfassung (renderZusammenfassung), damit Feld-Labels an
+// nur einer Stelle gepflegt werden.
+const VEREINBARUNG_FIELDS = [
+  ['MASSNAHME', 'massnahme', 'Was wird konkret vereinbart? …'],
+  ['VERANTWORTLICH &amp; TERMIN', 'verantw', 'Wer setzt es bis wann um? …'],
+  ['WORAN ERKENNEN WIR ERFOLG?', 'erf', 'Beobachtbares Kriterium …'],
+  ['WELCHE UNTERSTÜTZUNG IST VEREINBART?', 'unt', 'Unterstützung eintragen …'],
+  ['WAS TUN WIR, WENN EIN HINDERNIS AUFTRITT?', 'hindernis', 'Plan B …'],
+  ['ZUSAMMENFASSUNG, DIE BEIDE SEITEN VERSTANDEN HABEN', 'zsf', 'In eigenen Worten zusammengefasst …']
+];
+const FOLLOWUP_FIELDS = [
+  ['WAS WURDE UMGESETZT? WAS HAT SICH VERBESSERT?', 'fu1', 'Stand seit dem Gespräch …'],
+  ['WAS IST NOCH OFFEN? WELCHE HINDERNISSE BESTEHEN?', 'fu2', 'Offene Punkte …'],
+  ['WELCHE UNTERSTÜTZUNG WIRD JETZT BENÖTIGT? NÄCHSTER SCHRITT?', 'fu3', 'Nächster Schritt …'],
+  ['WANN PRÜFEN WIR ERNEUT?', 'fu4', 'Termin für die nächste Prüfung …']
+];
+
 function esc(s) {
   return String(s == null ? '' : s).replace(/[&<>]/g, function (c) {
     return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c];
@@ -91,14 +109,7 @@ function slideImGespraech(card, num) {
 }
 
 function slideVereinbarung(card, num) {
-  const fields = [
-    ['MASSNAHME', 'massnahme', 'Was wird konkret vereinbart? …'],
-    ['VERANTWORTLICH &amp; TERMIN', 'verantw', 'Wer setzt es bis wann um? …'],
-    ['WORAN ERKENNEN WIR ERFOLG?', 'erf', 'Beobachtbares Kriterium …'],
-    ['WELCHE UNTERSTÜTZUNG IST VEREINBART?', 'unt', 'Unterstützung eintragen …'],
-    ['WAS TUN WIR, WENN EIN HINDERNIS AUFTRITT?', 'hindernis', 'Plan B …'],
-    ['ZUSAMMENFASSUNG, DIE BEIDE SEITEN VERSTANDEN HABEN', 'zsf', 'In eigenen Worten zusammengefasst …']
-  ];
+  const fields = VEREINBARUNG_FIELDS;
   const fieldsHtml = fields.map(function (f) {
     return '<div class="weeklyCheckCard"><label>' + f[0] + '</label>' +
       '<textarea data-field="k' + card.n + '_' + f[1] + '" placeholder="' + f[2] + '"></textarea></div>';
@@ -115,12 +126,7 @@ function slideVereinbarung(card, num) {
 }
 
 function slideFollowUp(card, num, isLast) {
-  const fields = [
-    ['WAS WURDE UMGESETZT? WAS HAT SICH VERBESSERT?', 'fu1', 'Stand seit dem Gespräch …'],
-    ['WAS IST NOCH OFFEN? WELCHE HINDERNISSE BESTEHEN?', 'fu2', 'Offene Punkte …'],
-    ['WELCHE UNTERSTÜTZUNG WIRD JETZT BENÖTIGT? NÄCHSTER SCHRITT?', 'fu3', 'Nächster Schritt …'],
-    ['WANN PRÜFEN WIR ERNEUT?', 'fu4', 'Termin für die nächste Prüfung …']
-  ];
+  const fields = FOLLOWUP_FIELDS;
   const fieldsHtml = fields.map(function (f) {
     return '<div class="weeklyCheckCard"><label>' + f[0] + '</label>' +
       '<textarea data-field="k' + card.n + '_' + f[1] + '" placeholder="' + f[2] + '"></textarea></div>';
@@ -155,11 +161,23 @@ function buildCardSlides(cards) {
   return out.join('\n');
 }
 
-// Field-id groups needed by the team report (mirrors the original V3 prototype).
+// Field-id/label groups needed by the team report and the Gesprächs-
+// Zusammenfassung (mirrors the original V3 prototype for the report part).
 function cardFieldMeta(cards) {
   return cards.map(function (card) {
     const prepFieldIds = card.prep.map(function (_, i) { return 'k' + card.n + '_f' + (i + 1); });
-    return { n: card.n, title: card.title, prepFieldIds: prepFieldIds, docFieldId: 'k' + card.n + '_massnahme' };
+    const prepEntries = card.prep.map(function (label, i) { return { id: 'k' + card.n + '_f' + (i + 1), label: label.toUpperCase() }; });
+    const vereinbarungEntries = VEREINBARUNG_FIELDS.map(function (f) { return { id: 'k' + card.n + '_' + f[1], label: f[0] }; });
+    const followupEntries = FOLLOWUP_FIELDS.map(function (f) { return { id: 'k' + card.n + '_' + f[1], label: f[0] }; });
+    return {
+      n: card.n,
+      title: card.title,
+      prepFieldIds: prepFieldIds,
+      prepEntries: prepEntries,
+      vereinbarungEntries: vereinbarungEntries,
+      followupEntries: followupEntries,
+      docFieldId: 'k' + card.n + '_massnahme'
+    };
   });
 }
 
@@ -209,6 +227,41 @@ const initScript = function (cards) {
     'function removeEmployee(id, ev){ manager.remove(id, ev); }\n' +
     'function restoreFieldsForActive(){ MotorEngine.restoreFields(manager); }\n' +
     '\n' +
+    'function renderZusammenfassung(){\n' +
+    '  const out = document.getElementById("summaryOutput");\n' +
+    '  if(!out) return;\n' +
+    '  const id = manager.data.activeEmployeeId;\n' +
+    '  const emp = id ? manager.data.employees[id] : null;\n' +
+    '  if(!emp){\n' +
+    '    out.innerHTML = \'<div class="summaryEmpty">Bitte wählen Sie zuerst einen Mitarbeiter aus, um dessen Zusammenfassung zu sehen.<br><button class="btn" onclick="goTo(6)">Zu den Mitarbeitenden</button></div>\';\n' +
+    '    return;\n' +
+    '  }\n' +
+    '  const bucket = manager.bucketFor(id);\n' +
+    '  const dateStr = new Date().toLocaleDateString("de-DE", { day: "numeric", month: "long", year: "numeric" });\n' +
+    '  let step = 0;\n' +
+    '  function entriesHtml(entries){\n' +
+    '    return entries.filter(function(e){ return (bucket.fields[e.id]||"").trim().length>0; })\n' +
+    '      .map(function(e){ return \'<div class="summaryField"><label>\'+e.label+\'</label><p>\'+MotorEngine.escapeHtml(bucket.fields[e.id])+\'</p></div>\'; })\n' +
+    '      .join("");\n' +
+    '  }\n' +
+    '  const cardsHtml = CARD_META.map(function(c){\n' +
+    '    const prepHtml = entriesHtml(c.prepEntries);\n' +
+    '    const vereinbarungHtml = entriesHtml(c.vereinbarungEntries);\n' +
+    '    const followupHtml = entriesHtml(c.followupEntries);\n' +
+    '    if(!prepHtml && !vereinbarungHtml && !followupHtml) return "";\n' +
+    '    step++;\n' +
+    '    return \'<div class="summaryCard"><div class="summaryCardHead"><span class="summaryCardNum">\'+step+\'</span><h3>GESPRÄCHSKARTE \'+c.n+\' — \'+MotorEngine.escapeHtml(c.title.toUpperCase())+\'</h3></div>\' +\n' +
+    '      (prepHtml ? \'<div class="summarySection"><b>VORBEREITUNG</b>\'+prepHtml+\'</div>\' : "") +\n' +
+    '      (vereinbarungHtml ? \'<div class="summarySection"><b>VEREINBARUNG</b>\'+vereinbarungHtml+\'</div>\' : "") +\n' +
+    '      (followupHtml ? \'<div class="summarySection"><b>FOLLOW-UP</b>\'+followupHtml+\'</div>\' : "") +\n' +
+    '      "</div>";\n' +
+    '  }).join("");\n' +
+    '  const metaHtml = \'<div class="summaryMeta"><b>Mitarbeiter:</b> \'+MotorEngine.escapeHtml(emp.name)+\'<br><b>Erstellt am:</b> \'+dateStr+\'</div>\';\n' +
+    '  out.innerHTML = cardsHtml\n' +
+    '    ? (metaHtml + cardsHtml)\n' +
+    '    : (metaHtml + \'<div class="summaryEmpty">Für \'+MotorEngine.escapeHtml(emp.name)+\' wurden noch keine Notizen erfasst.</div>\');\n' +
+    '}\n' +
+    '\n' +
     'nav.onEnter(51, function(){\n' +
     '  MotorEngine.renderTeamReport({\n' +
     '    manager: manager,\n' +
@@ -230,6 +283,7 @@ const initScript = function (cards) {
     '    }\n' +
     '  });\n' +
     '});\n' +
+    'nav.onEnter(52, renderZusammenfassung);\n' +
     '\n' +
     'document.addEventListener("DOMContentLoaded", function(){\n' +
     '  theme.init();\n' +
