@@ -62,6 +62,12 @@ function assert(cond, msg) {
   // ---- Milestone headline: "TAG X." / "GESPRÄCHSPHASE „NAME"." ----
   const tag30H1 = await page.locator('.slide.active h1').innerText();
   assert(tag30H1.includes('TAG 30') && tag30H1.includes('GESPRÄCHSPHASE') && tag30H1.includes('CHECK-IN'), 'Tag30 headline names the phase: got "' + tag30H1.replace(/\n/g, ' / ') + '"');
+  const tag30Preview = await page.locator('.slide.active .nextPreview').innerText();
+  assert(tag30Preview.includes('Ziel & Einstieg'), 'Tag30 Vorbereitung "Als Nächstes" points to Ziel & Einstieg: got "' + tag30Preview + '"');
+
+  // ---- "Als Nächstes" preview appears on every slide except the last (outro has no "Weiter") ----
+  const previewCount = await page.locator('.nextPreview').count();
+  assert(previewCount === TOTAL_SLIDES - 1, 'every slide but the last carries an "Als Nächstes" preview: got ' + previewCount + ' of ' + (TOTAL_SLIDES - 1));
 
   // ---- Employees + data separation ----
   await page.evaluate(() => window.goTo(5));

@@ -39,6 +39,13 @@ const BUDDY_SUBTITLES = ['ROLLE', 'DAUER & TAKTUNG', 'AUFGABEN', 'GRENZEN & TABU
 const ESKALATION_SUBTITLES = ['WANN GREIFT DAS?', 'SCHRITT 1 · FAKTENABGLEICH', 'ZWISCHENZIEL', 'SCHRITT 2 · LERNKURVE', 'SCHRITT 3 · ENTSCHEIDUNG'];
 const TRENNUNG_SUBTITLES = ['LEITPLANKE', 'SCHRITT 1', 'SCHRITT 2', 'SCHRITT 3', 'PROTOKOLL'];
 
+// Readable (not all-caps) versions of the same subtitles, used only for the
+// "Als Nächstes" preview line under every slide's nav — see navBar().
+const MILESTONE_STEP_NAMES = ['Vorbereitung', 'Ziel & Einstieg', 'Typische Reaktionen', 'Besser sagen', 'Vereinbarung', 'Follow-up'];
+const BUDDY_STEP_NAMES = ['Rolle', 'Dauer & Taktung', 'Aufgaben', 'Grenzen & Tabus', 'Arbeitsvorlage'];
+const ESKALATION_STEP_NAMES = ['Wann greift das?', 'Schritt 1 · Faktenabgleich', 'Zwischenziel', 'Schritt 2 · Lernkurve', 'Schritt 3 · Entscheidung'];
+const TRENNUNG_STEP_NAMES = ['Leitplanke', 'Schritt 1', 'Schritt 2', 'Schritt 3', 'Protokoll'];
+
 function esc(s) {
   return String(s == null ? '' : s).replace(/[&<>]/g, function (c) {
     return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c];
@@ -53,8 +60,10 @@ function milestoneHeadline(m) {
   return esc(tagPart.toUpperCase()) + '.<br>GESPRÄCHSPHASE „' + esc(namePart.toUpperCase()) + '“.';
 }
 function ctxbar() { return '<div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div>'; }
-function navBar(nextLabel) {
-  return '<div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button>' +
+function navBar(nextLabel, nextPreview) {
+  const preview = nextPreview ? '<div class="nextPreview">Als Nächstes: <b>' + esc(nextPreview) + '</b></div>' : '';
+  return preview +
+    '<div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button>' +
     '<button class="btn alt" onclick="prevSlide()">Zurück</button>' +
     '<button class="btn" onclick="nextSlide()">' + nextLabel + '</button></div>';
 }
@@ -104,7 +113,7 @@ function slideOverview(data) {
     '<div class="grid">' + phaseTiles + '</div>' +
     '<h2>WEITERE WERKZEUGE.</h2>' +
     '<div class="grid">' + toolTiles + '</div>' +
-    navBar('Weiter') +
+    navBar('Weiter', data.milestones[0].title) +
     '</section>'
   );
 }
@@ -132,7 +141,7 @@ function slideMilestoneVorbereitung(m, num, phase) {
     '<p class="lead">Diese Liste zeigt, was in ' + esc(zeitraum || 'dieser Zeit') + ' eigentlich passiert sein sollte. Geh sie vor dem Gespräch kurz durch: Was passt schon? Was fehlt noch? Ein offener Punkt ist kein Problem — er wird einfach zum Thema im Gespräch.</p>' +
     checksList('m' + m.n + '_chk', m.checks) +
     '<div class="weeklyCheck"><div class="weeklyCheckIntro"><b>WER NIMMT AM GESPRÄCH TEIL?</b></div>' + fieldsGrid('m' + m.n, teilnehmerFields) + '</div>' +
-    navBar('Weiter') +
+    navBar('Weiter', MILESTONE_STEP_NAMES[1]) +
     '</section>'
   );
 }
@@ -148,7 +157,7 @@ function slideMilestoneZielEinstieg(m, num) {
     '<h1>' + milestoneHeadline(m) + '</h1>' +
     '<div class="box"><b>DARUM GEHT ES MIR IN DIESEM GESPRÄCH.</b><p class="lead" style="margin:10px 0 0">„' + esc(m.ziel) + '“</p></div>' +
     frageBox + zweckBox + bereicheBox +
-    navBar('Weiter') +
+    navBar('Weiter', MILESTONE_STEP_NAMES[2]) +
     '</section>'
   );
 }
@@ -162,7 +171,7 @@ function slideMilestoneReaktionen(m, num) {
     '<h1>' + milestoneHeadline(m) + '</h1>' +
     '<h2>WAS DIE NEUE PERSON SAGEN KÖNNTE — UND WIE DU ANTWORTEST.</h2>' +
     qaHtml +
-    navBar('Weiter') +
+    navBar('Weiter', MILESTONE_STEP_NAMES[3]) +
     '</section>'
   );
 }
@@ -178,7 +187,7 @@ function slideMilestoneBesserSagen(m, num) {
     '<p class="lead">Manche Sätze klingen schnell falsch, auch wenn sie nicht böse gemeint sind. Hier siehst du bessere Alternativen.</p>' +
     '<div class="compareHead"><span>Nicht sagen</span><span>Besser sagen</span></div>' +
     compareHtml +
-    navBar('Weiter') +
+    navBar('Weiter', MILESTONE_STEP_NAMES[4]) +
     '</section>'
   );
 }
@@ -190,22 +199,23 @@ function slideMilestoneVereinbarung(m, num) {
     '<h1>' + milestoneHeadline(m) + '</h1>' +
     '<p class="lead">Trage hier fest, was ihr im Gespräch besprochen und vereinbart habt — nach Carmens Gesprächsvorlage.</p>' +
     '<div class="weeklyCheck"><div class="weeklyCheckIntro"><b>WAS WURDE BESPROCHEN UND VEREINBART?</b></div>' + fieldsGrid('m' + m.n, restFields) + '</div>' +
-    navBar('Weiter') +
+    navBar('Weiter', MILESTONE_STEP_NAMES[5]) +
     '</section>'
   );
 }
 
-function slideMilestoneFollowUp(m, num, nextPhase, isLast) {
+function slideMilestoneFollowUp(m, num, nextPhase, nextMilestone, isLast) {
   const nextBox = nextPhase
     ? '<div class="box"><b>WAS ALS NÄCHSTES ANSTEHT.</b><p class="lead" style="margin:10px 0 0"><b>' + esc(nextPhase.zeitraum) + ' — ' + esc(nextPhase.phase.toUpperCase()) + '.</b><br>' + esc(nextPhase.fokus) + '</p></div>'
     : '<div class="box"><b>ENDE DER PROBEZEIT.</b><p class="lead" style="margin:10px 0 0">Mit diesem Gespräch endet der Entscheidungs-Korridor. Einmal bauen. Immer wieder nutzen — für die nächste neue Mitarbeiterin oder den nächsten neuen Mitarbeiter.</p></div>';
+  const nextPreview = isLast ? 'Buddy-Framework' : (nextMilestone ? nextMilestone.title : null);
   return (
     '<section class="slide" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 5) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
     '<h1>' + milestoneHeadline(m) + '</h1>' +
     '<h2>HAKE AB: IST DIESES GESPRÄCH ERLEDIGT?</h2>' +
     checksList('m' + m.n + '_gf', m.gespraechsfolge) +
     nextBox +
-    navBar(isLast ? 'Weiter zum Buddy-Framework' : 'Nächste Station') +
+    navBar(isLast ? 'Weiter zum Buddy-Framework' : 'Nächste Station', nextPreview) +
     '</section>'
   );
 }
@@ -216,13 +226,14 @@ function buildMilestoneSlides(data) {
     const base = FIRST_MILESTONE_SLIDE + i * SLIDES_PER_MILESTONE;
     const phase = data.phases[i] || null;
     const nextPhase = data.phases[i + 1] || null;
+    const nextMilestone = data.milestones[i + 1] || null;
     const isLast = i === data.milestones.length - 1;
     out.push(slideMilestoneVorbereitung(m, base, phase));
     out.push(slideMilestoneZielEinstieg(m, base + 1));
     out.push(slideMilestoneReaktionen(m, base + 2));
     out.push(slideMilestoneBesserSagen(m, base + 3));
     out.push(slideMilestoneVereinbarung(m, base + 4));
-    out.push(slideMilestoneFollowUp(m, base + 5, nextPhase, isLast));
+    out.push(slideMilestoneFollowUp(m, base + 5, nextPhase, nextMilestone, isLast));
   });
   return out.join('\n');
 }
@@ -239,7 +250,7 @@ function buildBuddySlides(b) {
     '<section class="slide" data-slide="' + s1 + '"><div class="brand">' + buddyBrand(0) + '</div><div class="num">' + pad2(s1) + '</div>' + ctxbar() +
     '<h1>BUDDY-FRAMEWORK.<br>WER IST DER BUDDY?</h1>' +
     '<div class="box"><b>ROLLE DES BUDDYS.</b><p class="lead" style="margin:10px 0 0">' + esc(b.rolle) + '</p></div>' +
-    navBar('Weiter') + '</section>',
+    navBar('Weiter', BUDDY_STEP_NAMES[1]) + '</section>',
 
     '<section class="slide" data-slide="' + s2 + '"><div class="brand">' + buddyBrand(1) + '</div><div class="num">' + pad2(s2) + '</div>' + ctxbar() +
     '<h1>BUDDY-FRAMEWORK.<br>WIE LANGE UND WIE OFT?</h1>' +
@@ -247,20 +258,20 @@ function buildBuddySlides(b) {
     '<h2>TAKTUNG.</h2>' +
     '<p class="lead">Auch wie oft ihr euch trefft, nimmt mit der Zeit ab:</p>' +
     taktungHtml +
-    navBar('Weiter') + '</section>',
+    navBar('Weiter', BUDDY_STEP_NAMES[2]) + '</section>',
 
     '<section class="slide" data-slide="' + s3 + '"><div class="brand">' + buddyBrand(2) + '</div><div class="num">' + pad2(s3) + '</div>' + ctxbar() +
     '<h1>BUDDY-FRAMEWORK.<br>WAS DARF DER BUDDY TUN?</h1>' +
     '<p class="lead">Das ist die Aufgabe des Buddys — nicht mehr und nicht weniger:</p>' +
     '<h2>DER BUDDY DARF.</h2>' +
     checksList('buddy_auf', b.aufgaben) +
-    navBar('Weiter') + '</section>',
+    navBar('Weiter', BUDDY_STEP_NAMES[3]) + '</section>',
 
     '<section class="slide" data-slide="' + s4 + '"><div class="brand">' + buddyBrand(3) + '</div><div class="num">' + pad2(s4) + '</div>' + ctxbar() +
     '<h1>BUDDY-FRAMEWORK.<br>WAS DER BUDDY NICHT DARF.</h1>' +
     '<p class="lead">Damit für alle klar bleibt, wer wofür zuständig ist — der Buddy ersetzt weder dich noch HR:</p>' +
     '<div class="note" style="border-left-color:var(--red)"><b>STRIKTE GRENZEN UND TABUS.</b><br>' + b.tabus.map(esc).join('<br>') + '</div>' +
-    navBar('Weiter') + '</section>',
+    navBar('Weiter', BUDDY_STEP_NAMES[4]) + '</section>',
 
     '<section class="slide" data-slide="' + s5 + '"><div class="brand">' + buddyBrand(4) + '</div><div class="num">' + pad2(s5) + '</div>' + ctxbar() +
     '<h1>BUDDY-FRAMEWORK.<br>CHECKLISTE &amp; ARBEITSVORLAGE.</h1>' +
@@ -268,7 +279,7 @@ function buildBuddySlides(b) {
     '<p class="lead">Das fasst die letzten vier Seiten als Checkliste zusammen — häkel ab, was schon passt.</p>' +
     checksList('buddy_chk', b.checkliste) +
     '<div class="weeklyCheck"><div class="weeklyCheckIntro"><b>ARBEITSVORLAGE.</b></div>' + fieldsGrid('buddy', b.fields) + '</div>' +
-    navBar('Weiter zum Eskalationsprotokoll') + '</section>'
+    navBar('Weiter zum Eskalationsprotokoll', 'Eskalationsprotokoll') + '</section>'
   ].join('\n');
 }
 
@@ -288,19 +299,19 @@ function buildEskalationSlides(e) {
     '<p class="lead">' + esc(e.intro) + '</p>' +
     '<div class="note"><b>GRUNDSATZ.</b><br>„' + esc(e.grundsatz) + '“</div>' +
     '<h2>DIE DREI SCHRITTE.</h2>' + stepOverview +
-    navBar('Weiter') + '</section>',
+    navBar('Weiter', ESKALATION_STEP_NAMES[1]) + '</section>',
 
     '<section class="slide" data-slide="' + s2 + '"><div class="brand">' + eskBrand(1) + '</div><div class="num">' + pad2(s2) + '</div>' + ctxbar() +
     '<h1>SCHRITT 1.<br>' + esc(e.schritt1.titel.toUpperCase()) + '.</h1>' +
     '<p class="lead">' + esc(e.schritt1.text) + '</p>' +
     '<div class="weeklyCheck"><div class="weeklyCheckIntro"><b>DOKUMENTATION.</b></div>' + fieldsGrid('esk', pickFields(e.fields, ['luecke', 'fakten'])) + '</div>' +
-    navBar('Weiter') + '</section>',
+    navBar('Weiter', ESKALATION_STEP_NAMES[2]) + '</section>',
 
     '<section class="slide" data-slide="' + s3 + '"><div class="brand">' + eskBrand(2) + '</div><div class="num">' + pad2(s3) + '</div>' + ctxbar() +
     '<h1>ZWISCHENZIEL &amp;<br>SCHLÜSSELFRAGE.</h1>' +
     '<div class="note"><b>SCHLÜSSELFRAGE.</b><br>„' + esc(e.schluesselfrage) + '“</div>' +
     '<div class="weeklyCheck"><div class="weeklyCheckIntro"><b>DOKUMENTATION.</b></div>' + fieldsGrid('esk', pickFields(e.fields, ['abgleich', 'zwischenziel', 'antwort'])) + '</div>' +
-    navBar('Weiter') + '</section>',
+    navBar('Weiter', ESKALATION_STEP_NAMES[3]) + '</section>',
 
     '<section class="slide" data-slide="' + s4 + '"><div class="brand">' + eskBrand(3) + '</div><div class="num">' + pad2(s4) + '</div>' + ctxbar() +
     '<h1>SCHRITT 2.<br>' + esc(e.schritt2.titel.toUpperCase()) + '.</h1>' +
@@ -311,7 +322,7 @@ function buildEskalationSlides(e) {
     '<div class="choice" data-toggle="esk_verb_nein" onclick="toggleYesNo(this, \'esk_verb_ja\')">Nein</div>' +
     '</div>' +
     '<div class="weeklyCheck"><div class="weeklyCheckIntro"><b>DOKUMENTATION.</b></div>' + fieldsGrid('esk', pickFields(e.fields, ['lernkurve'])) + '</div>' +
-    navBar('Weiter') + '</section>',
+    navBar('Weiter', ESKALATION_STEP_NAMES[4]) + '</section>',
 
     '<section class="slide" data-slide="' + s5 + '"><div class="brand">' + eskBrand(4) + '</div><div class="num">' + pad2(s5) + '</div>' + ctxbar() +
     '<h1>SCHRITT 3.<br>' + esc(e.schritt3.titel.toUpperCase()) + '.</h1>' +
@@ -321,7 +332,7 @@ function buildEskalationSlides(e) {
     '<h2>CHECKLISTE.</h2>' +
     '<p class="lead">Das fasst das ganze Eskalationsprotokoll zusammen — geh es kurz durch, bevor du weitermachst.</p>' +
     checksList('esk_chk', e.checkliste) +
-    navBar('Weiter zum Trennungsleitfaden') + '</section>'
+    navBar('Weiter zum Trennungsleitfaden', 'Trennungs-Leitfaden') + '</section>'
   ].join('\n');
 }
 
@@ -339,25 +350,25 @@ function buildTrennungSlides(t, rechtlicherHinweisAllgemein) {
     '<div class="note" style="border-left-color:var(--red)"><b>RECHTLICHE LEITPLANKE.</b><br>' + esc(t.rechtlicheLeitplanke) + '</div>' +
     '<div class="box"><b>VIER-AUGEN-PRINZIP.</b><p style="margin:10px 0 0">' + esc(t.vierAugen) + '</p></div>' +
     '<div class="box"><b>GESPRÄCHSDAUER.</b><p style="margin:10px 0 0">Kurz und klar halten — lange Erklärungen verunsichern in dieser Situation nur. ' + esc(t.dauer) + '</p></div>' +
-    navBar('Weiter') + '</section>',
+    navBar('Weiter', TRENNUNG_STEP_NAMES[1]) + '</section>',
 
     '<section class="slide" data-slide="' + s2 + '"><div class="brand">' + trBrand(1) + '</div><div class="num">' + pad2(s2) + '</div>' + ctxbar() +
     '<h1>' + esc(a1.titel.toUpperCase()) + '.</h1>' +
     '<p class="lead">So beginnst du das Gespräch — wortwörtlich:</p>' +
     '<div class="box"><b>FESTE FORMULIERUNG.</b><p class="lead" style="margin:10px 0 0">„' + esc(a1.formulierung) + '“</p></div>' +
-    navBar('Weiter') + '</section>',
+    navBar('Weiter', TRENNUNG_STEP_NAMES[2]) + '</section>',
 
     '<section class="slide" data-slide="' + s3 + '"><div class="brand">' + trBrand(2) + '</div><div class="num">' + pad2(s3) + '</div>' + ctxbar() +
     '<h1>' + esc(a2.titel.toUpperCase()) + '.</h1>' +
     '<p class="lead">' + esc(a2.hinweis) + '</p>' +
     '<div class="box"><b>FESTE FORMULIERUNG.</b><p class="lead" style="margin:10px 0 0">„' + esc(a2.formulierung) + '“</p></div>' +
-    navBar('Weiter') + '</section>',
+    navBar('Weiter', TRENNUNG_STEP_NAMES[3]) + '</section>',
 
     '<section class="slide" data-slide="' + s4 + '"><div class="brand">' + trBrand(3) + '</div><div class="num">' + pad2(s4) + '</div>' + ctxbar() +
     '<h1>' + esc(a3.titel.toUpperCase()) + '.</h1>' +
     '<p class="lead">Das sind die praktischen Punkte, die direkt im Anschluss an die Ansage erledigt werden — häkel ab, was schon geklärt ist:</p>' +
     checksList('tr_ablauf', a3.punkte) +
-    navBar('Weiter') + '</section>',
+    navBar('Weiter', TRENNUNG_STEP_NAMES[4]) + '</section>',
 
     '<section class="slide" data-slide="' + s5 + '"><div class="brand">' + trBrand(4) + '</div><div class="num">' + pad2(s5) + '</div>' + ctxbar() +
     '<h1>PROTOKOLL &amp;<br>CHECKLISTE.</h1>' +
@@ -365,7 +376,7 @@ function buildTrennungSlides(t, rechtlicherHinweisAllgemein) {
     checksList('tr_chk', t.checks) +
     '<div class="weeklyCheck"><div class="weeklyCheckIntro"><b>ARBEITSFELDER.</b></div>' + fieldsGrid('tr', t.fields) + '</div>' +
     '<div class="note" style="border-left-color:var(--red)"><b>RECHTLICHER HINWEIS.</b><br>' + esc(rechtlicherHinweisAllgemein) + '</div>' +
-    navBar('Weiter zum Team-Bericht') + '</section>'
+    navBar('Weiter zum Team-Bericht', 'Team-Bericht') + '</section>'
   ].join('\n');
 }
 
@@ -384,7 +395,7 @@ function slideTeamBericht() {
     '</div>' +
     '<table class="teamTable"><thead><tr><th>MITARBEITER</th><th>VORBEREITET</th><th>DOKUMENTIERT</th></tr></thead><tbody id="teamTableBody"></tbody></table>' +
     '<button class="pdfBtn" onclick="window.print()">🖨 ALS PDF DRUCKEN</button>' +
-    navBar('Weiter') +
+    navBar('Weiter', 'Abschluss') +
     '</section>'
   );
 }
@@ -505,8 +516,19 @@ module.exports = {
   outroFile: './p2/outro.slides.html',
   buildCardSlides: buildCardSlides,
   initScript: initScript,
-  // Product-only style tweak (not a motor change): centers every headline
-  // and sub-headline. build/build.js appends this after engine.css only
-  // when a config exports it, so P6 (no extraCss) renders unaffected.
-  extraCss: '#app h1, #app h2 { text-align: center; margin-left: auto; margin-right: auto; }'
+  // Product-only style tweaks (not a motor change): build/build.js appends
+  // this after engine.css only when a config exports it, so P6 (no
+  // extraCss) renders byte-identical to before.
+  extraCss: [
+    // Center every headline and sub-headline; body text/boxes stay left-aligned.
+    '#app h1, #app h2 { text-align: center; margin-left: auto; margin-right: auto; }',
+    // More visual weight/depth in the headline type.
+    '#app h1 { font-weight: 900; text-shadow: 0 2px 3px rgba(37,37,37,.15); }',
+    '#app h2 { font-weight: 800; }',
+    // Give the flat white content boxes a soft lift instead of a bare border.
+    '#app .box, #app .tile, #app .note, #app .qa, #app .choice, #app .weeklyCheckCard, #app .weeklyCheckIntro, #app .compareRow > div, #app .bigCounts > div, #app .ctaHero { box-shadow: 0 2px 8px rgba(37,37,37,.07), 0 1px 2px rgba(37,37,37,.05); }',
+    // "Als Nächstes" preview line above every nav bar.
+    '#app .nextPreview { margin-top: 26px; padding-top: 14px; border-top: 1px solid var(--line); font-size: 12px; letter-spacing: .3px; color: var(--ci); text-align: center; }',
+    '#app .nextPreview b { color: var(--ink); font-weight: 800; }'
+  ].join('\n')
 };
