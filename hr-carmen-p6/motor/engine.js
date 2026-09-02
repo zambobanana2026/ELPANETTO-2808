@@ -226,6 +226,65 @@
   }
 
   // ---------------------------------------------------------------------
+  // Farbmodelle: jedes Modell ist ein vollständig abgestimmtes Set aus
+  // neun Tokens (Seiten-Hintergrund, Papier/Slide, Fläche/Karten, Text,
+  // gedämpfter Text, Rahmen, Marke/Buttons, Akzent, Seitenzahl-Akzent) —
+  // nicht nur ein einzelner Akzent. So bleibt Kontrast innerhalb eines
+  // Modells garantiert, auch beim dunklen "Anthrazit"-Modell. Die
+  // Ampelfarben (--green/--orange/--red) bleiben absichtlich über alle
+  // Modelle hinweg fest, damit "Erfolg/Warnung/Fehler" nie mit der Marke
+  // kippt. Persistiert die Wahl in localStorage wie Mitarbeiterdaten.
+  // ---------------------------------------------------------------------
+  const THEME_KEYS = ['pagebg', 'paper', 'surface', 'ink', 'muted', 'line', 'ci', 'mint', 'num'];
+  const DEFAULT_THEMES = [
+    { id: 'salbei', name: 'Salbei (Standard)', pagebg: '#ebe8e3', paper: '#f6f4f0', surface: '#ffffff', ink: '#252525', muted: '#777672', line: '#d9d5cf', ci: '#7f7a74', mint: '#8fe3cf', num: '#55cdb2' },
+    { id: 'ozean', name: 'Ozean', pagebg: '#e3ebf1', paper: '#eef4f9', surface: '#ffffff', ink: '#252525', muted: '#5b7185', line: '#c9d9e6', ci: '#3867b0', mint: '#a8d4ef', num: '#3d84c9' },
+    { id: 'bordeaux', name: 'Bordeaux', pagebg: '#f1e5e3', paper: '#faf1ef', surface: '#ffffff', ink: '#252525', muted: '#8a6a66', line: '#e6d1cd', ci: '#7a3b3b', mint: '#e8b8b8', num: '#c2605f' },
+    { id: 'wald', name: 'Waldgrün', pagebg: '#e5ece7', paper: '#f0f6f2', surface: '#ffffff', ink: '#252525', muted: '#5f7a68', line: '#cfe0d5', ci: '#2f6b4f', mint: '#b3e8cb', num: '#3f9c6d' },
+    { id: 'terrakotta', name: 'Terrakotta', pagebg: '#f1e8de', paper: '#faf2e9', surface: '#ffffff', ink: '#252525', muted: '#8a6a4c', line: '#e6d3ba', ci: '#a2542f', mint: '#f0c9a3', num: '#c46f3c' },
+    { id: 'graphit', name: 'Graphit', pagebg: '#e6e8eb', paper: '#f1f2f4', surface: '#ffffff', ink: '#252525', muted: '#5c6472', line: '#d4d8de', ci: '#4a5568', mint: '#b8cbe0', num: '#5c7290' },
+    { id: 'aubergine', name: 'Aubergine', pagebg: '#ece5ee', paper: '#f6f0f8', surface: '#ffffff', ink: '#252525', muted: '#7a6a82', line: '#ddd0e3', ci: '#5b3a6b', mint: '#d3b8e8', num: '#8354a0' },
+    { id: 'senf', name: 'Senfgelb', pagebg: '#efe9db', paper: '#f8f3e6', surface: '#ffffff', ink: '#252525', muted: '#8a7a45', line: '#e3d8b0', ci: '#8a6d1f', mint: '#f0dfa8', num: '#b5911f' },
+    { id: 'petrol', name: 'Petrol', pagebg: '#e2ecea', paper: '#edf5f3', surface: '#ffffff', ink: '#252525', muted: '#4e7371', line: '#c7ddd9', ci: '#1d6b6b', mint: '#a8e3da', num: '#28918f' },
+    { id: 'anthrazit', name: 'Anthrazit (Dunkel)', pagebg: '#181818', paper: '#222222', surface: '#2b2b2b', ink: '#f0efec', muted: '#a19a90', line: '#3a3a3a', ci: '#6b6560', mint: '#c9c2b8', num: '#c9c2b8' }
+  ];
+
+  function createColorThemes(themes, storageKey) {
+    const KEY = storageKey || 'carmen_theme_v1';
+    const list = themes || DEFAULT_THEMES;
+    function find(id) {
+      let t = null;
+      for (let i = 0; i < list.length; i++) { if (list[i].id === id) t = list[i]; }
+      return t || list[0];
+    }
+    function apply(id) {
+      const t = find(id);
+      const root = document.documentElement.style;
+      THEME_KEYS.forEach(function (k) { root.setProperty('--' + k, t[k]); });
+      try { localStorage.setItem(KEY, t.id); } catch (e) { /* storage unavailable */ }
+    }
+    function current() {
+      try { return localStorage.getItem(KEY) || list[0].id; } catch (e) { return list[0].id; }
+    }
+    function init() { apply(current()); }
+    function renderSwatches(selector) {
+      const el = document.querySelector(selector);
+      if (!el) return;
+      el.innerHTML = '';
+      const active = current();
+      list.forEach(function (t) {
+        const btn = document.createElement('div');
+        btn.className = 'themeSwatch' + (t.id === active ? ' active' : '');
+        btn.title = t.name;
+        btn.style.background = 'linear-gradient(135deg, ' + t.paper + ' 50%, ' + t.ci + ' 50%)';
+        btn.onclick = function () { apply(t.id); renderSwatches(selector); };
+        el.appendChild(btn);
+      });
+    }
+    return { apply: apply, current: current, init: init, renderSwatches: renderSwatches, themes: list };
+  }
+
+  // ---------------------------------------------------------------------
   // Team-Report: iteriert alle Mitarbeitenden, lässt das Produkt pro Person
   // eine Tabellenzeile + Zählwerte berechnen (rowFn), summiert automatisch.
   // Der letzte Eintrag in totalsSelectors bekommt immer die Mitarbeiterzahl.
@@ -268,6 +327,8 @@
     bindFields: bindFields,
     restoreFields: restoreFields,
     createChoices: createChoices,
+    createColorThemes: createColorThemes,
+    DEFAULT_THEMES: DEFAULT_THEMES,
     renderTeamReport: renderTeamReport,
     openModal: openModal,
     closeModal: closeModal
