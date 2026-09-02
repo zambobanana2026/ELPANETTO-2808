@@ -488,6 +488,9 @@ function parseBunqCsv(text) {
 function normalizeIban(s) {
   return (s || "").replace(/\s+/g, "").toUpperCase();
 }
+function normalizeForMatch(s) {
+  return (s || "").toLowerCase().replace(/[^a-z0-9äöüß]/g, "");
+}
 function tokenOverlapScore(a, b) {
   const clean = (s) => (s || "").toLowerCase().replace(/[^a-zäöüß0-9 ]/g, " ").split(/\s+/).filter((w) => w.length > 2);
   const ta = clean(a), tb = clean(b);
@@ -604,11 +607,14 @@ function guessCashCategory(description) {
 }
 function findCostMatch(costs, month, description) {
   const lower = (description || "").toLowerCase();
+  const descNorm = normalizeForMatch(description);
   let best = null, bestScore = 0;
   costs.filter((c) => isCostActive(c, month)).forEach((c) => {
     const cLower = c.name.toLowerCase();
+    const cNorm = normalizeForMatch(c.name);
     let score = 0;
     if (lower.includes(cLower) || cLower.includes(lower)) score = 1;
+    else if (cNorm.length >= 4 && (descNorm.includes(cNorm) || cNorm.includes(descNorm))) score = 1;
     else score = tokenOverlapScore(c.name, description);
     if (score > bestScore) {
       bestScore = score;
@@ -617,10 +623,22 @@ function findCostMatch(costs, month, description) {
   });
   return bestScore > 0.3 ? best : null;
 }
+function findOpMatchByPurpose(ops, description) {
+  const descNorm = normalizeForMatch(description);
+  if (!descNorm) return null;
+  const activeOps = ops.filter((o) => o.status !== "deleted");
+  for (const op of activeOps) {
+    const purposeNorm = normalizeForMatch(op.purpose);
+    if (purposeNorm.length >= 4 && descNorm.includes(purposeNorm)) return op;
+  }
+  return null;
+}
 function guessTransactionAssignment(costs, ops, tx) {
   if (tx.amount > 0) return { type: "ignore" };
   const descLower = (tx.description || "").toLowerCase();
   if (WITHDRAWAL_KEYWORDS.some((k) => descLower.includes(k))) return { type: "withdrawal" };
+  const purposeMatch = findOpMatchByPurpose(ops, tx.description);
+  if (purposeMatch) return { type: "op", id: purposeMatch.id, name: purposeMatch.name };
   const costMatch = findCostMatch(costs, tx.date.month, tx.description);
   if (costMatch) return { type: "cost", id: costMatch.id, name: costMatch.name };
   const opMatches = matchAgainstOps(ops, { iban: tx.iban, reference: null, nameGuess: tx.description });
