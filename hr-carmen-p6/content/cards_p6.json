@@ -19,6 +19,14 @@
    "Was will ich erreichen?",
    "Welche Beispiele bringe ich mit?"
   ],
+  "prepPlaceholders": [
+   "z. B. Die letzten drei Wochenberichte kamen jeweils nach dem vereinbarten Termin am Donnerstag.",
+   "z. B. Drei Berichte in Folge wurden erst freitags statt donnerstags eingereicht.",
+   "z. B. Ich vermute Zeitdruck oder falsche Priorisierung — weiß es aber nicht sicher.",
+   "z. B. Ob es an der Aufgabenlast liegt oder an fehlender Klarheit über die Erwartung.",
+   "z. B. Dass Berichte künftig zuverlässig bis Donnerstag 15 Uhr vorliegen.",
+   "z. B. Die drei konkreten Abgabedaten der letzten Berichte mit Datum."
+  ],
   "ziel": "Nach diesem Gespräch soll klar sein, welche Leistung bis wann erwartet wird, welche Unterstützung nötig ist und wann wir den Stand prüfen.",
   "satz": "Ich möchte heute mit dir darüber sprechen, was bei deinen Aufgaben gerade noch nicht so läuft, wie wir es vereinbart haben, und gemeinsam klären, was du brauchst und was sich konkret ändern soll.",
   "fragen": [
@@ -87,6 +95,13 @@
    "Welche Wirkung hatte es?",
    "Was ist Vermutung und noch nicht geklärt?",
    "Welche Erwartung formuliere ich?"
+  ],
+  "prepPlaceholders": [
+   "z. B. Die Übergabe wurde in den letzten zwei Fällen nicht im gemeinsamen System dokumentiert.",
+   "z. B. Die Absprache, jede Übergabe bis 15 Uhr im System zu dokumentieren.",
+   "z. B. Dem nächsten Team fehlte die Information, dadurch kam es zu Verzögerungen.",
+   "z. B. Ob es an Zeitdruck lag oder die Regel nicht klar genug kommuniziert war.",
+   "z. B. Dass die Übergabe künftig verlässlich und rechtzeitig dokumentiert wird."
   ],
   "ziel": "Nach diesem Gespräch soll die betroffene Verhaltensgrenze klar sein und die Person wissen, welches Verhalten ab jetzt erwartet und wann es überprüft wird.",
   "satz": "Ich möchte heute ein konkretes Verhalten ansprechen, weil es die Zusammenarbeit beziehungsweise unsere Vereinbarung beeinträchtigt.",
@@ -157,6 +172,13 @@
    "Welche Perspektive muss ich hören?",
    "Welche Mindestregel soll danach gelten?"
   ],
+  "prepPlaceholders": [
+   "z. B. Bei drei Übergaben wurden offene Punkte per E-Mail-Kopie statt direkt geklärt.",
+   "z. B. Die Zuständigkeit blieb jeweils unklar, dadurch verzögerten sich Übergaben.",
+   "z. B. Beide Seiten haben sich in den letzten Wochen nicht direkt abgestimmt.",
+   "z. B. Wie beide die Zusammenarbeit und die Übergaben selbst erleben.",
+   "z. B. Offene Punkte werden im Board markiert und direkt am selben Tag geklärt."
+  ],
   "ziel": "Nach diesem Gespräch sollen die Beteiligten die konkrete Auswirkung verstehen und eine Arbeitsvereinbarung für Übergaben, Kommunikation und nächste Schritte treffen.",
   "satz": "Ich möchte heute nicht entscheiden, wer angefangen hat, sondern klären, was zwischen euch passiert, welche Folgen es für die Arbeit hat und wie die Zusammenarbeit ab jetzt funktionieren soll.",
   "fragen": [
@@ -225,6 +247,13 @@
    "Was ist bereits entschieden?",
    "Was ist noch veränderbar?",
    "Welche Beteiligung erwarte ich?"
+  ],
+  "prepPlaceholders": [
+   "z. B. Die neue Einsatzplanung wurde in drei Besprechungen pauschal mit „das funktioniert sowieso nicht“ kommentiert.",
+   "z. B. Bisher wurde kein konkretes Risiko benannt, nur pauschale Ablehnung.",
+   "z. B. Die neue Einsatzplanung steht, die Frühschicht-Frage ist noch offen.",
+   "z. B. Details zur Frühschicht können bis Freitag geprüft werden.",
+   "z. B. Konkrete, sachliche Einwände statt pauschaler Ablehnung."
   ],
   "ziel": "Nach diesem Gespräch sind berechtigte Sachfragen geklärt, der Entscheidungsspielraum ist benannt und die Erwartung an die weitere Zusammenarbeit ist eindeutig.",
   "satz": "Ich möchte heute besprechen, wie du auf die aktuelle Entscheidung reagierst, welche konkreten Bedenken dahinterstehen und wie wir künftig sachlich damit umgehen.",
@@ -295,6 +324,13 @@
    "Was vermute ich nicht sicher?",
    "Welche Unterstützung und Erwartung sind nötig?"
   ],
+  "prepPlaceholders": [
+   "z. B. Früher hat sie sich in Teamrunden aktiv eingebracht und pünktlich zurückgemeldet.",
+   "z. B. In den letzten drei Teamrunden kaum Beteiligung, zwei Rückmeldungen verspätet.",
+   "z. B. Zwei Kundenrückmeldungen kamen später als vereinbart, ohne Erklärung.",
+   "z. B. Ob es an privater Belastung, Aufgabenlast oder etwas anderem liegt.",
+   "z. B. Klären, was helfen würde, und eine realistische Rückmeldefrist vereinbaren."
+  ],
   "ziel": "Nach diesem Gespräch ist die beobachtete Veränderung besprochen, die Sichtweise der Person gehört und ein realistischer nächster Schritt vereinbart.",
   "satz": "Mir ist aufgefallen, dass sich deine Beteiligung und Eigeninitiative in den letzten Wochen verändert haben. Ich möchte verstehen, wie du das selbst erlebst und was jetzt hilfreich wäre.",
   "fragen": [
@@ -363,6 +399,13 @@
    "Auswirkung auf Aufgaben oder Team",
    "Was weiß ich nicht und frage ich nicht aus?",
    "Welche Unterstützung und nächsten Schritte will ich klären?"
+  ],
+  "prepPlaceholders": [
+   "z. B. Für das laufende Kundenprojekt fehlen wiederholt rechtzeitige Übergaben.",
+   "z. B. Mehrere Abwesenheiten in den letzten Wochen, genaue Daten liegen vor.",
+   "z. B. Offene Projektpunkte konnten nicht rechtzeitig weitergegeben werden.",
+   "z. B. Die medizinischen oder privaten Gründe — die gehören nicht ins Gespräch.",
+   "z. B. Wie Übergaben künftig zuverlässig dokumentiert werden können."
   ],
   "ziel": "Nach diesem Gespräch sind die arbeitsbezogenen Auswirkungen, die Rückkehr- oder Unterstützungsbedarfe und die nächsten organisatorischen Schritte klar, ohne private oder medizinische Details zu erzwingen.",
   "satz": "Ich möchte heute die arbeitsbezogenen Auswirkungen der wiederholten Abwesenheiten und die nächsten organisatorischen Schritte besprechen. Persönliche oder medizinische Details musst du nicht offenlegen.",
@@ -433,6 +476,13 @@
    "Was will ich nicht unterstellen?",
    "Was soll danach konkret vereinbart sein?"
   ],
+  "prepPlaceholders": [
+   "z. B. Das Gespräch über die verspäteten Kundenrückmeldungen, seit einem Monat.",
+   "z. B. In den letzten vier Wochen wurden drei Kundenrückmeldungen später als vereinbart gegeben.",
+   "z. B. Weil sich das Muster wiederholt und die Kundenbeziehung inzwischen belastet.",
+   "z. B. Dass es an fehlendem Interesse liegt — ich kenne den Grund noch nicht.",
+   "z. B. Ein fester Zeitpunkt bis 16 Uhr, an dem Rückmeldungen künftig dokumentiert werden."
+  ],
   "ziel": "Nach diesem Gespräch ist das bisher aufgeschobene Thema konkret benannt, die Sichtweise gehört und ein überprüfbarer nächster Schritt vereinbart.",
   "satz": "Ich möchte ein Thema ansprechen, das ich zu lange vor mir hergeschoben habe: Bei … gibt es seit … eine Abweichung von unserer Vereinbarung. Das möchte ich heute klar und fair mit dir besprechen.",
   "fragen": [
@@ -501,6 +551,13 @@
    "Welche Wirkung hatte es auf Team, Kunden oder Ergebnis?",
    "Wer sollte es noch erfahren: nur die Person, das Team, weitere Ebenen?",
    "Wie stelle ich sicher, dass es nicht aufgesetzt klingt?"
+  ],
+  "prepPlaceholders": [
+   "z. B. Er hat einen Fehler in der Bestellabwicklung selbst gefunden, gemeldet und einen Lösungsvorschlag mitgebracht.",
+   "z. B. Er hat nicht nur gemeldet, sondern gleich mitgedacht und eine Lösung angeboten.",
+   "z. B. Wahrscheinlich wurden dadurch mehrere Reklamationen vermieden.",
+   "z. B. Das ganze Team, weil der Vorschlag für alle relevant ist.",
+   "z. B. Konkret bleiben und den Effekt benennen statt nur „gut gemacht“ zu sagen."
   ],
   "ziel": "Nach diesem Gespräch soll die Person genau wissen, was sie richtig gemacht hat, warum es wichtig war, und ermutigt sein, es weiterzuführen.",
   "satz": "Ich möchte dir kurz sagen, was mir aufgefallen ist und warum das wirklich einen Unterschied gemacht hat.",

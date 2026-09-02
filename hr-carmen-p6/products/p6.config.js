@@ -54,8 +54,9 @@ function slidePrep(card, num) {
     return '<div class="choice" data-toggle="k' + card.n + '_chk' + (i + 1) + '" onclick="toggleChoice(this)">' + esc(c) + '</div>';
   }).join('');
   const prepHtml = card.prep.map(function (p, i) {
+    const placeholder = (card.prepPlaceholders && card.prepPlaceholders[i]) || 'Kurz eintragen …';
     return '<div class="weeklyCheckCard"><label>' + esc(p.toUpperCase()) + '</label>' +
-      '<textarea data-field="k' + card.n + '_f' + (i + 1) + '" placeholder="Kurz eintragen …"></textarea></div>';
+      '<textarea data-field="k' + card.n + '_f' + (i + 1) + '" placeholder="' + esc(placeholder) + '"></textarea></div>';
   }).join('');
   return (
     '<section class="slide headCenter" data-slide="' + num + '"><div class="brand">P6 / GESPRÄCHSKARTE ' + card.n + ' · 1/5 ' + SUBTITLES[0] + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +

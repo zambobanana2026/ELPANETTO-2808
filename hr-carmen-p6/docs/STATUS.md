@@ -1,5 +1,24 @@
 # Status — Carmen Next Motor/Config
 
+## P6 — Beispiel-Platzhalter in der 5-Minuten-Vorbereitung (alle 8 Karten)
+
+Auf Wunsch bekommt jede der bisher 41 "Kurz eintragen …"-Textareas in der
+5-Minuten-Vorbereitung (Slide 1/5 jeder Gesprächskarte) jetzt ein
+konkretes, zum jeweiligen Kartenszenario passendes Beispiel als
+Platzhaltertext statt des generischen Hinweises — beantwortet also direkt
+die Unterüberschrift/Frage darüber (z. B. "WAS IST PASSIERT?" →
+"z. B. Die Übergabe wurde in den letzten zwei Fällen nicht im gemeinsamen
+System dokumentiert."). Die Beispiele sind konsistent mit dem jeweils
+schon vorhandenen `beispiel`-Szenario der Karte (sit/nicht/besser), damit
+alle Beispieltexte einer Gesprächskarte zusammenpassen.
+
+Neues Feld `prepPlaceholders` (Array, parallel zu `prep`) in
+`content/cards_p6.json` für alle 8 Karten ergänzt; `slidePrep()` in
+`products/p6.config.js` nutzt `card.prepPlaceholders[i]` statt des
+hartkodierten "Kurz eintragen …" (mit Fallback, falls das Feld einmal
+fehlen sollte). Reine Inhalts-Ergänzung, keine Struktur-/ID-Änderung.
+`qa/p6_qa.js` (106 Checks) läuft weiterhin vollständig grün.
+
 ## P6 — Durchgängige Du-Anrede, dritter Video-Platzhalter, "Als Nächstes"-Übergänge
 
 Reine P6-Textänderungen, keine Motor-Änderungen (motor/engine.css und
