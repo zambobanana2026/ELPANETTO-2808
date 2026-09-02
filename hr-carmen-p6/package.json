@@ -1,0 +1,9 @@
+{
+  "name": "hr-carmen-p6",
+  "private": true,
+  "type": "commonjs",
+  "description": "Carmen Next — Motor+Config Architektur für die P1-P8 HR-Produktfamilie (P6 Migration).",
+  "scripts": {
+    "build": "node build/build.js p6"
+  }
+}

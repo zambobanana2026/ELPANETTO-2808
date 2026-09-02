@@ -1,0 +1,612 @@
+[
+ {
+  "n": 1,
+  "id": "leistung",
+  "title": "Leistung bleibt hinter den Erwartungen zurück",
+  "checks": [
+   "Ist die erwartete Leistung konkret beschrieben?",
+   "Gibt es mindestens ein oder zwei konkrete Beispiele?",
+   "Ist das Problem wiederholt oder für die Aufgabe wesentlich?",
+   "Wurde die Erwartung bereits erklärt?",
+   "Gibt es erkennbare Hindernisse bei Information, Fähigkeit, Ressourcen oder Prioritäten?"
+  ],
+  "hinweis": "Wenn die Erwartung nie klar war, beginnt das Gespräch nicht mit Vorwurf, sondern mit Klärung. Unterstelle nicht vorschnell ein Motivationsproblem.",
+  "prep": [
+   "Was weiß ich?",
+   "Was beobachte ich konkret?",
+   "Was vermute ich nur?",
+   "Was muss ich noch klären?",
+   "Was will ich erreichen?",
+   "Welche Beispiele bringe ich mit?"
+  ],
+  "prepPlaceholders": [
+   "z. B. Die letzten drei Wochenberichte kamen jeweils nach dem vereinbarten Termin am Donnerstag.",
+   "z. B. Drei Berichte in Folge wurden erst freitags statt donnerstags eingereicht.",
+   "z. B. Ich vermute Zeitdruck oder falsche Priorisierung — weiß es aber nicht sicher.",
+   "z. B. Ob es an der Aufgabenlast liegt oder an fehlender Klarheit über die Erwartung.",
+   "z. B. Dass Berichte künftig zuverlässig bis Donnerstag 15 Uhr vorliegen.",
+   "z. B. Die drei konkreten Abgabedaten der letzten Berichte mit Datum."
+  ],
+  "ziel": "Nach diesem Gespräch soll klar sein, welche Leistung bis wann erwartet wird, welche Unterstützung nötig ist und wann wir den Stand prüfen.",
+  "satz": "Ich möchte heute mit dir darüber sprechen, was bei deinen Aufgaben gerade noch nicht so läuft, wie wir es vereinbart haben, und gemeinsam klären, was du brauchst und was sich konkret ändern soll.",
+  "fragen": [
+   "Wie schätzt du die letzten Aufgaben selbst ein?",
+   "Was hat dazu geführt, dass die Termine oder Qualitätsanforderungen nicht eingehalten wurden?",
+   "Was war dir bei der Priorität oder Erwartung noch unklar?",
+   "Welche Unterstützung würde die Umsetzung realistisch verbessern?",
+   "Woran können wir in zwei Wochen erkennen, dass es besser läuft?"
+  ],
+  "reaktionen": [
+   [
+    "Das stimmt überhaupt nicht.",
+    "Lass uns die konkrete Situation anschauen. Am 12. Juni war die Auswertung bis 12 Uhr vereinbart; sie lag am 14. Juni vor. Wie hast du diesen Ablauf erlebt?"
+   ],
+   [
+    "Dafür hatte ich keine Zeit.",
+    "Das kann ein wichtiger Grund sein. Dann müssen wir die Prioritäten klären. Welche Aufgabe hätte dafür zurückgestellt werden müssen, und was vereinbaren wir für den nächsten vergleichbaren Fall?"
+   ],
+   [
+    "Die anderen schaffen das auch nicht.",
+    "Heute sprechen wir über deine Aufgabe und die Vereinbarung dazu. Wenn es ein grundsätzliches Ressourcenproblem gibt, nehmen wir das zusätzlich auf."
+   ],
+   [
+    "Warum sagen Sie mir das erst jetzt?",
+    "Der Hinweis hätte früher kommen können. Ich spreche ihn jetzt konkret an, damit wir eine klare Vereinbarung für die nächsten Aufgaben treffen."
+   ]
+  ],
+  "compare": [
+   [
+    "Du arbeitest nicht sorgfältig.",
+    "In den letzten drei Auswertungen fehlten jeweils die Quellenangaben."
+   ],
+   [
+    "Du bist unzuverlässig.",
+    "Zwei vereinbarte Termine wurden in diesem Monat nicht eingehalten."
+   ],
+   [
+    "Du musst dich mehr anstrengen.",
+    "Bis Freitag 16 Uhr brauchen wir die vollständige Version mit den drei Prüfschritten."
+   ]
+  ],
+  "beispiel": {
+   "sit": "Berichte werden wiederholt nach dem vereinbarten Termin abgegeben.",
+   "nicht": "Du musst zuverlässiger werden.",
+   "besser": "Die letzten drei Berichte wurden jeweils nach dem vereinbarten Termin abgegeben.",
+   "vereinbarung": "Die Berichte werden künftig bis Donnerstag 15 Uhr vollständig abgegeben. Wenn eine andere Priorität das verhindert, wird dies vorher angesprochen."
+  },
+  "achtung": "Vermeide: Motive zu unterstellen; zu viele alte Beispiele aufzuzählen; eine vage Zusage wie „mehr Mühe geben“ stehen zu lassen.",
+  "rechtshinweis": null
+ },
+ {
+  "n": 2,
+  "id": "verhalten",
+  "title": "Problematisches Verhalten",
+  "checks": [
+   "Geht es um ein konkretes beobachtbares Verhalten und nicht um deine Meinung zur Persönlichkeit?",
+   "Wurde eine Regel, Absprache oder Erwartung verletzt?",
+   "Ist die Situation einmalig mit hoher Wirkung oder wiederholt aufgetreten?",
+   "Kannst du Zeitpunkt, Ort und Wirkung benennen?",
+   "Ist klar, welches Verhalten künftig erwartet wird?"
+  ],
+  "hinweis": null,
+  "prep": [
+   "Was ist passiert?",
+   "Welche Vereinbarung oder Grenze war betroffen?",
+   "Welche Wirkung hatte es?",
+   "Was ist Vermutung und noch nicht geklärt?",
+   "Welche Erwartung formuliere ich?"
+  ],
+  "prepPlaceholders": [
+   "z. B. Die Übergabe wurde in den letzten zwei Fällen nicht im gemeinsamen System dokumentiert.",
+   "z. B. Die Absprache, jede Übergabe bis 15 Uhr im System zu dokumentieren.",
+   "z. B. Dem nächsten Team fehlte die Information, dadurch kam es zu Verzögerungen.",
+   "z. B. Ob es an Zeitdruck lag oder die Regel nicht klar genug kommuniziert war.",
+   "z. B. Dass die Übergabe künftig verlässlich und rechtzeitig dokumentiert wird."
+  ],
+  "ziel": "Nach diesem Gespräch soll die betroffene Verhaltensgrenze klar sein und die Person wissen, welches Verhalten ab jetzt erwartet und wann es überprüft wird.",
+  "satz": "Ich möchte heute ein konkretes Verhalten ansprechen, weil es die Zusammenarbeit beziehungsweise unsere Vereinbarung beeinträchtigt.",
+  "fragen": [
+   "Wie hast du die Situation erlebt?",
+   "Was war dir zu diesem Zeitpunkt über die Vereinbarung klar?",
+   "Was hat dazu geführt, dass du anders gehandelt hast?",
+   "Was wirst du beim nächsten Mal konkret anders machen?",
+   "Was brauchst du, damit das gelingt?"
+  ],
+  "reaktionen": [
+   [
+    "So bin ich eben.",
+    "Ich bewerte nicht deine Persönlichkeit. Ich spreche das Verhalten vom Dienstag und seine Wirkung auf die Zusammenarbeit an."
+   ],
+   [
+    "Das war doch nicht schlimm.",
+    "Du kannst die Situation anders bewerten. Die Auswirkung war, dass der Kunde ohne Rückmeldung blieb. Deshalb ist die Vereinbarung für künftige Fälle wichtig."
+   ],
+   [
+    "Das machen die anderen auch.",
+    "Wenn es weitere Fälle gibt, prüfe ich sie separat. Jetzt klären wir zunächst deine konkrete Situation."
+   ],
+   [
+    "Ich habe mich nur gewehrt.",
+    "Deinen Einwand möchte ich verstehen. Gleichzeitig müssen wir klären, wie der Einwand geäußert wird, ohne die vereinbarte Grenze zu überschreiten."
+   ]
+  ],
+  "compare": [
+   [
+    "Du bist respektlos.",
+    "Du hast im Teammeeting zweimal gesprochen, während andere noch gesprochen haben."
+   ],
+   [
+    "Du hältst dich nie an Regeln.",
+    "Die vereinbarte Übergabe im System wurde in den letzten zwei Fällen nicht dokumentiert."
+   ],
+   [
+    "So etwas akzeptiere ich nicht von dir.",
+    "Abwertende Kommentare gegenüber Kolleginnen akzeptiere ich nicht. Kritik wird sachlich und direkt angesprochen."
+   ]
+  ],
+  "beispiel": {
+   "sit": "Eine vereinbarte Übergabe wird wiederholt nicht im gemeinsamen System dokumentiert.",
+   "nicht": "Du hältst dich nie an Regeln.",
+   "besser": "Die Übergabe wurde in den letzten zwei Fällen nicht dokumentiert. Dadurch fehlte dem nächsten Team die Information.",
+   "vereinbarung": "Die Übergabe wird ab sofort bis 15 Uhr im gemeinsamen System dokumentiert. Offene Punkte werden dort markiert."
+  },
+  "achtung": "Vermeide: Persönlichkeitsurteile; öffentliche Kritik; Drohungen mit Konsequenzen, deren Voraussetzungen du nicht geprüft hast.",
+  "rechtshinweis": "Bei möglichen arbeitsrechtlichen Konsequenzen ist eine individuelle fachliche Prüfung sinnvoll."
+ },
+ {
+  "n": 3,
+  "id": "teamkonflikt",
+  "title": "Konflikt im Team",
+  "checks": [
+   "Gibt es wiederholte Reibung zwischen zwei oder mehr Personen?",
+   "Beeinträchtigt der Konflikt Aufgaben, Übergaben, Kunden oder Teamklima?",
+   "Kannst du konkrete Situationen benennen?",
+   "Sind beide Perspektiven noch nicht ausreichend gehört?",
+   "Ist dein Ziel Arbeitsfähigkeit statt Schuldzuweisung?"
+  ],
+  "hinweis": null,
+  "prep": [
+   "Meine Beobachtungen",
+   "Auswirkung auf die Arbeit",
+   "Was weiß ich sicher?",
+   "Welche Perspektive muss ich hören?",
+   "Welche Mindestregel soll danach gelten?"
+  ],
+  "prepPlaceholders": [
+   "z. B. Bei drei Übergaben wurden offene Punkte per E-Mail-Kopie statt direkt geklärt.",
+   "z. B. Die Zuständigkeit blieb jeweils unklar, dadurch verzögerten sich Übergaben.",
+   "z. B. Beide Seiten haben sich in den letzten Wochen nicht direkt abgestimmt.",
+   "z. B. Wie beide die Zusammenarbeit und die Übergaben selbst erleben.",
+   "z. B. Offene Punkte werden im Board markiert und direkt am selben Tag geklärt."
+  ],
+  "ziel": "Nach diesem Gespräch sollen die Beteiligten die konkrete Auswirkung verstehen und eine Arbeitsvereinbarung für Übergaben, Kommunikation und nächste Schritte treffen.",
+  "satz": "Ich möchte heute nicht entscheiden, wer angefangen hat, sondern klären, was zwischen euch passiert, welche Folgen es für die Arbeit hat und wie die Zusammenarbeit ab jetzt funktionieren soll.",
+  "fragen": [
+   "Was ist aus deiner Sicht konkret passiert?",
+   "Welche Wirkung hatte das auf deine Arbeit oder die des Teams?",
+   "Was brauchst du für eine verlässliche Zusammenarbeit?",
+   "Wozu bist du selbst bereit?",
+   "Welche Regel gilt ab heute bei Übergaben oder Rückfragen?"
+  ],
+  "reaktionen": [
+   [
+    "Sie hat angefangen.",
+    "Das können wir als Teil deiner Sicht festhalten. Für die Vereinbarung ist jetzt wichtiger, was du künftig konkret tun wirst."
+   ],
+   [
+    "Mit ihm kann man nicht arbeiten.",
+    "Das ist eine Bewertung. Bitte beschreibe die Situation, auf die du dich beziehst, und die konkrete Wirkung."
+   ],
+   [
+    "Ich werde mich nicht entschuldigen.",
+    "Eine Entschuldigung erzwinge ich nicht. Wir brauchen aber eine klare Vereinbarung darüber, wie die Zusammenarbeit ab jetzt laufen soll."
+   ],
+   [
+    "Dann mache ich alles nur noch schriftlich.",
+    "Schriftliche Klarheit kann helfen. Wir klären, welche Informationen schriftlich festgehalten werden und welche direkte Abstimmung weiterhin notwendig ist."
+   ]
+  ],
+  "compare": [
+   [
+    "Ihr müsst euch einfach vertragen.",
+    "Die Übergabe erfolgt ab heute bis 15 Uhr im gemeinsamen Board; offene Punkte werden direkt markiert."
+   ],
+   [
+    "Wer hat Schuld?",
+    "Welche Situation hat die Zusammenarbeit konkret behindert?"
+   ],
+   [
+    "Das ist Kindergarten.",
+    "Der Konflikt bindet Zeit und erschwert die Übergabe. Das müssen wir arbeitsbezogen lösen."
+   ]
+  ],
+  "beispiel": {
+   "sit": "Zwei Mitarbeitende klären Zuständigkeiten wiederholt über E-Mail-Kopien und Vorwürfe statt direkt.",
+   "nicht": "Ihr müsst euch einfach vertragen.",
+   "besser": "Bei drei Übergaben wurden offene Punkte nicht direkt geklärt; dadurch blieb die Zuständigkeit unklar.",
+   "vereinbarung": "Offene Übergabepunkte werden im Board markiert und am selben Tag in zehn Minuten direkt geklärt."
+  },
+  "achtung": "Vermeide: vorschnell Partei zu ergreifen; Personen vor dem Team bloßzustellen; eine Versöhnung zu erzwingen, statt Arbeitsregeln zu vereinbaren.",
+  "rechtshinweis": null
+ },
+ {
+  "n": 4,
+  "id": "widerstand",
+  "title": "Dauernde Unzufriedenheit und Widerstand",
+  "checks": [
+   "Wird eine Entscheidung oder Aufgabe wiederholt negativ kommentiert?",
+   "Gibt es konkrete Einwände, die geprüft werden müssen?",
+   "Unterscheidest du zwischen berechtigtem Hinweis und pauschalem Widerstand?",
+   "Ist die Entscheidung bereits getroffen oder noch offen?",
+   "Welche konstruktive Beteiligung erwartest du?"
+  ],
+  "hinweis": null,
+  "prep": [
+   "Welche Reaktionen beobachte ich?",
+   "Welche Einwände sind konkret?",
+   "Was ist bereits entschieden?",
+   "Was ist noch veränderbar?",
+   "Welche Beteiligung erwarte ich?"
+  ],
+  "prepPlaceholders": [
+   "z. B. Die neue Einsatzplanung wurde in drei Besprechungen pauschal mit „das funktioniert sowieso nicht“ kommentiert.",
+   "z. B. Bisher wurde kein konkretes Risiko benannt, nur pauschale Ablehnung.",
+   "z. B. Die neue Einsatzplanung steht, die Frühschicht-Frage ist noch offen.",
+   "z. B. Details zur Frühschicht können bis Freitag geprüft werden.",
+   "z. B. Konkrete, sachliche Einwände statt pauschaler Ablehnung."
+  ],
+  "ziel": "Nach diesem Gespräch sind berechtigte Sachfragen geklärt, der Entscheidungsspielraum ist benannt und die Erwartung an die weitere Zusammenarbeit ist eindeutig.",
+  "satz": "Ich möchte heute besprechen, wie du auf die aktuelle Entscheidung reagierst, welche konkreten Bedenken dahinterstehen und wie wir künftig sachlich damit umgehen.",
+  "fragen": [
+   "Was genau ist dein konkreter Einwand?",
+   "Welche Information fehlt dir dafür?",
+   "Was ist aus deiner Sicht das Risiko?",
+   "Was ist trotz deiner Bedenken ein tragfähiger nächster Schritt?",
+   "Welche sachliche Unterstützung brauchst du, um die getroffene Entscheidung umzusetzen, sofern sie bestehen bleibt?"
+  ],
+  "reaktionen": [
+   [
+    "Das funktioniert sowieso nicht.",
+    "Dann benenne bitte das konkrete Risiko und einen Vorschlag, wie wir es prüfen können. Pauschal kommen wir nicht weiter."
+   ],
+   [
+    "Warum muss immer ich?",
+    "Lass uns die Aufgabenverteilung konkret anschauen. Wenn die Verteilung unausgewogen ist, sprechen wir darüber. Die pauschale Aussage allein klärt es nicht."
+   ],
+   [
+    "Dann sage ich künftig gar nichts mehr.",
+    "Sachliche Einwände sind erwünscht. Ich erwarte aber, dass sie konkret, rechtzeitig und lösungsorientiert eingebracht werden."
+   ],
+   [
+    "Sie hören mir sowieso nicht zu.",
+    "Ich höre mir deinen konkreten Einwand jetzt an. Danach sage ich klar, was wir ändern können und was entschieden bleibt."
+   ]
+  ],
+  "compare": [
+   [
+    "Du bist immer negativ.",
+    "In den letzten drei Besprechungen hast du die Entscheidung pauschal abgelehnt, ohne einen konkreten Einwand zu benennen."
+   ],
+   [
+    "Dann mach es doch besser.",
+    "Welchen konkreten Vorschlag machst du, und woran prüfen wir ihn?"
+   ],
+   [
+    "Du musst loyaler sein.",
+    "Ich erwarte, dass Bedenken im Entscheidungsprozess sachlich geäußert werden und die getroffene Entscheidung anschließend umgesetzt wird."
+   ]
+  ],
+  "beispiel": {
+   "sit": "Eine neue Einsatzplanung wird wiederholt mit „Das funktioniert sowieso nicht“ kommentiert.",
+   "nicht": "Du bist illoyal und immer negativ.",
+   "besser": "Du hast die Planung in drei Besprechungen pauschal abgelehnt. Bitte benenne jetzt das konkrete Risiko, das du siehst.",
+   "vereinbarung": "Der Einwand zur Frühschicht wird bis Freitag geprüft. Was bereits entschieden ist, wird ab Montag umgesetzt; weitere Sachfragen werden konkret und rechtzeitig angesprochen."
+  },
+  "achtung": "Vermeide: berechtigte Kritik als Illoyalität abzuwerten; eine Debatte ohne Ende zuzulassen; Zustimmung mit Begeisterung zu verwechseln.",
+  "rechtshinweis": null
+ },
+ {
+  "n": 5,
+  "id": "motivation",
+  "title": "Motivation und Engagement lassen nach",
+  "checks": [
+   "Hast du eine sichtbare Veränderung gegenüber früher beobachtet?",
+   "Kannst du Verhalten statt Stimmung beschreiben?",
+   "Ist die Veränderung über mehrere Situationen erkennbar?",
+   "Gibt es mögliche Ursachen bei Aufgabe, Führung, Team, Belastung oder privaten Umständen?",
+   "Willst du verstehen und gleichzeitig Erwartungen klären?"
+  ],
+  "hinweis": null,
+  "prep": [
+   "Frühere Beobachtung",
+   "Aktuelle Veränderung",
+   "Konkrete Beispiele",
+   "Was vermute ich nicht sicher?",
+   "Welche Unterstützung und Erwartung sind nötig?"
+  ],
+  "prepPlaceholders": [
+   "z. B. Früher hat sie sich in Teamrunden aktiv eingebracht und pünktlich zurückgemeldet.",
+   "z. B. In den letzten drei Teamrunden kaum Beteiligung, zwei Rückmeldungen verspätet.",
+   "z. B. Zwei Kundenrückmeldungen kamen später als vereinbart, ohne Erklärung.",
+   "z. B. Ob es an privater Belastung, Aufgabenlast oder etwas anderem liegt.",
+   "z. B. Klären, was helfen würde, und eine realistische Rückmeldefrist vereinbaren."
+  ],
+  "ziel": "Nach diesem Gespräch ist die beobachtete Veränderung besprochen, die Sichtweise der Person gehört und ein realistischer nächster Schritt vereinbart.",
+  "satz": "Mir ist aufgefallen, dass sich deine Beteiligung und Eigeninitiative in den letzten Wochen verändert haben. Ich möchte verstehen, wie du das selbst erlebst und was jetzt hilfreich wäre.",
+  "fragen": [
+   "Wie geht es dir mit deinen aktuellen Aufgaben?",
+   "Was hat sich aus deiner Sicht in den letzten Wochen verändert?",
+   "Welche Aufgabe oder Rahmenbedingung bremst dich gerade?",
+   "Was würde dir helfen, wieder verlässlicher in den Arbeitsfluss zu kommen?",
+   "Welche konkrete Veränderung vereinbaren wir für die nächsten zwei Wochen?"
+  ],
+  "reaktionen": [
+   [
+    "Ich bin nicht unmotiviert.",
+    "Ich möchte dich auch nicht so nennen. Ich beschreibe, dass du dich an drei Teamrunden weniger beteiligt und zwei Aufgaben später als vereinbart abgeschlossen hast. Wie erklärst du dir das?"
+   ],
+   [
+    "Privat ist gerade viel los.",
+    "Danke, dass du das sagst. Du musst keine privaten Details nennen. Lass uns klären, welche arbeitsbezogene Unterstützung oder Priorisierung möglich ist."
+   ],
+   [
+    "Die Arbeit macht einfach keinen Spaß mehr.",
+    "Das nehme ich ernst. Was genau daran belastet dich, und welche Veränderung wäre innerhalb unserer Möglichkeiten ein sinnvoller erster Schritt?"
+   ],
+   [
+    "Ich mache doch genug.",
+    "Lass uns die konkrete Erwartung vergleichen: vereinbart waren …, erreicht wurde …. Was ist deine Sicht auf diese Differenz?"
+   ]
+  ],
+  "compare": [
+   [
+    "Du bist unmotiviert.",
+    "Du bringst dich seit drei Teamrunden kaum noch ein und meldest Rückfragen später zurück als zuvor."
+   ],
+   [
+    "Du hast wohl keine Lust mehr.",
+    "Ich beobachte eine Veränderung bei Beteiligung und Eigeninitiative und möchte die Ursache verstehen."
+   ],
+   [
+    "Reiß dich zusammen.",
+    "Welche Priorität und Unterstützung helfen dir, die nächsten zwei Aufgaben zuverlässig abzuschließen?"
+   ]
+  ],
+  "beispiel": {
+   "sit": "Eine erfahrene Mitarbeiterin beteiligt sich kaum noch an Teamrunden und gibt Rückmeldungen später als bisher.",
+   "nicht": "Du bist unmotiviert.",
+   "besser": "Du hast dich in den letzten drei Teamrunden kaum beteiligt und zwei Rückmeldungen später als vereinbart gegeben.",
+   "vereinbarung": "Du meldest die zwei offenen Kundenpunkte bis Mittwoch zurück. Wir sprechen am Freitag zehn Minuten darüber, was dich dabei unterstützt oder bremst."
+  },
+  "achtung": "Vermeide: Motivation zu diagnostizieren; private Gründe auszuforschen; Unterstützung anzubieten, ohne die Arbeitsanforderung zu klären.",
+  "rechtshinweis": null
+ },
+ {
+  "n": 6,
+  "id": "fehlzeiten",
+  "title": "Wiederholte Fehlzeiten",
+  "checks": [
+   "Müssen wiederholte oder auffällige Fehlzeiten sachlich besprochen werden?",
+   "Hast du nur arbeitsbezogene Fakten und keine Diagnosevermutungen?",
+   "Ist klar, welches Ziel das Gespräch hat: Rückkehr, Zusammenarbeit, Information oder weitere Klärung?",
+   "Sind aktuelle Zuständigkeiten und interne Abläufe geprüft?",
+   "Ist absehbar, dass eine individuelle rechtliche oder fachliche Prüfung notwendig sein kann?"
+  ],
+  "hinweis": "Was gehört hier nicht ins Gespräch? Medizinische Diagnosen, private Ursachen und neugierige Fragen zu persönlichen Details. Sprich nur über Informationen, die für die konkrete Arbeitsorganisation erforderlich sind.",
+  "prep": [
+   "Arbeitsbezogene Beobachtung",
+   "Zeitraum / Häufigkeit, soweit zulässig und erforderlich",
+   "Auswirkung auf Aufgaben oder Team",
+   "Was weiß ich nicht und frage ich nicht aus?",
+   "Welche Unterstützung und nächsten Schritte will ich klären?"
+  ],
+  "prepPlaceholders": [
+   "z. B. Für das laufende Kundenprojekt fehlen wiederholt rechtzeitige Übergaben.",
+   "z. B. Mehrere Abwesenheiten in den letzten Wochen, genaue Daten liegen vor.",
+   "z. B. Offene Projektpunkte konnten nicht rechtzeitig weitergegeben werden.",
+   "z. B. Die medizinischen oder privaten Gründe — die gehören nicht ins Gespräch.",
+   "z. B. Wie Übergaben künftig zuverlässig dokumentiert werden können."
+  ],
+  "ziel": "Nach diesem Gespräch sind die arbeitsbezogenen Auswirkungen, die Rückkehr- oder Unterstützungsbedarfe und die nächsten organisatorischen Schritte klar, ohne private oder medizinische Details zu erzwingen.",
+  "satz": "Ich möchte heute die arbeitsbezogenen Auswirkungen der wiederholten Abwesenheiten und die nächsten organisatorischen Schritte besprechen. Persönliche oder medizinische Details musst du nicht offenlegen.",
+  "fragen": [
+   "Welche Informationen brauchst du für die aktuellen Aufgaben und Übergaben?",
+   "Gibt es arbeitsorganisatorische Unterstützung, die wir prüfen sollten?",
+   "Welche Aufgaben können aktuell zuverlässig übernommen werden?",
+   "Wie stellen wir eine klare Übergabe und Kommunikation sicher?",
+   "Welchen nächsten Termin vereinbaren wir zur organisatorischen Klärung?"
+  ],
+  "reaktionen": [
+   [
+    "Ich muss mich dafür nicht rechtfertigen.",
+    "Du musst keine medizinischen Details nennen. Wir müssen aber die arbeitsbezogene Organisation, Übergaben und die nächsten Schritte klären."
+   ],
+   [
+    "Sie glauben mir wohl nicht.",
+    "Es geht nicht um eine Unterstellung. Ich möchte die Auswirkungen auf die Arbeit und die notwendige Organisation sachlich besprechen."
+   ],
+   [
+    "Das ist meine Privatsache.",
+    "Das respektiere ich. Wir bleiben bei den Informationen, die für die Arbeitsorganisation erforderlich sind."
+   ],
+   [
+    "Dann kann ich hier wohl nicht mehr arbeiten.",
+    "Heute treffen wir keine vorschnelle Entscheidung. Wir klären die konkrete Situation und prüfen die nächsten Schritte fachgerecht."
+   ]
+  ],
+  "compare": [
+   [
+    "Du bist ständig krank.",
+    "In den vergangenen Wochen gab es mehrere Abwesenheitszeiten. Wir müssen die arbeitsbezogene Organisation und die nächsten Schritte klären."
+   ],
+   [
+    "Was hast du denn genau?",
+    "Welche arbeitsbezogene Unterstützung oder Übergabe ist erforderlich?"
+   ],
+   [
+    "Wenn das so weitergeht, bist du raus.",
+    "Mögliche arbeitsrechtliche Schritte hängen vom Einzelfall ab und werden nicht in diesem Gespräch vorweggenommen."
+   ]
+  ],
+  "beispiel": {
+   "sit": "Wiederholte Abwesenheiten erschweren die Übergabe eines laufenden Kundenprojekts.",
+   "nicht": "Was hast du denn genau, und wie lange fällt das noch so aus?",
+   "besser": "Für das Projekt fehlen uns wiederholt Übergaben. Welche arbeitsbezogene Organisation brauchen wir, damit die offenen Punkte zuverlässig weitergegeben werden?",
+   "vereinbarung": "Die offenen Projektpunkte werden bis Donnerstag im Übergabedokument aktualisiert. Den organisatorischen Stand prüfen wir am Montag erneut."
+  },
+  "achtung": "Vermeide: Diagnosen oder Ursachen zu erfragen; pauschale rechtliche Drohungen; sensible Informationen unnötig zu dokumentieren.",
+  "rechtshinweis": "Fehlzeiten, Krankheit, Datenschutz, Schwerbehinderung, Betriebsrat und mögliche arbeitsrechtliche Konsequenzen können vom Einzelfall abhängen. Prüfe bei Unsicherheit die konkrete Situation mit geeigneter fachlicher Unterstützung."
+ },
+ {
+  "n": 7,
+  "id": "aufgeschoben",
+  "title": "Das seit Wochen aufgeschobene Gespräch",
+  "checks": [
+   "Weißt du bereits konkret, welches Thema angesprochen werden muss?",
+   "Hast du das Gespräch mehrfach verschoben?",
+   "Wird das Aufschieben selbst inzwischen zum Problem?",
+   "Kannst du einen sachlichen Einstieg und eine konkrete Erwartung formulieren?",
+   "Ist ein Termin mit ausreichend Ruhe möglich?"
+  ],
+  "hinweis": null,
+  "prep": [
+   "Das schiebe ich auf",
+   "Konkrete Beobachtung",
+   "Warum ist jetzt der richtige Zeitpunkt?",
+   "Was will ich nicht unterstellen?",
+   "Was soll danach konkret vereinbart sein?"
+  ],
+  "prepPlaceholders": [
+   "z. B. Das Gespräch über die verspäteten Kundenrückmeldungen, seit einem Monat.",
+   "z. B. In den letzten vier Wochen wurden drei Kundenrückmeldungen später als vereinbart gegeben.",
+   "z. B. Weil sich das Muster wiederholt und die Kundenbeziehung inzwischen belastet.",
+   "z. B. Dass es an fehlendem Interesse liegt — ich kenne den Grund noch nicht.",
+   "z. B. Ein fester Zeitpunkt bis 16 Uhr, an dem Rückmeldungen künftig dokumentiert werden."
+  ],
+  "ziel": "Nach diesem Gespräch ist das bisher aufgeschobene Thema konkret benannt, die Sichtweise gehört und ein überprüfbarer nächster Schritt vereinbart.",
+  "satz": "Ich möchte ein Thema ansprechen, das ich zu lange vor mir hergeschoben habe: Bei … gibt es seit … eine Abweichung von unserer Vereinbarung. Das möchte ich heute klar und fair mit dir besprechen.",
+  "fragen": [
+   "Wie erlebst du die Situation selbst?",
+   "Was hat bisher verhindert, dass es anders läuft?",
+   "Was ist aus deiner Sicht ein realistischer nächster Schritt?",
+   "Welche Unterstützung brauchst du, welche Verantwortung übernimmst du?",
+   "Woran prüfen wir am …, ob sich etwas verändert hat?"
+  ],
+  "reaktionen": [
+   [
+    "Warum sagen Sie das erst jetzt?",
+    "Weil ich es zu lange aufgeschoben habe. Das war nicht hilfreich. Ich spreche es jetzt konkret an, damit wir eine klare Vereinbarung treffen."
+   ],
+   [
+    "Dann war es ja bisher nicht so wichtig.",
+    "Dass ich gewartet habe, ändert nichts daran, dass die Situation jetzt geklärt werden muss."
+   ],
+   [
+    "Das kommt völlig überraschend.",
+    "Ich verstehe das. Deshalb bleibe ich bei konkreten Beispielen und höre mir deine Sicht an. Danach klären wir den nächsten Schritt."
+   ],
+   [
+    "Ich habe keine Lust auf dieses Gespräch.",
+    "Das kann ich nachvollziehen. Wir führen es trotzdem kurz und sachlich, weil die offene Situation die Arbeit inzwischen belastet."
+   ]
+  ],
+  "compare": [
+   [
+    "Ich wollte dich nicht verletzen.",
+    "Ich habe das Thema zu lange aufgeschoben. Heute benenne ich es konkret und möchte deine Sicht hören."
+   ],
+   [
+    "Es ist eigentlich nicht so schlimm.",
+    "Es ist wichtig genug, dass wir eine klare Vereinbarung brauchen."
+   ],
+   [
+    "Du weißt ja, worum es geht.",
+    "Ich spreche konkret über …, beobachtet am …, mit der Wirkung … ."
+   ]
+  ],
+  "beispiel": {
+   "sit": "Die Führungskraft verschiebt seit einem Monat ein Gespräch über wiederholt verspätete Kundenrückmeldungen.",
+   "nicht": "Du weißt ja, dass das gerade nicht optimal läuft.",
+   "besser": "Ich habe das Thema zu lange aufgeschoben. In den letzten vier Wochen wurden drei Kundenrückmeldungen später als vereinbart gegeben.",
+   "vereinbarung": "Kundenrückmeldungen werden künftig bis 16 Uhr im System dokumentiert. Wenn das nicht möglich ist, wird die Verzögerung am selben Tag angesprochen."
+  },
+  "achtung": "Vermeide: die Verzögerung zu beschönigen; aus schlechtem Gewissen unklar zu werden; das gesamte vergangene Verhalten auf einmal abzurechnen.",
+  "rechtshinweis": null
+ },
+ {
+  "n": 8,
+  "id": "lob",
+  "title": "Lob und Anerkennung, die wirklich wirkt",
+  "checks": [
+   "Gibt es eine konkrete Leistung oder ein konkretes Verhalten, das Anerkennung verdient?",
+   "Willst du mehr sagen als ein pauschales „Gut gemacht“?",
+   "Ist die Leistung wirklich bemerkenswert – nicht nur normale Erwartung?",
+   "Soll die Anerkennung Wirkung für die Zukunft haben, nicht nur für den Moment?",
+   "Passt der Rahmen: unter vier Augen oder bewusst vor dem Team?"
+  ],
+  "hinweis": "Lob wirkt nur, wenn es konkret und ehrlich gemeint ist. Pauschales Lob für Selbstverständliches entwertet echte Anerkennung und wird schnell als Floskel erkannt.",
+  "prep": [
+   "Welche konkrete Leistung oder welches Verhalten würdige ich?",
+   "Was genau war daran besonders — nicht nur „gut“, sondern warum?",
+   "Welche Wirkung hatte es auf Team, Kunden oder Ergebnis?",
+   "Wer sollte es noch erfahren: nur die Person, das Team, weitere Ebenen?",
+   "Wie stelle ich sicher, dass es nicht aufgesetzt klingt?"
+  ],
+  "prepPlaceholders": [
+   "z. B. Er hat einen Fehler in der Bestellabwicklung selbst gefunden, gemeldet und einen Lösungsvorschlag mitgebracht.",
+   "z. B. Er hat nicht nur gemeldet, sondern gleich mitgedacht und eine Lösung angeboten.",
+   "z. B. Wahrscheinlich wurden dadurch mehrere Reklamationen vermieden.",
+   "z. B. Das ganze Team, weil der Vorschlag für alle relevant ist.",
+   "z. B. Konkret bleiben und den Effekt benennen statt nur „gut gemacht“ zu sagen."
+  ],
+  "ziel": "Nach diesem Gespräch soll die Person genau wissen, was sie richtig gemacht hat, warum es wichtig war, und ermutigt sein, es weiterzuführen.",
+  "satz": "Ich möchte dir kurz sagen, was mir aufgefallen ist und warum das wirklich einen Unterschied gemacht hat.",
+  "fragen": [
+   "Wie hast du diese Situation selbst erlebt?",
+   "Was hat aus deiner Sicht dazu beigetragen, dass es so gut lief?",
+   "Was davon würdest du gerne öfter so machen?",
+   "Gibt es etwas dabei, das wir auch für andere im Team nutzbar machen können?",
+   "Wie kann ich dich dabei weiter unterstützen?"
+  ],
+  "reaktionen": [
+   [
+    "Ach, das war doch nichts Besonderes.",
+    "Für mich war es das. Konkret hat dein Vorgehen dazu geführt, dass der Kunde am Freitag doch noch beliefert werden konnte — das ist keine Selbstverständlichkeit."
+   ],
+   [
+    "Das hätte doch jeder so gemacht.",
+    "Ich spreche über deinen konkreten Beitrag in dieser Situation. Wenn andere das genauso gut machen, sage ich es ihnen auch — das ändert nichts an deiner Leistung hier."
+   ],
+   [
+    "Ist das jetzt wegen des Gesprächs letzte Woche?",
+    "Nein, das steht unabhängig davon. Ich melde mich bewusst auch dann, wenn etwas gut läuft, nicht nur bei Problemen."
+   ],
+   [
+    "Ich mache doch nur meinen Job.",
+    "Du machst ihn in diesem Fall besonders gut, und genau das darf auch mal ausgesprochen werden."
+   ]
+  ],
+  "compare": [
+   [
+    "Gut gemacht.",
+    "Deine Lösung für das Kundenproblem am Montag hat den Auftrag gerettet — das war genau richtig entschieden."
+   ],
+   [
+    "Weiter so!",
+    "Genau diese Art, frühzeitig Rückmeldung zu geben, hilft dem ganzen Team. Mach das gern zum Standard."
+   ],
+   [
+    "Toll, dass du das gemacht hast.",
+    "Dass du die Übergabe eigenständig dokumentiert hast, hat uns am Montag viel Zeit gespart."
+   ]
+  ],
+  "beispiel": {
+   "sit": "Ein Mitarbeiter bemerkt eigenständig einen Prozessfehler, meldet ihn und bringt gleich einen Lösungsvorschlag mit.",
+   "nicht": "Gut gemacht, weiter so.",
+   "besser": "Dass du den Fehler in der Bestellabwicklung selbst gefunden, gemeldet und gleich einen Lösungsvorschlag mitgebracht hast, hat uns wahrscheinlich mehrere Reklamationen erspart.",
+   "vereinbarung": "Der Verbesserungsvorschlag wird im nächsten Teammeeting vorgestellt; du übernimmst die kurze Vorstellung."
+  },
+  "achtung": "Vermeide: Lob mit Kritik zu verknüpfen („gut gemacht, aber…“); Vergleiche mit anderen Mitarbeitenden; Anerkennung erst nach langer Verzögerung auszusprechen; pauschales Lob für Selbstverständliches.",
+  "rechtshinweis": null
+ }
+]
