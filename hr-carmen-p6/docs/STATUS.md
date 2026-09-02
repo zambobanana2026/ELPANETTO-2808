@@ -1,5 +1,54 @@
 # Status — Carmen Next Motor/Config
 
+## P6 — Durchgängige Du-Anrede, dritter Video-Platzhalter, "Als Nächstes"-Übergänge
+
+Reine P6-Textänderungen, keine Motor-Änderungen (motor/engine.css und
+motor/engine.js unangetastet, P2 nicht betroffen).
+
+1. **Anrede vereinheitlicht:** P6 duzte bisher nur auf Slide 1, alle
+   anderen 53 Slides siezten. Jetzt konsequent Du auf allen Slides —
+   Fließtext, Fragen, Hinweise, Button-Beschriftungen, Checklisten,
+   Überschriften. Betroffen: `products/p6/intro.slides.html` (Slides 2–8),
+   `products/p6/outro.slides.html` ("IHR TEAM." → "DEIN TEAM." auf dem
+   Team-Bericht), `products/p6.config.js` (Leerzustand der Zusammenfassung)
+   und `content/cards_p6.json` (25 Stellen in checks/hinweis/achtung/
+   rechtshinweis über alle 8 Gesprächskarten). **Die Dialog-Beispiele
+   innerhalb der Gesprächskarten bleiben unverändert** — dort spricht die
+   Führungskraft die Mitarbeiterin bereits korrekt mit „du" an, und auch
+   die Mitarbeiter-Repliken (teils mit „Sie" an die Führungskraft) sind
+   Teil des Dialogs, keine Anrede des App-Nutzers, und bleiben deshalb
+   unangetastet (z. B. „Ihr müsst euch einfach vertragen" als Negativ-
+   Beispiel, oder „Warum sagen Sie mir das erst jetzt?" als Mitarbeiter-
+   Zitat).
+
+2. **Dritter Video-Platzhalter:** Mitarbeiter-Slide (6) hat jetzt — nach
+   demselben `.videoPlaceholder`-Muster wie Slide 1 und Slide 7 — einen
+   eigenen Platzhalter ("MITARBEITER-VERWALTUNG", Format 9:16,
+   "[hier kommt dein Video]"), mit einem kurzen erklärenden Satz davor:
+   warum Mitarbeitende einzeln angelegt werden, was „aktiv" bedeutet, was
+   die 20er-Grenze bedeutet. Die beiden bestehenden Platzhalter (Slide 1,
+   Slide 7) sind unverändert.
+
+3. **"Als Nächstes"-Orientierung:** An 8 der 9 vom Nutzer genannten großen
+   Abschnitts-Übergänge steht jetzt ein kurzer Satz rechtsbündig über dem
+   Nav-Button (z. B. "Als Nächstes: du legst deinen ersten Mitarbeiter
+   an."), als Inline-Style statt einer neuen Motor-Klasse (bewusst keine
+   engine.css-Änderung). Zwei Rückfragen dazu vom Nutzer beantwortet:
+   „Für wen → System" sitzt auf Slide 4 (So funktioniert's), der Slide, die
+   tatsächlich per Klick zu System führt — nicht auf Slide 2, wie im
+   Ausgangstext geschrieben. „Mitarbeiterverwaltung → Kartenübersicht"
+   bekommt bewusst **keinen** Satz, weil Slide 7 ("So geht's weiter") genau
+   diesen Übergang bereits ausführlich erklärt. Nach demselben Prinzip
+   wurde der Übergang „Team-Bericht → Checkliste" auf die neue
+   Zusammenfassungs-Slide (52) gelegt statt auf Team-Bericht (51) selbst,
+   da dazwischen inzwischen die Gesprächs-Zusammenfassung liegt (in einer
+   früheren Runde dieser Session ergänzt) — analog zur zweiten Antwort des
+   Nutzers, da auch diese Slide ihren eigenen Übergang bereits über
+   Überschrift und Lead-Text erklärt.
+
+`qa/p6_qa.js` (106 Checks, unverändert — reine Textänderungen, keine
+Struktur-/ID-Änderungen) läuft vollständig grün, 0 Konsolen-/Seitenfehler.
+
 ## P6 — Position &amp; Abteilung im "Mitarbeiter hinzufügen"-Fenster
 
 Gleiche Ergänzung wie zuvor in P2: das "MITARBEITER HINZUFÜGEN"-Modal auf

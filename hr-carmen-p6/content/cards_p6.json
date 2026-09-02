@@ -10,7 +10,7 @@
    "Wurde die Erwartung bereits erklärt?",
    "Gibt es erkennbare Hindernisse bei Information, Fähigkeit, Ressourcen oder Prioritäten?"
   ],
-  "hinweis": "Wenn die Erwartung nie klar war, beginnt das Gespräch nicht mit Vorwurf, sondern mit Klärung. Unterstellen Sie nicht vorschnell ein Motivationsproblem.",
+  "hinweis": "Wenn die Erwartung nie klar war, beginnt das Gespräch nicht mit Vorwurf, sondern mit Klärung. Unterstelle nicht vorschnell ein Motivationsproblem.",
   "prep": [
    "Was weiß ich?",
    "Was beobachte ich konkret?",
@@ -66,7 +66,7 @@
    "besser": "Die letzten drei Berichte wurden jeweils nach dem vereinbarten Termin abgegeben.",
    "vereinbarung": "Die Berichte werden künftig bis Donnerstag 15 Uhr vollständig abgegeben. Wenn eine andere Priorität das verhindert, wird dies vorher angesprochen."
   },
-  "achtung": "Vermeiden Sie: Motive zu unterstellen; zu viele alte Beispiele aufzuzählen; eine vage Zusage wie „mehr Mühe geben“ stehen zu lassen.",
+  "achtung": "Vermeide: Motive zu unterstellen; zu viele alte Beispiele aufzuzählen; eine vage Zusage wie „mehr Mühe geben“ stehen zu lassen.",
   "rechtshinweis": null
  },
  {
@@ -74,10 +74,10 @@
   "id": "verhalten",
   "title": "Problematisches Verhalten",
   "checks": [
-   "Geht es um ein konkretes beobachtbares Verhalten und nicht um Ihre Meinung zur Persönlichkeit?",
+   "Geht es um ein konkretes beobachtbares Verhalten und nicht um deine Meinung zur Persönlichkeit?",
    "Wurde eine Regel, Absprache oder Erwartung verletzt?",
    "Ist die Situation einmalig mit hoher Wirkung oder wiederholt aufgetreten?",
-   "Können Sie Zeitpunkt, Ort und Wirkung benennen?",
+   "Kannst du Zeitpunkt, Ort und Wirkung benennen?",
    "Ist klar, welches Verhalten künftig erwartet wird?"
   ],
   "hinweis": null,
@@ -135,7 +135,7 @@
    "besser": "Die Übergabe wurde in den letzten zwei Fällen nicht dokumentiert. Dadurch fehlte dem nächsten Team die Information.",
    "vereinbarung": "Die Übergabe wird ab sofort bis 15 Uhr im gemeinsamen System dokumentiert. Offene Punkte werden dort markiert."
   },
-  "achtung": "Vermeiden Sie: Persönlichkeitsurteile; öffentliche Kritik; Drohungen mit Konsequenzen, deren Voraussetzungen Sie nicht geprüft haben.",
+  "achtung": "Vermeide: Persönlichkeitsurteile; öffentliche Kritik; Drohungen mit Konsequenzen, deren Voraussetzungen du nicht geprüft hast.",
   "rechtshinweis": "Bei möglichen arbeitsrechtlichen Konsequenzen ist eine individuelle fachliche Prüfung sinnvoll."
  },
  {
@@ -145,9 +145,9 @@
   "checks": [
    "Gibt es wiederholte Reibung zwischen zwei oder mehr Personen?",
    "Beeinträchtigt der Konflikt Aufgaben, Übergaben, Kunden oder Teamklima?",
-   "Können Sie konkrete Situationen benennen?",
+   "Kannst du konkrete Situationen benennen?",
    "Sind beide Perspektiven noch nicht ausreichend gehört?",
-   "Ist Ihr Ziel Arbeitsfähigkeit statt Schuldzuweisung?"
+   "Ist dein Ziel Arbeitsfähigkeit statt Schuldzuweisung?"
   ],
   "hinweis": null,
   "prep": [
@@ -204,7 +204,7 @@
    "besser": "Bei drei Übergaben wurden offene Punkte nicht direkt geklärt; dadurch blieb die Zuständigkeit unklar.",
    "vereinbarung": "Offene Übergabepunkte werden im Board markiert und am selben Tag in zehn Minuten direkt geklärt."
   },
-  "achtung": "Vermeiden Sie: vorschnell Partei zu ergreifen; Personen vor dem Team bloßzustellen; eine Versöhnung zu erzwingen, statt Arbeitsregeln zu vereinbaren.",
+  "achtung": "Vermeide: vorschnell Partei zu ergreifen; Personen vor dem Team bloßzustellen; eine Versöhnung zu erzwingen, statt Arbeitsregeln zu vereinbaren.",
   "rechtshinweis": null
  },
  {
@@ -214,9 +214,9 @@
   "checks": [
    "Wird eine Entscheidung oder Aufgabe wiederholt negativ kommentiert?",
    "Gibt es konkrete Einwände, die geprüft werden müssen?",
-   "Unterscheiden Sie zwischen berechtigtem Hinweis und pauschalem Widerstand?",
+   "Unterscheidest du zwischen berechtigtem Hinweis und pauschalem Widerstand?",
    "Ist die Entscheidung bereits getroffen oder noch offen?",
-   "Welche konstruktive Beteiligung erwarten Sie?"
+   "Welche konstruktive Beteiligung erwartest du?"
   ],
   "hinweis": null,
   "prep": [
@@ -273,7 +273,7 @@
    "besser": "Du hast die Planung in drei Besprechungen pauschal abgelehnt. Bitte benenne jetzt das konkrete Risiko, das du siehst.",
    "vereinbarung": "Der Einwand zur Frühschicht wird bis Freitag geprüft. Was bereits entschieden ist, wird ab Montag umgesetzt; weitere Sachfragen werden konkret und rechtzeitig angesprochen."
   },
-  "achtung": "Vermeiden Sie: berechtigte Kritik als Illoyalität abzuwerten; eine Debatte ohne Ende zuzulassen; Zustimmung mit Begeisterung zu verwechseln.",
+  "achtung": "Vermeide: berechtigte Kritik als Illoyalität abzuwerten; eine Debatte ohne Ende zuzulassen; Zustimmung mit Begeisterung zu verwechseln.",
   "rechtshinweis": null
  },
  {
@@ -281,11 +281,11 @@
   "id": "motivation",
   "title": "Motivation und Engagement lassen nach",
   "checks": [
-   "Haben Sie eine sichtbare Veränderung gegenüber früher beobachtet?",
-   "Können Sie Verhalten statt Stimmung beschreiben?",
+   "Hast du eine sichtbare Veränderung gegenüber früher beobachtet?",
+   "Kannst du Verhalten statt Stimmung beschreiben?",
    "Ist die Veränderung über mehrere Situationen erkennbar?",
    "Gibt es mögliche Ursachen bei Aufgabe, Führung, Team, Belastung oder privaten Umständen?",
-   "Wollen Sie verstehen und gleichzeitig Erwartungen klären?"
+   "Willst du verstehen und gleichzeitig Erwartungen klären?"
   ],
   "hinweis": null,
   "prep": [
@@ -342,7 +342,7 @@
    "besser": "Du hast dich in den letzten drei Teamrunden kaum beteiligt und zwei Rückmeldungen später als vereinbart gegeben.",
    "vereinbarung": "Du meldest die zwei offenen Kundenpunkte bis Mittwoch zurück. Wir sprechen am Freitag zehn Minuten darüber, was dich dabei unterstützt oder bremst."
   },
-  "achtung": "Vermeiden Sie: Motivation zu diagnostizieren; private Gründe auszuforschen; Unterstützung anzubieten, ohne die Arbeitsanforderung zu klären.",
+  "achtung": "Vermeide: Motivation zu diagnostizieren; private Gründe auszuforschen; Unterstützung anzubieten, ohne die Arbeitsanforderung zu klären.",
   "rechtshinweis": null
  },
  {
@@ -351,12 +351,12 @@
   "title": "Wiederholte Fehlzeiten",
   "checks": [
    "Müssen wiederholte oder auffällige Fehlzeiten sachlich besprochen werden?",
-   "Haben Sie nur arbeitsbezogene Fakten und keine Diagnosevermutungen?",
+   "Hast du nur arbeitsbezogene Fakten und keine Diagnosevermutungen?",
    "Ist klar, welches Ziel das Gespräch hat: Rückkehr, Zusammenarbeit, Information oder weitere Klärung?",
    "Sind aktuelle Zuständigkeiten und interne Abläufe geprüft?",
    "Ist absehbar, dass eine individuelle rechtliche oder fachliche Prüfung notwendig sein kann?"
   ],
-  "hinweis": "Was gehört hier nicht ins Gespräch? Medizinische Diagnosen, private Ursachen und neugierige Fragen zu persönlichen Details. Sprechen Sie nur über Informationen, die für die konkrete Arbeitsorganisation erforderlich sind.",
+  "hinweis": "Was gehört hier nicht ins Gespräch? Medizinische Diagnosen, private Ursachen und neugierige Fragen zu persönlichen Details. Sprich nur über Informationen, die für die konkrete Arbeitsorganisation erforderlich sind.",
   "prep": [
    "Arbeitsbezogene Beobachtung",
    "Zeitraum / Häufigkeit, soweit zulässig und erforderlich",
@@ -411,18 +411,18 @@
    "besser": "Für das Projekt fehlen uns wiederholt Übergaben. Welche arbeitsbezogene Organisation brauchen wir, damit die offenen Punkte zuverlässig weitergegeben werden?",
    "vereinbarung": "Die offenen Projektpunkte werden bis Donnerstag im Übergabedokument aktualisiert. Den organisatorischen Stand prüfen wir am Montag erneut."
   },
-  "achtung": "Vermeiden Sie: Diagnosen oder Ursachen zu erfragen; pauschale rechtliche Drohungen; sensible Informationen unnötig zu dokumentieren.",
-  "rechtshinweis": "Fehlzeiten, Krankheit, Datenschutz, Schwerbehinderung, Betriebsrat und mögliche arbeitsrechtliche Konsequenzen können vom Einzelfall abhängen. Prüfen Sie bei Unsicherheit die konkrete Situation mit geeigneter fachlicher Unterstützung."
+  "achtung": "Vermeide: Diagnosen oder Ursachen zu erfragen; pauschale rechtliche Drohungen; sensible Informationen unnötig zu dokumentieren.",
+  "rechtshinweis": "Fehlzeiten, Krankheit, Datenschutz, Schwerbehinderung, Betriebsrat und mögliche arbeitsrechtliche Konsequenzen können vom Einzelfall abhängen. Prüfe bei Unsicherheit die konkrete Situation mit geeigneter fachlicher Unterstützung."
  },
  {
   "n": 7,
   "id": "aufgeschoben",
   "title": "Das seit Wochen aufgeschobene Gespräch",
   "checks": [
-   "Wissen Sie bereits konkret, welches Thema angesprochen werden muss?",
-   "Haben Sie das Gespräch mehrfach verschoben?",
+   "Weißt du bereits konkret, welches Thema angesprochen werden muss?",
+   "Hast du das Gespräch mehrfach verschoben?",
    "Wird das Aufschieben selbst inzwischen zum Problem?",
-   "Können Sie einen sachlichen Einstieg und eine konkrete Erwartung formulieren?",
+   "Kannst du einen sachlichen Einstieg und eine konkrete Erwartung formulieren?",
    "Ist ein Termin mit ausreichend Ruhe möglich?"
   ],
   "hinweis": null,
@@ -480,7 +480,7 @@
    "besser": "Ich habe das Thema zu lange aufgeschoben. In den letzten vier Wochen wurden drei Kundenrückmeldungen später als vereinbart gegeben.",
    "vereinbarung": "Kundenrückmeldungen werden künftig bis 16 Uhr im System dokumentiert. Wenn das nicht möglich ist, wird die Verzögerung am selben Tag angesprochen."
   },
-  "achtung": "Vermeiden Sie: die Verzögerung zu beschönigen; aus schlechtem Gewissen unklar zu werden; das gesamte vergangene Verhalten auf einmal abzurechnen.",
+  "achtung": "Vermeide: die Verzögerung zu beschönigen; aus schlechtem Gewissen unklar zu werden; das gesamte vergangene Verhalten auf einmal abzurechnen.",
   "rechtshinweis": null
  },
  {
@@ -489,7 +489,7 @@
   "title": "Lob und Anerkennung, die wirklich wirkt",
   "checks": [
    "Gibt es eine konkrete Leistung oder ein konkretes Verhalten, das Anerkennung verdient?",
-   "Wollen Sie mehr sagen als ein pauschales „Gut gemacht“?",
+   "Willst du mehr sagen als ein pauschales „Gut gemacht“?",
    "Ist die Leistung wirklich bemerkenswert – nicht nur normale Erwartung?",
    "Soll die Anerkennung Wirkung für die Zukunft haben, nicht nur für den Moment?",
    "Passt der Rahmen: unter vier Augen oder bewusst vor dem Team?"
@@ -549,7 +549,7 @@
    "besser": "Dass du den Fehler in der Bestellabwicklung selbst gefunden, gemeldet und gleich einen Lösungsvorschlag mitgebracht hast, hat uns wahrscheinlich mehrere Reklamationen erspart.",
    "vereinbarung": "Der Verbesserungsvorschlag wird im nächsten Teammeeting vorgestellt; du übernimmst die kurze Vorstellung."
   },
-  "achtung": "Vermeiden Sie: Lob mit Kritik zu verknüpfen („gut gemacht, aber…“); Vergleiche mit anderen Mitarbeitenden; Anerkennung erst nach langer Verzögerung auszusprechen; pauschales Lob für Selbstverständliches.",
+  "achtung": "Vermeide: Lob mit Kritik zu verknüpfen („gut gemacht, aber…“); Vergleiche mit anderen Mitarbeitenden; Anerkennung erst nach langer Verzögerung auszusprechen; pauschales Lob für Selbstverständliches.",
   "rechtshinweis": null
  }
 ]

@@ -142,6 +142,7 @@ function slideFollowUp(card, num, isLast) {
     '<div class="weeklyCheckGrid">' + fieldsHtml + '</div></div>' +
     '<div class="note" style="border-left-color:#c99a2e"><b>ACHTUNG.</b><br>' + esc(card.achtung) + '</div>' +
     rechtshinweis +
+    (isLast ? '<p style="margin:18px 0 0;font-size:12px;color:var(--muted);text-align:right">Als Nächstes: die Formulierungs-Bibliothek mit fertigen Sätzen für wiederkehrende Momente.</p>' : '') +
     navBar(isLast ? 'Weiter zur Bibliothek' : 'Nächste Gesprächskarte') +
     '</section>'
   );
@@ -240,7 +241,7 @@ const initScript = function (cards) {
     '  const id = manager.data.activeEmployeeId;\n' +
     '  const emp = id ? manager.data.employees[id] : null;\n' +
     '  if(!emp){\n' +
-    '    out.innerHTML = \'<div class="summaryEmpty">Bitte wählen Sie zuerst einen Mitarbeiter aus, um dessen Zusammenfassung zu sehen.<br><button class="btn" onclick="goTo(6)">Zu den Mitarbeitenden</button></div>\';\n' +
+    '    out.innerHTML = \'<div class="summaryEmpty">Bitte wähle zuerst einen Mitarbeiter aus, um dessen Zusammenfassung zu sehen.<br><button class="btn" onclick="goTo(6)">Zu den Mitarbeitenden</button></div>\';\n' +
     '    return;\n' +
     '  }\n' +
     '  const bucket = manager.bucketFor(id);\n' +
