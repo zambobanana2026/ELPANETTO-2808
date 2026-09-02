@@ -1,4 +1,12 @@
-<section class="slide" data-slide="47"><div class="brand">P2 / ABSCHLUSS</div><div class="num">47</div>
+<section class="slide headCenter" data-slide="47"><div class="brand">P2 / ZUSAMMENFASSUNG</div><div class="num">47</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div>
+<h1>ONBOARDING-<br>ZUSAMMENFASSUNG.</h1>
+<p class="lead">Alle Notizen zum aktiven Mitarbeiter, Station für Station — zum Ausdrucken, als PDF speichern oder weitergeben.</p>
+<div id="summaryOutput"></div>
+<button class="pdfBtn" onclick="window.print()">🖨 ALS PDF DRUCKEN</button>
+<div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div>
+</section>
+
+<section class="slide headCenter" data-slide="48"><div class="brand">P2 / ABSCHLUSS</div><div class="num">48</div>
 <h1>EINMAL BAUEN.<br>IMMER WIEDER NUTZEN.</h1>
 <p class="lead">Produkt 2 führt die Carmen-Onboarding-Produktwelt vom ersten Arbeitstag über die 30-60-90-Tage-Taktung und den Entscheidungs-Korridor Tag 150–170 bis zum Ende der Probezeit.</p>
 <div class="ctaHero"><b>ÜBER CARMEN GRUSE-LATEGAHN</b><p style="margin:10px 0 0;line-height:1.5">Carmen Gruse-Lategahn ist HR-Generalistin mit 18 Jahren Praxiserfahrung. Sie übersetzt typische HR- und Führungssituationen in klare, praxistaugliche Werkzeuge für kleine und mittlere Unternehmen. Das Onboarding-Prozessbundle ist eine praktische Prozesshilfe. Es ersetzt kein individuelles Coaching und keine Rechtsberatung.</p></div>
@@ -11,4 +19,12 @@
 <label>Position<input type="text" id="empPositionInput" placeholder="z. B. Sachbearbeiterin Einkauf"></label>
 <label>Abteilung<input type="text" id="empAbteilungInput" placeholder="z. B. Einkauf"></label>
 <div class="row"><button class="btn alt" onclick="closeEmpModal()">Abbrechen</button><button class="btn" onclick="confirmAddEmployee()">Hinzufügen</button></div>
+</div></div>
+
+<button class="themeTrigger" onclick="openThemeModal()" title="Farbe ändern" aria-label="Farbe ändern">🎨</button>
+<div class="modal" id="themeModal"><div class="dialog">
+<h2>FARBE WÄHLEN</h2>
+<p style="margin:0;color:var(--ci);font-size:13px">Zehn abgestimmte Farbmodelle — jederzeit wechselbar, bleibt gespeichert.</p>
+<div class="themeSwatches" id="themeSwatches"></div>
+<div class="row"><button class="btn alt" onclick="closeThemeModal()">Schließen</button></div>
 </div></div>

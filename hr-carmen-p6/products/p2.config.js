@@ -33,14 +33,16 @@ const SLIDES_PER_ESKALATION = 5;
 const TRENNUNG_FIRST_SLIDE = 41;
 const SLIDES_PER_TRENNUNG = 5;
 const TEAMBERICHT_SLIDE = 46;
+const ZUSAMMENFASSUNG_SLIDE = 47;
 
 const MILESTONE_SUBTITLES = ['VORBEREITUNG', 'ZIEL & EINSTIEG', 'TYPISCHE REAKTIONEN', 'BESSER SAGEN', 'VEREINBARUNG', 'FOLLOW-UP'];
 const BUDDY_SUBTITLES = ['ROLLE', 'DAUER & TAKTUNG', 'AUFGABEN', 'GRENZEN & TABUS', 'ARBEITSVORLAGE'];
 const ESKALATION_SUBTITLES = ['WANN GREIFT DAS?', 'SCHRITT 1 · FAKTENABGLEICH', 'ZWISCHENZIEL', 'SCHRITT 2 · LERNKURVE', 'SCHRITT 3 · ENTSCHEIDUNG'];
 const TRENNUNG_SUBTITLES = ['LEITPLANKE', 'SCHRITT 1', 'SCHRITT 2', 'SCHRITT 3', 'PROTOKOLL'];
 
-// Readable (not all-caps) versions of the same subtitles, used only for the
-// "Als Nächstes" preview line under every slide's nav — see navBar().
+// Readable (not all-caps) versions of the same subtitles, used for slide
+// headlines and for the "Als Nächstes" preview at the big section changes
+// (see navBar()) — not shown on every slide, per the Carmen-Klar styleguide.
 const MILESTONE_STEP_NAMES = ['Vorbereitung', 'Ziel & Einstieg', 'Typische Reaktionen', 'Besser sagen', 'Vereinbarung', 'Follow-up'];
 const BUDDY_STEP_NAMES = ['Rolle', 'Dauer & Taktung', 'Aufgaben', 'Grenzen & Tabus', 'Arbeitsvorlage'];
 const ESKALATION_STEP_NAMES = ['Wann greift das?', 'Schritt 1 · Faktenabgleich', 'Zwischenziel', 'Schritt 2 · Lernkurve', 'Schritt 3 · Entscheidung'];
@@ -61,7 +63,8 @@ function milestoneHeadline(m) {
 }
 function ctxbar() { return '<div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div>'; }
 function navBar(nextLabel, nextPreview) {
-  const preview = nextPreview ? '<div class="nextPreview">Als Nächstes: <b>' + esc(nextPreview) + '</b></div>' : '';
+  // Carmen-Klar convention: only at big section changes, not on every slide.
+  const preview = nextPreview ? '<p style="margin:18px 0 0;font-size:12px;color:var(--muted);text-align:right">Als Nächstes: ' + esc(nextPreview) + '</p>' : '';
   return preview +
     '<div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button>' +
     '<button class="btn alt" onclick="prevSlide()">Zurück</button>' +
@@ -107,7 +110,7 @@ function slideOverview(data) {
     return '<div class="tile" style="cursor:pointer" onclick="goTo(' + t[2] + ')"><b>' + t[0] + '</b><small>' + t[1] + '</small></div>';
   }).join('');
   return (
-    '<section class="slide" data-slide="6"><div class="brand">P2 / ÜBERSICHT</div><div class="num">06</div>' +
+    '<section class="slide headCenter" data-slide="6"><div class="brand">P2 / ÜBERSICHT</div><div class="num">06</div>' +
     '<h1>IHR<br>PROBEZEIT-RADAR.</h1>' +
     '<p class="lead">Tag 1 → Tag 30 → Tag 60 → Tag 90 → Tag 150–170 → Ende der Probezeit. Klicken Sie eine Phase oder ein Werkzeug an, oder gehen Sie der Reihe nach vor. Jede Station ist in kurze Unterseiten aufgeteilt.</p>' +
     '<div class="grid">' + phaseTiles + '</div>' +
@@ -134,14 +137,14 @@ function slideMilestoneVorbereitung(m, num, phase) {
   const teilnehmerFields = pickFields(m.fields, ['teilnehmer']);
   const zeitraum = phase ? phase.zeitraum : '';
   return (
-    '<section class="slide" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 0) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
+    '<section class="slide headCenter" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 0) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
     '<h1>' + milestoneHeadline(m) + '</h1>' +
     fokusBox + buddyBox +
     '<h2>IST DIESE GESPRÄCHSPHASE ABGESCHLOSSEN?</h2>' +
     '<p class="lead">Diese Liste zeigt, was in ' + esc(zeitraum || 'dieser Zeit') + ' eigentlich passiert sein sollte. Geh sie vor dem Gespräch kurz durch: Was passt schon? Was fehlt noch? Ein offener Punkt ist kein Problem — er wird einfach zum Thema im Gespräch.</p>' +
     checksList('m' + m.n + '_chk', m.checks) +
     '<div class="weeklyCheck"><div class="weeklyCheckIntro"><b>WER NIMMT AM GESPRÄCH TEIL?</b></div>' + fieldsGrid('m' + m.n, teilnehmerFields) + '</div>' +
-    navBar('Weiter', MILESTONE_STEP_NAMES[1]) +
+    navBar('Weiter') +
     '</section>'
   );
 }
@@ -153,11 +156,11 @@ function slideMilestoneZielEinstieg(m, num) {
     ? '<h2>DAS WIRD HEUTE BEWERTET.</h2><p class="lead">Diese vier Bereiche schaut ihr euch heute gemeinsam an. Was du dazu genau notierst, steht auf der Vereinbarungs-Seite.</p><ul class="qlist">' + m.bewertungsbereiche.map(function (b) { return '<li>' + esc(b) + '</li>'; }).join('') + '</ul>'
     : '';
   return (
-    '<section class="slide" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 1) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
+    '<section class="slide headCenter" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 1) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
     '<h1>' + milestoneHeadline(m) + '</h1>' +
     '<div class="box"><b>DARUM GEHT ES MIR IN DIESEM GESPRÄCH.</b><p class="lead" style="margin:10px 0 0">„' + esc(m.ziel) + '“</p></div>' +
     frageBox + zweckBox + bereicheBox +
-    navBar('Weiter', MILESTONE_STEP_NAMES[2]) +
+    navBar('Weiter') +
     '</section>'
   );
 }
@@ -167,11 +170,11 @@ function slideMilestoneReaktionen(m, num) {
     return '<div class="qa"><b>„' + esc(pair[0]) + '“</b><p>' + esc(pair[1]) + '</p></div>';
   }).join('');
   return (
-    '<section class="slide" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 2) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
+    '<section class="slide headCenter" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 2) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
     '<h1>' + milestoneHeadline(m) + '</h1>' +
     '<h2>WAS DIE NEUE PERSON SAGEN KÖNNTE — UND WIE DU ANTWORTEST.</h2>' +
     qaHtml +
-    navBar('Weiter', MILESTONE_STEP_NAMES[3]) +
+    navBar('Weiter') +
     '</section>'
   );
 }
@@ -181,13 +184,13 @@ function slideMilestoneBesserSagen(m, num) {
     return '<div class="compareRow"><div class="no">„' + esc(pair[0]) + '“</div><div class="yes">„' + esc(pair[1]) + '“</div></div>';
   }).join('');
   return (
-    '<section class="slide" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 3) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
+    '<section class="slide headCenter" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 3) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
     '<h1>' + milestoneHeadline(m) + '</h1>' +
     '<h2>SAG DAS NICHT — SAG LIEBER DAS.</h2>' +
     '<p class="lead">Manche Sätze klingen schnell falsch, auch wenn sie nicht böse gemeint sind. Hier siehst du bessere Alternativen.</p>' +
     '<div class="compareHead"><span>Nicht sagen</span><span>Besser sagen</span></div>' +
     compareHtml +
-    navBar('Weiter', MILESTONE_STEP_NAMES[4]) +
+    navBar('Weiter') +
     '</section>'
   );
 }
@@ -195,11 +198,11 @@ function slideMilestoneBesserSagen(m, num) {
 function slideMilestoneVereinbarung(m, num) {
   const restFields = omitFields(m.fields, ['teilnehmer']);
   return (
-    '<section class="slide" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 4) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
+    '<section class="slide headCenter" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 4) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
     '<h1>' + milestoneHeadline(m) + '</h1>' +
     '<p class="lead">Trage hier fest, was ihr im Gespräch besprochen und vereinbart habt — nach Carmens Gesprächsvorlage.</p>' +
     '<div class="weeklyCheck"><div class="weeklyCheckIntro"><b>WAS WURDE BESPROCHEN UND VEREINBART?</b></div>' + fieldsGrid('m' + m.n, restFields) + '</div>' +
-    navBar('Weiter', MILESTONE_STEP_NAMES[5]) +
+    navBar('Weiter') +
     '</section>'
   );
 }
@@ -208,14 +211,22 @@ function slideMilestoneFollowUp(m, num, nextPhase, nextMilestone, isLast) {
   const nextBox = nextPhase
     ? '<div class="box"><b>WAS ALS NÄCHSTES ANSTEHT.</b><p class="lead" style="margin:10px 0 0"><b>' + esc(nextPhase.zeitraum) + ' — ' + esc(nextPhase.phase.toUpperCase()) + '.</b><br>' + esc(nextPhase.fokus) + '</p></div>'
     : '<div class="box"><b>ENDE DER PROBEZEIT.</b><p class="lead" style="margin:10px 0 0">Mit diesem Gespräch endet der Entscheidungs-Korridor. Einmal bauen. Immer wieder nutzen — für die nächste neue Mitarbeiterin oder den nächsten neuen Mitarbeiter.</p></div>';
-  const nextPreview = isLast ? 'Buddy-Framework' : (nextMilestone ? nextMilestone.title : null);
+  const nextLabel = isLast ? 'Buddy-Framework' : (nextMilestone ? nextMilestone.title : 'die nächste Station');
+  // Carmen-Klar: keine automatische Weiterleitung nach einer abgeschlossenen
+  // Station — stattdessen bewusst wählen lassen, wie es weitergeht.
   return (
-    '<section class="slide" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 5) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
+    '<section class="slide headCenter" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 5) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
     '<h1>' + milestoneHeadline(m) + '</h1>' +
     '<h2>HAKE AB: IST DIESES GESPRÄCH ERLEDIGT?</h2>' +
     checksList('m' + m.n + '_gf', m.gespraechsfolge) +
     nextBox +
-    navBar(isLast ? 'Weiter zum Buddy-Framework' : 'Nächste Station', nextPreview) +
+    '<div class="note"><b>GESPRÄCH DOKUMENTIERT.</b><br>Wie geht es jetzt weiter?</div>' +
+    '<div class="grid grid1">' +
+    '<div class="tile" style="cursor:pointer" onclick="goTo(' + (num + 1) + ')"><b>▶ WEITER ZU ' + esc(nextLabel.toUpperCase()) + '</b><small>Zur nächsten Station.</small></div>' +
+    '<div class="tile" style="cursor:pointer" onclick="goTo(' + ZUSAMMENFASSUNG_SLIDE + ')"><b>📄 ZUSAMMENFASSUNG &amp; PDF</b><small>Alle bisher dokumentierten Stationen dieses Mitarbeiters ansehen und als PDF drucken.</small></div>' +
+    '<div class="tile" style="cursor:pointer" onclick="goTo(5)"><b>👤 ZUR MITARBEITERWAHL</b><small>Mitarbeiter wechseln oder eine neue Person anlegen.</small></div>' +
+    '</div>' +
+    '<div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><span></span></div>' +
     '</section>'
   );
 }
@@ -247,39 +258,46 @@ function buildBuddySlides(b) {
   const s1 = BUDDY_FIRST_SLIDE, s2 = s1 + 1, s3 = s1 + 2, s4 = s1 + 3, s5 = s1 + 4;
   const taktungHtml = b.taktung.map(function (t) { return '<div class="qa"><b>' + esc(t[0]) + '</b><p>' + esc(t[1]) + '</p></div>'; }).join('');
   return [
-    '<section class="slide" data-slide="' + s1 + '"><div class="brand">' + buddyBrand(0) + '</div><div class="num">' + pad2(s1) + '</div>' + ctxbar() +
+    '<section class="slide headCenter" data-slide="' + s1 + '"><div class="brand">' + buddyBrand(0) + '</div><div class="num">' + pad2(s1) + '</div>' + ctxbar() +
     '<h1>BUDDY-FRAMEWORK.<br>WER IST DER BUDDY?</h1>' +
     '<div class="box"><b>ROLLE DES BUDDYS.</b><p class="lead" style="margin:10px 0 0">' + esc(b.rolle) + '</p></div>' +
-    navBar('Weiter', BUDDY_STEP_NAMES[1]) + '</section>',
+    navBar('Weiter') + '</section>',
 
-    '<section class="slide" data-slide="' + s2 + '"><div class="brand">' + buddyBrand(1) + '</div><div class="num">' + pad2(s2) + '</div>' + ctxbar() +
+    '<section class="slide headCenter" data-slide="' + s2 + '"><div class="brand">' + buddyBrand(1) + '</div><div class="num">' + pad2(s2) + '</div>' + ctxbar() +
     '<h1>BUDDY-FRAMEWORK.<br>WIE LANGE UND WIE OFT?</h1>' +
     '<div class="box"><b>WIE LANGE BEGLEITET DER BUDDY?</b><p style="margin:10px 0 0">Die Rolle ist bewusst zeitlich begrenzt — danach soll die neue Person allein zurechtkommen. Dauer: ' + esc(b.dauer) + '</p></div>' +
     '<h2>TAKTUNG.</h2>' +
     '<p class="lead">Auch wie oft ihr euch trefft, nimmt mit der Zeit ab:</p>' +
     taktungHtml +
-    navBar('Weiter', BUDDY_STEP_NAMES[2]) + '</section>',
+    navBar('Weiter') + '</section>',
 
-    '<section class="slide" data-slide="' + s3 + '"><div class="brand">' + buddyBrand(2) + '</div><div class="num">' + pad2(s3) + '</div>' + ctxbar() +
+    '<section class="slide headCenter" data-slide="' + s3 + '"><div class="brand">' + buddyBrand(2) + '</div><div class="num">' + pad2(s3) + '</div>' + ctxbar() +
     '<h1>BUDDY-FRAMEWORK.<br>WAS DARF DER BUDDY TUN?</h1>' +
     '<p class="lead">Das ist die Aufgabe des Buddys — nicht mehr und nicht weniger:</p>' +
     '<h2>DER BUDDY DARF.</h2>' +
     checksList('buddy_auf', b.aufgaben) +
-    navBar('Weiter', BUDDY_STEP_NAMES[3]) + '</section>',
+    navBar('Weiter') + '</section>',
 
-    '<section class="slide" data-slide="' + s4 + '"><div class="brand">' + buddyBrand(3) + '</div><div class="num">' + pad2(s4) + '</div>' + ctxbar() +
+    '<section class="slide headCenter" data-slide="' + s4 + '"><div class="brand">' + buddyBrand(3) + '</div><div class="num">' + pad2(s4) + '</div>' + ctxbar() +
     '<h1>BUDDY-FRAMEWORK.<br>WAS DER BUDDY NICHT DARF.</h1>' +
     '<p class="lead">Damit für alle klar bleibt, wer wofür zuständig ist — der Buddy ersetzt weder dich noch HR:</p>' +
     '<div class="note" style="border-left-color:var(--red)"><b>STRIKTE GRENZEN UND TABUS.</b><br>' + b.tabus.map(esc).join('<br>') + '</div>' +
-    navBar('Weiter', BUDDY_STEP_NAMES[4]) + '</section>',
+    navBar('Weiter') + '</section>',
 
-    '<section class="slide" data-slide="' + s5 + '"><div class="brand">' + buddyBrand(4) + '</div><div class="num">' + pad2(s5) + '</div>' + ctxbar() +
+    '<section class="slide headCenter" data-slide="' + s5 + '"><div class="brand">' + buddyBrand(4) + '</div><div class="num">' + pad2(s5) + '</div>' + ctxbar() +
     '<h1>BUDDY-FRAMEWORK.<br>CHECKLISTE &amp; ARBEITSVORLAGE.</h1>' +
     '<h2>BUDDY-CHECKLISTE.</h2>' +
     '<p class="lead">Das fasst die letzten vier Seiten als Checkliste zusammen — häkel ab, was schon passt.</p>' +
     checksList('buddy_chk', b.checkliste) +
     '<div class="weeklyCheck"><div class="weeklyCheckIntro"><b>ARBEITSVORLAGE.</b></div>' + fieldsGrid('buddy', b.fields) + '</div>' +
-    navBar('Weiter zum Eskalationsprotokoll', 'Eskalationsprotokoll') + '</section>'
+    '<div class="note"><b>BUDDY-FRAMEWORK DOKUMENTIERT.</b><br>Wie geht es jetzt weiter?</div>' +
+    '<div class="grid grid1">' +
+    '<div class="tile" style="cursor:pointer" onclick="goTo(' + (s5 + 1) + ')"><b>▶ WEITER ZUM ESKALATIONSPROTOKOLL</b><small>Bei sichtbarer Leistungslücke.</small></div>' +
+    '<div class="tile" style="cursor:pointer" onclick="goTo(' + ZUSAMMENFASSUNG_SLIDE + ')"><b>📄 ZUSAMMENFASSUNG &amp; PDF</b><small>Alle bisher dokumentierten Stationen dieses Mitarbeiters ansehen und als PDF drucken.</small></div>' +
+    '<div class="tile" style="cursor:pointer" onclick="goTo(6)"><b>◂ ZUR ÜBERSICHT</b><small>Zurück zum Probezeit-Radar.</small></div>' +
+    '</div>' +
+    '<div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><span></span></div>' +
+    '</section>'
   ].join('\n');
 }
 
@@ -294,26 +312,26 @@ function buildEskalationSlides(e) {
     '<div class="tile"><b>SCHRITT 2</b><small>' + esc(e.schritt2.titel) + '</small></div>' +
     '<div class="tile"><b>SCHRITT 3</b><small>' + esc(e.schritt3.titel) + '</small></div></div>';
   return [
-    '<section class="slide" data-slide="' + s1 + '"><div class="brand">' + eskBrand(0) + '</div><div class="num">' + pad2(s1) + '</div>' + ctxbar() +
+    '<section class="slide headCenter" data-slide="' + s1 + '"><div class="brand">' + eskBrand(0) + '</div><div class="num">' + pad2(s1) + '</div>' + ctxbar() +
     '<h1>WENN ES HAKT.<br>14-TAGE-ESKALATIONSPROTOKOLL.</h1>' +
     '<p class="lead">' + esc(e.intro) + '</p>' +
     '<div class="note"><b>GRUNDSATZ.</b><br>„' + esc(e.grundsatz) + '“</div>' +
     '<h2>DIE DREI SCHRITTE.</h2>' + stepOverview +
-    navBar('Weiter', ESKALATION_STEP_NAMES[1]) + '</section>',
+    navBar('Weiter') + '</section>',
 
-    '<section class="slide" data-slide="' + s2 + '"><div class="brand">' + eskBrand(1) + '</div><div class="num">' + pad2(s2) + '</div>' + ctxbar() +
+    '<section class="slide headCenter" data-slide="' + s2 + '"><div class="brand">' + eskBrand(1) + '</div><div class="num">' + pad2(s2) + '</div>' + ctxbar() +
     '<h1>SCHRITT 1.<br>' + esc(e.schritt1.titel.toUpperCase()) + '.</h1>' +
     '<p class="lead">' + esc(e.schritt1.text) + '</p>' +
     '<div class="weeklyCheck"><div class="weeklyCheckIntro"><b>DOKUMENTATION.</b></div>' + fieldsGrid('esk', pickFields(e.fields, ['luecke', 'fakten'])) + '</div>' +
-    navBar('Weiter', ESKALATION_STEP_NAMES[2]) + '</section>',
+    navBar('Weiter') + '</section>',
 
-    '<section class="slide" data-slide="' + s3 + '"><div class="brand">' + eskBrand(2) + '</div><div class="num">' + pad2(s3) + '</div>' + ctxbar() +
+    '<section class="slide headCenter" data-slide="' + s3 + '"><div class="brand">' + eskBrand(2) + '</div><div class="num">' + pad2(s3) + '</div>' + ctxbar() +
     '<h1>ZWISCHENZIEL &amp;<br>SCHLÜSSELFRAGE.</h1>' +
     '<div class="note"><b>SCHLÜSSELFRAGE.</b><br>„' + esc(e.schluesselfrage) + '“</div>' +
     '<div class="weeklyCheck"><div class="weeklyCheckIntro"><b>DOKUMENTATION.</b></div>' + fieldsGrid('esk', pickFields(e.fields, ['abgleich', 'zwischenziel', 'antwort'])) + '</div>' +
-    navBar('Weiter', ESKALATION_STEP_NAMES[3]) + '</section>',
+    navBar('Weiter') + '</section>',
 
-    '<section class="slide" data-slide="' + s4 + '"><div class="brand">' + eskBrand(3) + '</div><div class="num">' + pad2(s4) + '</div>' + ctxbar() +
+    '<section class="slide headCenter" data-slide="' + s4 + '"><div class="brand">' + eskBrand(3) + '</div><div class="num">' + pad2(s4) + '</div>' + ctxbar() +
     '<h1>SCHRITT 2.<br>' + esc(e.schritt2.titel.toUpperCase()) + '.</h1>' +
     '<p class="lead">' + esc(e.schritt2.text) + '</p>' +
     '<h2>SICHTBARE VERBESSERUNG INNERHALB VON 14 TAGEN?</h2>' +
@@ -322,9 +340,9 @@ function buildEskalationSlides(e) {
     '<div class="choice" data-toggle="esk_verb_nein" onclick="toggleYesNo(this, \'esk_verb_ja\')">Nein</div>' +
     '</div>' +
     '<div class="weeklyCheck"><div class="weeklyCheckIntro"><b>DOKUMENTATION.</b></div>' + fieldsGrid('esk', pickFields(e.fields, ['lernkurve'])) + '</div>' +
-    navBar('Weiter', ESKALATION_STEP_NAMES[4]) + '</section>',
+    navBar('Weiter') + '</section>',
 
-    '<section class="slide" data-slide="' + s5 + '"><div class="brand">' + eskBrand(4) + '</div><div class="num">' + pad2(s5) + '</div>' + ctxbar() +
+    '<section class="slide headCenter" data-slide="' + s5 + '"><div class="brand">' + eskBrand(4) + '</div><div class="num">' + pad2(s5) + '</div>' + ctxbar() +
     '<h1>SCHRITT 3.<br>' + esc(e.schritt3.titel.toUpperCase()) + '.</h1>' +
     '<p class="lead">' + esc(e.schritt3.text) + '</p>' +
     '<div class="note" style="border-left-color:#c99a2e"><b>ACHTUNG.</b><br>' + esc(e.schritt3.rechtshinweis) + '</div>' +
@@ -332,7 +350,14 @@ function buildEskalationSlides(e) {
     '<h2>CHECKLISTE.</h2>' +
     '<p class="lead">Das fasst das ganze Eskalationsprotokoll zusammen — geh es kurz durch, bevor du weitermachst.</p>' +
     checksList('esk_chk', e.checkliste) +
-    navBar('Weiter zum Trennungsleitfaden', 'Trennungs-Leitfaden') + '</section>'
+    '<div class="note"><b>ESKALATIONSPROTOKOLL DOKUMENTIERT.</b><br>Wie geht es jetzt weiter?</div>' +
+    '<div class="grid grid1">' +
+    '<div class="tile" style="cursor:pointer" onclick="goTo(' + (s5 + 1) + ')"><b>▶ WEITER ZUM TRENNUNGS-LEITFADEN</b><small>Falls es zur Trennung kommt.</small></div>' +
+    '<div class="tile" style="cursor:pointer" onclick="goTo(' + ZUSAMMENFASSUNG_SLIDE + ')"><b>📄 ZUSAMMENFASSUNG &amp; PDF</b><small>Alle bisher dokumentierten Stationen dieses Mitarbeiters ansehen und als PDF drucken.</small></div>' +
+    '<div class="tile" style="cursor:pointer" onclick="goTo(6)"><b>◂ ZUR ÜBERSICHT</b><small>Zurück zum Probezeit-Radar.</small></div>' +
+    '</div>' +
+    '<div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><span></span></div>' +
+    '</section>'
   ].join('\n');
 }
 
@@ -345,38 +370,45 @@ function buildTrennungSlides(t, rechtlicherHinweisAllgemein) {
   const s1 = TRENNUNG_FIRST_SLIDE, s2 = s1 + 1, s3 = s1 + 2, s4 = s1 + 3, s5 = s1 + 4;
   const a1 = t.ablauf[0], a2 = t.ablauf[1], a3 = t.ablauf[2];
   return [
-    '<section class="slide" data-slide="' + s1 + '"><div class="brand">' + trBrand(0) + '</div><div class="num">' + pad2(s1) + '</div>' + ctxbar() +
+    '<section class="slide headCenter" data-slide="' + s1 + '"><div class="brand">' + trBrand(0) + '</div><div class="num">' + pad2(s1) + '</div>' + ctxbar() +
     '<h1>TRENNUNGS-LEITFADEN.<br>10-MINUTEN-PROTOKOLL.</h1>' +
     '<div class="note" style="border-left-color:var(--red)"><b>RECHTLICHE LEITPLANKE.</b><br>' + esc(t.rechtlicheLeitplanke) + '</div>' +
     '<div class="box"><b>VIER-AUGEN-PRINZIP.</b><p style="margin:10px 0 0">' + esc(t.vierAugen) + '</p></div>' +
     '<div class="box"><b>GESPRÄCHSDAUER.</b><p style="margin:10px 0 0">Kurz und klar halten — lange Erklärungen verunsichern in dieser Situation nur. ' + esc(t.dauer) + '</p></div>' +
-    navBar('Weiter', TRENNUNG_STEP_NAMES[1]) + '</section>',
+    navBar('Weiter') + '</section>',
 
-    '<section class="slide" data-slide="' + s2 + '"><div class="brand">' + trBrand(1) + '</div><div class="num">' + pad2(s2) + '</div>' + ctxbar() +
+    '<section class="slide headCenter" data-slide="' + s2 + '"><div class="brand">' + trBrand(1) + '</div><div class="num">' + pad2(s2) + '</div>' + ctxbar() +
     '<h1>' + esc(a1.titel.toUpperCase()) + '.</h1>' +
     '<p class="lead">So beginnst du das Gespräch — wortwörtlich:</p>' +
     '<div class="box"><b>FESTE FORMULIERUNG.</b><p class="lead" style="margin:10px 0 0">„' + esc(a1.formulierung) + '“</p></div>' +
-    navBar('Weiter', TRENNUNG_STEP_NAMES[2]) + '</section>',
+    navBar('Weiter') + '</section>',
 
-    '<section class="slide" data-slide="' + s3 + '"><div class="brand">' + trBrand(2) + '</div><div class="num">' + pad2(s3) + '</div>' + ctxbar() +
+    '<section class="slide headCenter" data-slide="' + s3 + '"><div class="brand">' + trBrand(2) + '</div><div class="num">' + pad2(s3) + '</div>' + ctxbar() +
     '<h1>' + esc(a2.titel.toUpperCase()) + '.</h1>' +
     '<p class="lead">' + esc(a2.hinweis) + '</p>' +
     '<div class="box"><b>FESTE FORMULIERUNG.</b><p class="lead" style="margin:10px 0 0">„' + esc(a2.formulierung) + '“</p></div>' +
-    navBar('Weiter', TRENNUNG_STEP_NAMES[3]) + '</section>',
+    navBar('Weiter') + '</section>',
 
-    '<section class="slide" data-slide="' + s4 + '"><div class="brand">' + trBrand(3) + '</div><div class="num">' + pad2(s4) + '</div>' + ctxbar() +
+    '<section class="slide headCenter" data-slide="' + s4 + '"><div class="brand">' + trBrand(3) + '</div><div class="num">' + pad2(s4) + '</div>' + ctxbar() +
     '<h1>' + esc(a3.titel.toUpperCase()) + '.</h1>' +
     '<p class="lead">Das sind die praktischen Punkte, die direkt im Anschluss an die Ansage erledigt werden — häkel ab, was schon geklärt ist:</p>' +
     checksList('tr_ablauf', a3.punkte) +
-    navBar('Weiter', TRENNUNG_STEP_NAMES[4]) + '</section>',
+    navBar('Weiter') + '</section>',
 
-    '<section class="slide" data-slide="' + s5 + '"><div class="brand">' + trBrand(4) + '</div><div class="num">' + pad2(s5) + '</div>' + ctxbar() +
+    '<section class="slide headCenter" data-slide="' + s5 + '"><div class="brand">' + trBrand(4) + '</div><div class="num">' + pad2(s5) + '</div>' + ctxbar() +
     '<h1>PROTOKOLL &amp;<br>CHECKLISTE.</h1>' +
     '<p class="lead">Das fasst den ganzen Trennungs-Leitfaden zusammen — geh es kurz durch, bevor du das Gespräch führst.</p>' +
     checksList('tr_chk', t.checks) +
     '<div class="weeklyCheck"><div class="weeklyCheckIntro"><b>ARBEITSFELDER.</b></div>' + fieldsGrid('tr', t.fields) + '</div>' +
     '<div class="note" style="border-left-color:var(--red)"><b>RECHTLICHER HINWEIS.</b><br>' + esc(rechtlicherHinweisAllgemein) + '</div>' +
-    navBar('Weiter zum Team-Bericht', 'Team-Bericht') + '</section>'
+    '<div class="note"><b>TRENNUNGS-LEITFADEN DOKUMENTIERT.</b><br>Wie geht es jetzt weiter?</div>' +
+    '<div class="grid grid1">' +
+    '<div class="tile" style="cursor:pointer" onclick="goTo(' + TEAMBERICHT_SLIDE + ')"><b>▶ WEITER ZUM TEAM-BERICHT</b><small>Übersicht über alle Mitarbeitenden.</small></div>' +
+    '<div class="tile" style="cursor:pointer" onclick="goTo(' + ZUSAMMENFASSUNG_SLIDE + ')"><b>📄 ZUSAMMENFASSUNG &amp; PDF</b><small>Alle bisher dokumentierten Stationen dieses Mitarbeiters ansehen und als PDF drucken.</small></div>' +
+    '<div class="tile" style="cursor:pointer" onclick="goTo(6)"><b>◂ ZUR ÜBERSICHT</b><small>Zurück zum Probezeit-Radar.</small></div>' +
+    '</div>' +
+    '<div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><span></span></div>' +
+    '</section>'
   ].join('\n');
 }
 
@@ -385,7 +417,7 @@ function buildTrennungSlides(t, rechtlicherHinweisAllgemein) {
    ---------------------------------------------------------------------- */
 function slideTeamBericht() {
   return (
-    '<section class="slide" data-slide="' + TEAMBERICHT_SLIDE + '"><div class="brand">P2 / TEAM-BERICHT</div><div class="num">' + pad2(TEAMBERICHT_SLIDE) + '</div>' +
+    '<section class="slide headCenter" data-slide="' + TEAMBERICHT_SLIDE + '"><div class="brand">P2 / TEAM-BERICHT</div><div class="num">' + pad2(TEAMBERICHT_SLIDE) + '</div>' +
     '<h1>IHR TEAM.<br>AUF EINEN BLICK.</h1>' +
     '<p class="lead">Übersicht über alle angelegten Mitarbeitenden und den Stand ihrer vier Kernkonversationen (Tag 30, 60, 90, 150–170).</p>' +
     '<div class="bigCounts">' +
@@ -395,7 +427,8 @@ function slideTeamBericht() {
     '</div>' +
     '<table class="teamTable"><thead><tr><th>MITARBEITER</th><th>VORBEREITET</th><th>DOKUMENTIERT</th></tr></thead><tbody id="teamTableBody"></tbody></table>' +
     '<button class="pdfBtn" onclick="window.print()">🖨 ALS PDF DRUCKEN</button>' +
-    navBar('Weiter', 'Abschluss') +
+    '<button class="btn alt" onclick="goTo(' + ZUSAMMENFASSUNG_SLIDE + ')">📄 Einzel-Zusammenfassung ansehen</button>' +
+    navBar('Weiter zur Zusammenfassung', 'die Einzel-Zusammenfassung eines Mitarbeiters') +
     '</section>'
   );
 }
@@ -418,10 +451,35 @@ function cardFieldMeta(data) {
   });
 }
 
+// Feeds the per-employee "Zusammenfassung & PDF" slide (renderZusammenfassung
+// in initScript) — every documented field across all 7 stations (4
+// milestones + Buddy/Eskalation/Trennung), grouped so only the ones a buyer
+// actually filled in show up.
+function sectionFieldMeta(data) {
+  const milestoneSections = data.milestones.map(function (m) {
+    const prepEntries = pickFields(m.fields, ['teilnehmer']).map(function (f) { return { id: 'm' + m.n + '_' + f[1], label: f[0] }; });
+    const vereinbarungEntries = omitFields(m.fields, ['teilnehmer']).map(function (f) { return { id: 'm' + m.n + '_' + f[1], label: f[0] }; });
+    return { title: m.title.toUpperCase(), prepEntries: prepEntries, vereinbarungEntries: vereinbarungEntries };
+  });
+  function toolEntries(fields, prefix) {
+    return fields.map(function (f) { return { id: prefix + '_' + f[1], label: f[0] }; });
+  }
+  return {
+    milestones: milestoneSections,
+    tools: [
+      { title: 'KMU-BUDDY-FRAMEWORK', entries: toolEntries(data.buddy.fields, 'buddy') },
+      { title: 'WENN ES HAKT — ESKALATIONSPROTOKOLL', entries: toolEntries(data.eskalation.fields, 'esk') },
+      { title: 'TRENNUNGS-LEITFADEN', entries: toolEntries(data.trennung.fields, 'tr') }
+    ]
+  };
+}
+
 const initScript = function (data) {
   const meta = cardFieldMeta(data);
+  const sectionMeta = sectionFieldMeta(data);
   return (
     'const CARD_META = ' + JSON.stringify(meta) + ';\n' +
+    'const SECTION_META = ' + JSON.stringify(sectionMeta) + ';\n' +
     'const store = MotorEngine.createStore("p2_data_v2", function(){ return { employees:{}, employeeOrder:[], activeEmployeeId:null, byEmployee:{}, choices:{} }; });\n' +
     'const manager = MotorEngine.createEmployeeManager({\n' +
     '  store: store,\n' +
@@ -442,8 +500,11 @@ const initScript = function (data) {
     '  }\n' +
     '});\n' +
     'const choices = MotorEngine.createChoices(store);\n' +
+    'const theme = MotorEngine.createColorThemes(MotorEngine.DEFAULT_THEMES, "p2_theme_v1");\n' +
     'const nav = MotorEngine.createNav();\n' +
     '\n' +
+    'function openThemeModal(){ theme.renderSwatches("#themeSwatches"); MotorEngine.openModal("themeModal"); }\n' +
+    'function closeThemeModal(){ MotorEngine.closeModal("themeModal"); }\n' +
     'function goTo(n){ nav.goTo(n); }\n' +
     'function nextSlide(){ nav.next(); }\n' +
     'function prevSlide(){ nav.prev(); }\n' +
@@ -498,7 +559,53 @@ const initScript = function (data) {
     '  });\n' +
     '});\n' +
     '\n' +
+    'function renderZusammenfassung(){\n' +
+    '  const out = document.getElementById("summaryOutput");\n' +
+    '  if(!out) return;\n' +
+    '  const id = manager.data.activeEmployeeId;\n' +
+    '  const emp = id ? manager.data.employees[id] : null;\n' +
+    '  if(!emp){\n' +
+    '    out.innerHTML = \'<div class="summaryEmpty">Bitte wähle zuerst einen Mitarbeiter aus, um dessen Zusammenfassung zu sehen.<br><button class="btn" onclick="goTo(5)">Zu den Mitarbeitenden</button></div>\';\n' +
+    '    return;\n' +
+    '  }\n' +
+    '  const bucket = manager.bucketFor(id);\n' +
+    '  const dateStr = new Date().toLocaleDateString("de-DE", { day: "numeric", month: "long", year: "numeric" });\n' +
+    '  let step = 0;\n' +
+    '  function entriesHtml(entries){\n' +
+    '    return entries.filter(function(e){ return (bucket.fields[e.id]||"").trim().length>0; })\n' +
+    '      .map(function(e){ return \'<div class="summaryField"><label>\'+e.label+\'</label><p>\'+MotorEngine.escapeHtml(bucket.fields[e.id])+\'</p></div>\'; })\n' +
+    '      .join("");\n' +
+    '  }\n' +
+    '  const milestoneHtml = SECTION_META.milestones.map(function(s){\n' +
+    '    const prepHtml = entriesHtml(s.prepEntries);\n' +
+    '    const vereinbarungHtml = entriesHtml(s.vereinbarungEntries);\n' +
+    '    if(!prepHtml && !vereinbarungHtml) return "";\n' +
+    '    step++;\n' +
+    '    return \'<div class="summaryCard"><div class="summaryCardHead"><span class="summaryCardNum">\'+step+\'</span><h3>\'+MotorEngine.escapeHtml(s.title)+\'</h3></div>\' +\n' +
+    '      (prepHtml ? \'<div class="summarySection"><b>TEILNEHMER</b>\'+prepHtml+\'</div>\' : "") +\n' +
+    '      (vereinbarungHtml ? \'<div class="summarySection"><b>VEREINBARUNG</b>\'+vereinbarungHtml+\'</div>\' : "") +\n' +
+    '      "</div>";\n' +
+    '  }).join("");\n' +
+    '  const toolHtml = SECTION_META.tools.map(function(s){\n' +
+    '    const entriesRendered = entriesHtml(s.entries);\n' +
+    '    if(!entriesRendered) return "";\n' +
+    '    step++;\n' +
+    '    return \'<div class="summaryCard"><div class="summaryCardHead"><span class="summaryCardNum">\'+step+\'</span><h3>\'+MotorEngine.escapeHtml(s.title)+\'</h3></div>\' +\n' +
+    '      \'<div class="summarySection">\'+entriesRendered+\'</div></div>\';\n' +
+    '  }).join("");\n' +
+    '  const cardsHtml = milestoneHtml + toolHtml;\n' +
+    '  const posAbt = [emp.position, emp.abteilung].filter(function(v){ return (v||"").trim(); }).join(" — ");\n' +
+    '  const metaHtml = \'<div class="summaryMeta"><b>Mitarbeiter:</b> \'+MotorEngine.escapeHtml(emp.name)+\n' +
+    '    (posAbt ? \'<br><b>Position:</b> \'+MotorEngine.escapeHtml(posAbt) : "")+\n' +
+    '    \'<br><b>Erstellt am:</b> \'+dateStr+\'</div>\';\n' +
+    '  out.innerHTML = cardsHtml\n' +
+    '    ? (metaHtml + cardsHtml)\n' +
+    '    : (metaHtml + \'<div class="summaryEmpty">Für \'+MotorEngine.escapeHtml(emp.name)+\' wurden noch keine Notizen erfasst.</div>\');\n' +
+    '}\n' +
+    'nav.onEnter(' + ZUSAMMENFASSUNG_SLIDE + ', renderZusammenfassung);\n' +
+    '\n' +
     'document.addEventListener("DOMContentLoaded", function(){\n' +
+    '  theme.init();\n' +
     '  manager.render();\n' +
     '  choices.bindAll();\n' +
     '  MotorEngine.bindFields(store, manager);\n' +
@@ -520,15 +627,12 @@ module.exports = {
   // this after engine.css only when a config exports it, so P6 (no
   // extraCss) renders byte-identical to before.
   extraCss: [
-    // Center every headline and sub-headline; body text/boxes stay left-aligned.
-    '#app h1, #app h2 { text-align: center; margin-left: auto; margin-right: auto; }',
+    // Headline centering now comes from the shared .headCenter/.textCenter
+    // classes (Carmen-Klar motor) applied to each slide, not a global rule.
     // More visual weight/depth in the headline type.
     '#app h1 { font-weight: 900; text-shadow: 0 2px 3px rgba(37,37,37,.15); }',
     '#app h2 { font-weight: 800; }',
     // Give the flat white content boxes a soft lift instead of a bare border.
-    '#app .box, #app .tile, #app .note, #app .qa, #app .choice, #app .weeklyCheckCard, #app .weeklyCheckIntro, #app .compareRow > div, #app .bigCounts > div, #app .ctaHero { box-shadow: 0 2px 8px rgba(37,37,37,.07), 0 1px 2px rgba(37,37,37,.05); }',
-    // "Als Nächstes" preview line above every nav bar.
-    '#app .nextPreview { margin-top: 26px; padding-top: 14px; border-top: 1px solid var(--line); font-size: 12px; letter-spacing: .3px; color: var(--ci); text-align: center; }',
-    '#app .nextPreview b { color: var(--ink); font-weight: 800; }'
+    '#app .box, #app .tile, #app .note, #app .qa, #app .choice, #app .weeklyCheckCard, #app .weeklyCheckIntro, #app .compareRow > div, #app .bigCounts > div, #app .ctaHero { box-shadow: 0 2px 8px rgba(37,37,37,.07), 0 1px 2px rgba(37,37,37,.05); }'
   ].join('\n')
 };

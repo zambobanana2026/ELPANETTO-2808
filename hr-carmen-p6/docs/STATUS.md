@@ -1,5 +1,82 @@
 # Status — Carmen Next Motor/Config
 
+## P2 — Umstieg auf den Carmen-Klar-Motor, 48 Slides (v4)
+
+Parallel zu diesem P2-Durchgang ist auf einer anderen Branch
+(`claude/hr-p6-app-s38hm7`) ein eigener Motor-Ausbau entstanden und als
+`docs/CARMEN_KLAR_STYLEGUIDE.md` dokumentiert worden ("Carmen Klar" —
+Design-/Sprachsystem für die ganze P1–P8-Familie). Martin bat darum, P2
+selbst auf diesen Motor umzustellen — **ausdrücklich ohne P6-Inhalte zu
+importieren**, nur den Motor plus die im Styleguide beschriebenen
+Bausteine.
+
+**Vorgehen:** `motor/engine.css`, `motor/engine.js` und den Styleguide
+selbst von der anderen Branch per `git checkout <branch> -- <pfade>`
+übernommen — P6s Config/Slides/Release blieben unangetastet, das ist
+weiterhin der eigene Stand dieser Branch. Vor der Übernahme den CSS-/JS-Diff
+geprüft: rein additiv (Farben durch CSS-Variablen ersetzt, die auf dieselben
+Werte zeigen; neue Klassen/Funktionen kommen dazu, nichts wurde entfernt
+oder umbenannt) — deshalb ohne Risiko für P6 oder den bisherigen P2-Stand.
+Nach der Übernahme beide Produkte neu gebaut und geprüft, bevor an P2
+weitergearbeitet wurde: `p6_qa.js` grün, `p6_diff.js` weiterhin "NO TEXT
+DIFFERENCES", `p2_qa.js` (alter Stand) ebenfalls grün — der Motor-Tausch
+allein hat an keinem der beiden Produkte etwas verändert.
+
+**Was aus dem Styleguide für P2 übernommen wurde:**
+- **Farbmodell-Umschaltung:** `MotorEngine.createColorThemes(...)` mit
+  eigenem `p2_theme_v1`-Speicherschlüssel (unabhängig von P6s
+  `p6_theme_v1`), 🎨-Button + Auswahl-Modal am Ende von `outro.slides.html`
+  (einmalig, nicht pro Slide).
+- **Willkommens-Slide neu aufgebaut** (Slide 1, `textCenter`): Video-
+  Platzhalter + Pitch-Bereich (Problem/Lösung) statt der bisherigen reinen
+  Feature-Kachel-Liste. Der Pitch-Text ist von Carmen Next verfasst (Werbe-
+  copy, nicht aus dem PDF) — die Feature-Kacheln und der Ersteller-Hinweis
+  aus der alten Slide 1 sind auf Slide 4 ("Die fünf Module") umgezogen.
+  Zweiter Video-Platzhalter auf der Mitarbeitenden-Slide (5), analog P6.
+- **Zusammenfassung & PDF pro Mitarbeiter** (neue Slide 47, zwischen Team-
+  Bericht und Abschluss): fasst alle bisher dokumentierten Stationen eines
+  Mitarbeiters zusammen (4 Meilensteine + Buddy + Eskalation + Trennung),
+  zeigt nur tatsächlich ausgefüllte Abschnitte, druckbar. Eigene
+  `SECTION_META`-Struktur in `p2.config.js` (parallel zur bestehenden
+  `CARD_META` fürs Team-Bericht, die unverändert blieb). Erreichbar über
+  Schnellzugriffs-Buttons auf der Mitarbeitenden-Slide und dem Team-Bericht.
+- **Kein automatisches Durchrutschen:** Die vier Meilenstein-Follow-ups
+  sowie die letzten Seiten von Buddy/Eskalation/Trennung enden jetzt in
+  einem Entscheidungsmenü (Kacheln: nächste Station / Zusammenfassung &
+  PDF / Mitarbeiterwahl bzw. Übersicht) statt in einem einzelnen "Weiter"-
+  Button, der automatisch zur nächsten Station springt.
+- **`.headCenter`/`.textCenter`** ersetzen die bisherige eigene
+  Zentrierungs-Regel (globales `#app h1,h2{text-align:center}` aus
+  `extraCss`) — jetzt wie in P6 pro Slide über eine Klasse gesteuert, für
+  Konsistenz in der Produktfamilie.
+- **"Als Nächstes"-Hinweis vereinheitlicht:** Frühere eigene Fassung zeigte
+  ihn (als eigene CSS-Box) auf 46 von 47 Slides. Auf Styleguide-Konvention
+  umgestellt: schlichter rechtsbündiger Text, nur an den großen
+  Abschnittswechseln (Übersicht→Tag 30, jedes Meilenstein-Ende, Buddy→
+  Eskalation, Eskalation→Trennung, Trennung→Team-Bericht, Team-Bericht→
+  Zusammenfassung) — nicht mehr bei jedem einzelnen Klick.
+
+**`extraCss` (P2-eigen, nicht Teil des Motors) reduziert** auf das, was
+wirklich P2-spezifisch bleibt: Kopfzeilen-Gewicht/-Schatten für mehr
+"Tiefe" und den Box-Schatten für die Karten — beides aus einer früheren
+Runde, unverändert übernommen.
+
+**Neue Gesamtlänge:** 48 Slides (vorher 47) — die neue Zusammenfassung-
+Slide kommt dazu, alles andere bleibt an seiner Position.
+
+**QA:** `qa/p2_qa.js` erweitert um: Video-Platzhalter auf der Willkommens-
+Slide, Farbmodell-Wechsel (Hintergrund-Repaint + Persistenz nach Reload),
+Zusammenfassung zeigt nur die Daten des aktiven Mitarbeiters (keine
+Vermischung), Entscheidungsmenüs statt Einzel-Weiter-Button an den
+7 betroffenen Stellen, Druckausgabe zeigt genau eine sichtbare Slide (nicht
+alle gestapelt). Die sequentielle Navigationsprüfung folgt jetzt an den
+7 Entscheidungsmenü-Slides der ersten Kachel statt eines "Weiter"-Buttons.
+Alle Checks grün, 0 Konsolen-/Seitenfehler. `p6_qa.js`/`p6_diff.js`
+weiterhin grün bzw. "NO TEXT DIFFERENCES" — P6 durch diesen ganzen
+Durchgang kein einziges Mal angefasst.
+
+---
+
 ## P2 — Verständlichkeits-Durchgang: erklärte Boxen, Feld-Hinweise, 47 Slides (v3)
 
 Martin fand nach der v2-Fassung (43 Slides, 5 Unterseiten je Station) einzelne
