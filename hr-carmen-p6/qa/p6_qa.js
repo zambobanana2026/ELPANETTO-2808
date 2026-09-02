@@ -137,32 +137,50 @@ function assert(cond, msg) {
     }
     if (n < 8) await page.click('.slide.active .nav button.btn:not(.alt)');
   }
+  // Follow-up (5/5) slides end each card without an auto-advance "Weiter" button —
+  // the user chooses explicitly (Zusammenfassung/PDF, Mitarbeiterwahl, Bibliothek, or
+  // Übersicht/Zurück) instead of being carried straight into the next Gesprächskarte.
+  const followUpSlides = new Set([13, 18, 23, 28, 33, 38, 43, 48]);
   await page.evaluate(() => window.goTo(9));
   for (let n = 9; n <= 54; n++) {
     const activeSlide = await page.locator('.slide.active').getAttribute('data-slide');
     assert(activeSlide === String(n), 'sequential nav at slide ' + n + ' matches (got ' + activeSlide + ')');
     if (n < 54) {
-      const nextBtn = page.locator('.slide.active .nav button.btn:not(.alt)');
-      await nextBtn.click();
+      if (followUpSlides.has(n)) {
+        assert((await page.locator('.slide.active .nav button.btn:not(.alt)').count()) === 0, 'follow-up slide ' + n + ' has no auto-advance "Weiter" button');
+        assert((await page.locator('.slide.active .tile:has-text("ZUSAMMENFASSUNG")').count()) === 1, 'follow-up slide ' + n + ' offers a Zusammenfassung-Kachel');
+        assert((await page.locator('.slide.active .tile:has-text("MITARBEITERWAHL")').count()) === 1, 'follow-up slide ' + n + ' offers a Mitarbeiterwahl-Kachel');
+        assert((await page.locator('.slide.active .tile:has-text("BIBLIOTHEK")').count()) === 1, 'follow-up slide ' + n + ' offers a Bibliothek-Kachel');
+        await page.evaluate((next) => window.goTo(next), n + 1);
+      } else {
+        await page.click('.slide.active .nav button.btn:not(.alt)');
+      }
     }
   }
   // last slide has no next button (just <span></span>), verify homeBtn "Von vorn" works
   await page.click('.slide.active .nav .homeBtn');
   assert((await page.locator('.slide.active').getAttribute('data-slide')) === '1', '"Von vorn" returns to slide 1');
 
-  // Verify card-8 (last card) follow-up slide (48) says "Weiter zur Bibliothek" and slide49 is Bibliothek
-  await page.evaluate(() => window.goTo(48));
-  const lastCardBtnText = await page.locator('.slide.active .nav button.btn:not(.alt)').textContent();
-  assert(lastCardBtnText.includes('Bibliothek'), 'card 8 follow-up next-button says "Weiter zur Bibliothek": got "' + lastCardBtnText + '"');
-  await page.click('.slide.active .nav button.btn:not(.alt)');
-  assert((await page.locator('.slide.active').getAttribute('data-slide')) === '49', 'card 8 forwards correctly to slide 49 (Bibliothek)');
-
-  // Verify card 1 (non-last) follow-up slide (13) says "Nächste Gesprächskarte" and forwards to slide 14
+  // ---- Follow-up end-of-card options actually navigate correctly (card 1, slide 13) ----
   await page.evaluate(() => window.goTo(13));
-  const firstCardBtnText = await page.locator('.slide.active .nav button.btn:not(.alt)').textContent();
-  assert(firstCardBtnText.includes('Nächste Gesprächskarte'), 'card 1 follow-up next-button says "Nächste Gesprächskarte": got "' + firstCardBtnText + '"');
-  await page.click('.slide.active .nav button.btn:not(.alt)');
-  assert((await page.locator('.slide.active').getAttribute('data-slide')) === '14', 'card 1 forwards correctly to slide 14 (card 2)');
+  await page.click('.slide.active .tile:has-text("ZUSAMMENFASSUNG")');
+  assert((await page.locator('.slide.active').getAttribute('data-slide')) === '52', '"Zusammenfassung & PDF"-Kachel navigiert zur Zusammenfassungs-Slide (52)');
+
+  await page.evaluate(() => window.goTo(13));
+  await page.click('.slide.active .tile:has-text("MITARBEITERWAHL")');
+  assert((await page.locator('.slide.active').getAttribute('data-slide')) === '6', '"Zur Mitarbeiterwahl"-Kachel navigiert zur Mitarbeiter-Slide (6)');
+
+  await page.evaluate(() => window.goTo(13));
+  await page.click('.slide.active .tile:has-text("BIBLIOTHEK")');
+  assert((await page.locator('.slide.active').getAttribute('data-slide')) === '49', '"Zur Formulierungs-Bibliothek"-Kachel navigiert zu Slide 49');
+
+  await page.evaluate(() => window.goTo(13));
+  await page.click('.slide.active .nav .homeBtn');
+  assert((await page.locator('.slide.active').getAttribute('data-slide')) === '8', 'Follow-up-Slide: "◂ Übersicht" führt weiterhin zur Kartenübersicht (8)');
+
+  await page.evaluate(() => window.goTo(13));
+  await page.click('.slide.active .nav button.btn.alt:has-text("Zurück")');
+  assert((await page.locator('.slide.active').getAttribute('data-slide')) === '12', 'Follow-up-Slide: "Zurück" führt weiterhin zur Vereinbarung-Slide (12)');
 
   // ---- Team report slide populates ----
   await page.evaluate(() => window.goTo(6));

@@ -1,5 +1,40 @@
 # Status — Carmen Next Motor/Config
 
+## P6 — Karten-Ende ohne Auto-Weiterleitung, stattdessen bewusste Wahl
+
+Bisher führte "Weiter" am Ende jeder Gesprächskarte (5/5 Follow-up)
+automatisch zur nächsten Karte (bzw. bei Karte 8 zur Bibliothek). Auf
+Wunsch entfernt: Sobald eine Karte bearbeitet wurde, soll der Nutzer nicht
+mehr direkt in die nächste Karte "durchrutschen", sondern bewusst
+entscheiden, wie es weitergeht.
+
+Jede Follow-up-Slide (13, 18, 23, 28, 33, 38, 43, 48) endet jetzt mit
+einem Hinweis „GESPRÄCH DOKUMENTIERT." und drei Kacheln:
+- 📄 **Zusammenfassung &amp; PDF** → Slide 52 (bestehende Gesprächs-
+  Zusammenfassung des aktiven Mitarbeiters, dort direkt "Als PDF
+  drucken")
+- 👤 **Zur Mitarbeiterwahl** → Slide 6 (Mitarbeiter wechseln/anlegen)
+- 📚 **Zur Formulierungs-Bibliothek** → Slide 49
+
+Plus weiterhin "◂ Übersicht" (zurück zur Kartenauswahl, Slide 8) und
+"Zurück" (zur Vereinbarung-Slide) in der Nav-Zeile. Der reine
+"Weiter"-Button und der `isLast`-Parameter in `slideFollowUp()`/
+`buildCardSlides()` in `products/p6.config.js` sind entfallen — es gibt
+keine Sonderbehandlung mehr für die letzte Karte, da jetzt alle 8 Karten
+gleich enden.
+
+Für eine bestimmte, einzelne Gesprächskarte gibt es keine eigene
+Kurz-Zusammenfassung — die "Zusammenfassung &amp; PDF"-Kachel nutzt
+bewusst die bereits bestehende Slide 52, die alle bisher dokumentierten
+Karten des aktiven Mitarbeiters zeigt (die eben bearbeitete Karte ist
+darin automatisch enthalten).
+
+`qa/p6_qa.js` komplett auf das neue Verhalten angepasst: die
+Sequenz-Navigation (Slides 9–54) überspringt an den 8 Follow-up-Slides
+den nicht mehr vorhandenen "Weiter"-Button, prüft stattdessen die drei
+Kacheln, und ein neuer Testblock verifiziert, dass alle drei Kacheln plus
+Übersicht/Zurück tatsächlich korrekt navigieren. 111 Checks, alle grün.
+
 ## P6 — Beispiel-Platzhalter in der 5-Minuten-Vorbereitung (alle 8 Karten)
 
 Auf Wunsch bekommt jede der bisher 41 "Kurz eintragen …"-Textareas in der

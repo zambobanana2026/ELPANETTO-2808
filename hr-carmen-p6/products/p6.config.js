@@ -126,7 +126,7 @@ function slideVereinbarung(card, num) {
   );
 }
 
-function slideFollowUp(card, num, isLast) {
+function slideFollowUp(card, num) {
   const fields = FOLLOWUP_FIELDS;
   const fieldsHtml = fields.map(function (f) {
     return '<div class="weeklyCheckCard"><label>' + f[0] + '</label>' +
@@ -143,8 +143,13 @@ function slideFollowUp(card, num, isLast) {
     '<div class="weeklyCheckGrid">' + fieldsHtml + '</div></div>' +
     '<div class="note" style="border-left-color:#c99a2e"><b>ACHTUNG.</b><br>' + esc(card.achtung) + '</div>' +
     rechtshinweis +
-    (isLast ? '<p style="margin:18px 0 0;font-size:12px;color:var(--muted);text-align:right">Als Nächstes: die Formulierungs-Bibliothek mit fertigen Sätzen für wiederkehrende Momente.</p>' : '') +
-    navBar(isLast ? 'Weiter zur Bibliothek' : 'Nächste Gesprächskarte') +
+    '<div class="note"><b>GESPRÄCH DOKUMENTIERT.</b><br>Möchtest du dir eine Zusammenfassung dieser Gesprächskarte ansehen oder als PDF speichern? Wie geht es jetzt weiter?</div>' +
+    '<div class="grid grid1">' +
+    '<div class="tile" style="cursor:pointer" onclick="goTo(52)"><b>📄 ZUSAMMENFASSUNG &amp; PDF</b><small>Alle bisher dokumentierten Gesprächskarten dieses Mitarbeiters ansehen und als PDF drucken.</small></div>' +
+    '<div class="tile" style="cursor:pointer" onclick="goTo(6)"><b>👤 ZUR MITARBEITERWAHL</b><small>Mitarbeiter wechseln oder eine neue Person anlegen.</small></div>' +
+    '<div class="tile" style="cursor:pointer" onclick="goTo(49)"><b>📚 ZUR FORMULIERUNGS-BIBLIOTHEK</b><small>Fertige Sätze für die wiederkehrenden Momente eines schwierigen Gesprächs.</small></div>' +
+    '</div>' +
+    '<div class="nav"><button class="btn alt homeBtn" onclick="goTo(8)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><span></span></div>' +
     '</section>'
   );
 }
@@ -153,12 +158,11 @@ function buildCardSlides(cards) {
   const out = [];
   cards.forEach(function (card, i) {
     const base = FIRST_CARD_SLIDE + i * SLIDES_PER_CARD;
-    const isLast = i === cards.length - 1;
     out.push(slidePrep(card, base));
     out.push(slideZielEinstieg(card, base + 1));
     out.push(slideImGespraech(card, base + 2));
     out.push(slideVereinbarung(card, base + 3));
-    out.push(slideFollowUp(card, base + 4, isLast));
+    out.push(slideFollowUp(card, base + 4));
   });
   return out.join('\n');
 }
