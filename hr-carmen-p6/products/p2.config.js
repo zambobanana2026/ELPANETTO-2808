@@ -99,7 +99,7 @@ function slideOverview(data) {
   const phaseTiles = data.phases.map(function (p) {
     const targetSlide = FIRST_MILESTONE_SLIDE + (p.n - 1) * SLIDES_PER_MILESTONE;
     return '<div class="tile" style="cursor:pointer" onclick="goTo(' + targetSlide + ')">' +
-      '<b>' + esc(p.zeitraum) + ' — ' + esc(p.phase.toUpperCase()) + '</b>' +
+      '<b style="text-align:center">' + esc(p.zeitraum) + '<br>' + esc(p.phase.toUpperCase()) + '</b>' +
       '<small>' + esc(p.fokus) + '<br><b style="color:var(--ci)">Meilenstein:</b> ' + esc(p.meilenstein) + '</small></div>';
   }).join('');
   const toolTiles = [
@@ -114,7 +114,7 @@ function slideOverview(data) {
     '<h1>IHR<br>PROBEZEIT-RADAR.</h1>' +
     '<p class="lead">Tag 1 → Tag 30 → Tag 60 → Tag 90 → Tag 150–170 → Ende der Probezeit. Klicken Sie eine Phase oder ein Werkzeug an, oder gehen Sie der Reihe nach vor. Jede Station ist in kurze Unterseiten aufgeteilt.</p>' +
     '<div class="grid">' + phaseTiles + '</div>' +
-    '<h2>WEITERE WERKZEUGE.</h2>' +
+    '<h2 style="text-align:center">WEITERE WERKZEUGE.</h2>' +
     '<div class="grid">' + toolTiles + '</div>' +
     navBar('Weiter', data.milestones[0].title) +
     '</section>'

@@ -45,7 +45,7 @@
       "ziel": "Onboarding-Zufriedenheit, Werkzeuge und Teamintegration besprechen.",
       "checks": [
         ["Systemzugänge, Prozesse und Teamkultur berücksichtigt", "Kommt die Person in alle Programme rein, die sie braucht? Kennt sie die wichtigsten Abläufe und ein paar ungeschriebene Regeln im Team?"],
-        ["Erste zwei Wochen: täglicher 10-Minuten-Check-in durchgeführt", "Hat sich der Buddy in den ersten beiden Wochen jeden Tag kurz gemeldet?"],
+        ["Erste zwei Wochen: täglicher 10-Minuten-Check-in durchgeführt", "Hat sich der Buddy in den ersten beiden Wochen jeden Tag bei der neuen Person gemeldet?"],
         ["Technische und soziale Hürden beseitigt", "Gibt es noch Probleme mit Zugängen oder Geräten — oder Unsicherheiten im Team, die noch gelöst werden sollten?"]
       ],
       "reaktionen": [
