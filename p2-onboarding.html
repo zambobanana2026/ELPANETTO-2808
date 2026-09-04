@@ -1,0 +1,754 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>P2 – Onboarding-Prozessbundle</title>
+<style>
+/* ============================================================================
+   CARMEN NEXT — MOTOR / engine.css
+   Geteiltes Design-System für die gesamte P1–P8 Produktfamilie.
+   CI-Tokens 1:1 aus P1 (Referenz) übernommen — nicht verändern, wenn ein neues
+   Produkt gebaut wird. Nur der jeweilige products/*.config.js liefert Inhalte.
+   ============================================================================ */
+:root{--ink:#252525;--paper:#f6f4f0;--pagebg:#ebe8e3;--surface:#ffffff;--muted:#777672;--line:#d9d5cf;--mint:#8fe3cf;--ci:#7f7a74;--num:#55cdb2;--green:#16a36a;--orange:#ef9b28;--red:#df4545}
+*{box-sizing:border-box} body{margin:0;background:var(--pagebg);color:var(--ink);font-family:Arial,Helvetica,sans-serif}
+#app{max-width:1180px;margin:0 auto;padding:22px}
+.slide{display:none;background:var(--paper);min-height:760px;padding:44px 48px 60px;position:relative;border:1px solid var(--line)}
+.slide.active{display:block}
+.num{position:absolute;right:42px;top:34px;font-size:34px;font-weight:800;color:var(--num);letter-spacing:-2px}
+.brand{font-size:12px;letter-spacing:3px;font-weight:800;color:var(--muted)}
+.ctxbar{font-size:11px;letter-spacing:1px;color:var(--ci);font-weight:800;margin-top:6px}
+.ctxbar b{color:var(--ink)}
+h1{font-size:clamp(28px,4.6vw,52px);line-height:1.02;letter-spacing:-1.5px;margin:30px 0 18px;max-width:900px}
+h2{font-size:21px;letter-spacing:-.4px;margin:26px 0 10px}
+.lead{font-size:18px;line-height:1.55;max-width:850px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:22px 0}
+.grid4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.grid1{grid-template-columns:1fr}
+.tile,.box{background:var(--surface);border:1px solid var(--line);padding:20px;margin-bottom:10px}
+.tile b{display:block;font-size:16px}
+.tile small{display:block;color:var(--muted);line-height:1.45;margin-top:8px}
+.tile small.tileSubtitle{color:var(--ci);font-weight:800;margin-top:2px}
+.tile.activeEmp{outline:2px solid var(--ci);border-color:var(--ci)}
+.tile .rm{float:right;color:var(--red);cursor:pointer;font-size:12px;font-weight:800}
+.box b{display:block;font-size:12px;letter-spacing:1px;color:var(--ci)}
+.btn{border:0;background:var(--ci);color:white;padding:13px 18px;font-weight:800;letter-spacing:.5px;cursor:pointer;margin-top:12px;font-size:14px}
+.btn.alt{background:var(--surface);color:var(--ink);border:1px solid var(--line)}
+textarea{width:100%;padding:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;min-height:78px;resize:vertical}
+input[type=text]{width:100%;padding:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;margin-top:8px}
+.checks{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0}
+.choice{border:1px solid var(--line);background:var(--surface);padding:12px 14px;cursor:pointer;font-size:14px}
+.choice.on{border-color:var(--green);background:#eafbf3;outline:1px solid var(--green)}
+.note{border-left:4px solid var(--mint);padding:14px 16px;background:var(--surface);margin:18px 0;line-height:1.5}
+.textCenter{text-align:center}
+.textCenter h1,.textCenter .lead,.textCenter .grid,.textCenter .note,.textCenter .box{margin-left:auto;margin-right:auto}
+.textCenter .tile,.textCenter .box{text-align:center}
+.headCenter h1{text-align:center;margin-left:auto;margin-right:auto}
+.headCenter h1+.lead{text-align:center;margin-left:auto;margin-right:auto}
+.pitchSection{background:var(--pagebg);border:1px solid var(--line);padding:34px 30px;margin:26px 0}
+.pitchHook{font-size:24px;font-weight:800;line-height:1.4;max-width:750px;margin:0 auto 22px}
+.pitchSection .grid{margin:0}
+.pitchTile{background:var(--surface);border-top:5px solid var(--ci);padding:28px 26px;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.pitchTile b{display:block;font-size:23px;letter-spacing:-.3px;color:var(--ci)}
+.pitchTile small{display:block;font-size:16px;line-height:1.65;color:var(--ink);margin-top:14px}
+@media(max-width:700px){
+ .pitchSection{padding:26px 18px}
+}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:34px}
+.nav .homeBtn{flex:0 0 auto}
+.qa{background:var(--surface);border:1px solid var(--line);padding:12px 14px;margin:8px 0;font-size:14px;line-height:1.5}
+.qa b{display:block;margin-bottom:5px}
+.qlist{padding-left:20px;line-height:1.7}
+.compareHead{display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:11px;letter-spacing:1px;color:var(--ci);font-weight:800;margin-top:14px}
+.compareRow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:6px 0}
+.compareRow div{background:var(--surface);border:1px solid var(--line);padding:10px;font-size:13px;line-height:1.4}
+.compareRow .no{border-left:3px solid var(--red)}
+.compareRow .yes{border-left:3px solid var(--green)}
+.weeklyCheck{margin-top:22px;border-top:5px solid var(--ci);padding-top:16px}
+.weeklyCheckIntro{background:var(--surface);border:1px solid var(--line);padding:14px 16px;margin:14px 0 12px}
+.weeklyCheckIntro b{display:block;font-size:12px;letter-spacing:1.2px;color:var(--ci)}
+.weeklyCheckGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.weeklyCheckCard{background:var(--surface);border:1px solid var(--line);padding:14px}
+.weeklyCheckCard label{display:block;font-size:11px;font-weight:800;letter-spacing:.5px;margin-bottom:8px;color:var(--ci)}
+.reportBox{border:1px solid var(--line);background:var(--surface);padding:16px;margin:10px 0}
+.reportBox b{display:block;font-size:11px;letter-spacing:1.2px;color:var(--ci);margin-bottom:9px}
+.bigCounts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0}
+.bigCounts div{border:1px solid var(--line);background:var(--surface);padding:14px;text-align:center}
+.bigCounts strong{display:block;font-size:36px}
+.bigCounts small{display:block;font-size:10px;margin-top:6px;color:var(--muted)}
+.ctaHero{margin:22px 0;border:1px solid var(--line);padding:22px;background:var(--surface)}
+.ctaHero>b{font-size:11px;letter-spacing:1.5px;color:var(--ci)}
+.videoPlaceholder{aspect-ratio:9/16;max-width:270px;margin:26px auto;background:var(--surface);border:2px dashed var(--line);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:20px}
+.videoPlaceholder .playIcon{width:52px;height:52px;border-radius:999px;background:var(--ci);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px}
+.videoPlaceholder b{font-size:11px;letter-spacing:1px;color:var(--ci)}
+.videoPlaceholder small{color:var(--muted);font-size:11px;line-height:1.4}
+.wave{display:inline-block;animation:wave 2.2s ease-in-out infinite;transform-origin:70% 70%}
+@keyframes wave{0%,60%,100%{transform:rotate(0deg)}10%{transform:rotate(14deg)}20%{transform:rotate(-8deg)}30%{transform:rotate(14deg)}40%{transform:rotate(-4deg)}50%{transform:rotate(10deg)}}
+.pdfBtn{border:0;border-radius:999px;background:#e12b2b;color:#fff;font-weight:900;padding:11px 18px;font-size:12px;letter-spacing:.3px;cursor:pointer;margin-top:12px;margin-right:8px}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:9;align-items:center;justify-content:center;padding:20px}
+.modal.open{display:flex}
+.dialog{background:var(--paper);width:min(420px,100%);padding:26px;border:1px solid var(--line)}
+.dialog h2{margin-top:0}
+.dialog label{display:block;margin-top:14px}
+.dialog label:first-of-type{margin-top:0}
+.dialog .row{display:flex;gap:10px;margin-top:16px}
+.teamTable{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
+.teamTable th{text-align:left;font-size:10px;letter-spacing:1px;color:var(--ci);padding:8px 6px;border-bottom:2px solid var(--line)}
+.teamTable td{padding:9px 6px;border-bottom:1px solid var(--line)}
+.summaryMeta{background:var(--surface);border:1px solid var(--line);padding:16px 18px;margin:22px 0;font-size:14px;line-height:1.6;text-align:left}
+.summaryEmpty{border:1px dashed var(--line);padding:36px 24px;text-align:center;color:var(--muted);margin:22px 0}
+.summaryEmpty .btn{margin-top:16px}
+.summaryCard{border:1px solid var(--line);background:var(--surface);margin:20px 0;padding:26px 28px;text-align:left}
+.summaryCardHead{display:flex;align-items:center;gap:14px;margin-bottom:18px;border-bottom:2px solid var(--ci);padding-bottom:14px}
+.summaryCardNum{flex:0 0 auto;width:32px;height:32px;border-radius:999px;background:var(--ci);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px}
+.summaryCardHead h3{margin:0;font-size:16px;letter-spacing:-.2px}
+.summarySection{margin-top:20px}
+.summarySection:first-of-type{margin-top:0}
+.summarySection>b{display:block;font-size:11px;letter-spacing:1.2px;color:var(--ci)}
+.summaryField{margin-top:14px}
+.summaryField label{display:block;font-size:12px;font-weight:800;color:var(--muted);margin-bottom:3px}
+.summaryField p{margin:0;font-size:14px;line-height:1.55;white-space:pre-wrap}
+.themeTrigger{position:fixed;left:16px;top:16px;z-index:9;width:42px;height:42px;border-radius:999px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-size:18px;box-shadow:0 2px 6px rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;padding:0}
+.themeSwatches{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-top:14px}
+.themeSwatch{aspect-ratio:1;border-radius:8px;cursor:pointer;border:2px solid var(--line)}
+.themeSwatch.active{border-color:var(--ink)}
+@media(max-width:700px){
+ body{background:var(--paper)}
+ #app{max-width:480px;margin:0 auto;padding:0}
+ .slide{min-height:100dvh;border:0;padding:50px 16px 110px}
+ .num{right:16px;top:14px;font-size:28px}
+ h1{font-size:32px;margin:26px 0 14px}
+ .grid,.grid4,.weeklyCheckGrid,.compareRow,.compareHead,.bigCounts{grid-template-columns:1fr}
+ .nav{position:fixed;z-index:8;bottom:0;left:50%;transform:translateX(-50%);width:min(480px,100%);margin:0;background:var(--paper);border-top:1px solid var(--line);padding:12px}
+ .nav .btn{margin:0;padding:12px}
+ .teamTable{font-size:11px}
+ .themeTrigger{left:10px;top:10px;width:38px;height:38px}
+}
+@media print{
+ .themeTrigger{display:none!important}
+ body{background:#fff}
+ #app{max-width:100%;padding:0}
+ .slide{display:none!important}
+ .slide.active{display:block!important;min-height:0;border:0;padding:20px;background:#fff}
+ .nav,.num,.modal,.videoPlaceholder,.pdfBtn{display:none!important}
+ .summaryMeta,.summaryCard,.summaryEmpty{background:#fff;border-color:#ccc}
+ .summaryCard{page-break-inside:avoid}
+}
+
+#app h1 { font-weight: 900; text-shadow: 0 2px 3px rgba(37,37,37,.15); }
+#app h2 { font-weight: 800; }
+#app .box, #app .tile, #app .note, #app .qa, #app .choice, #app .weeklyCheckCard, #app .weeklyCheckIntro, #app .compareRow > div, #app .bigCounts > div, #app .ctaHero { box-shadow: 0 2px 8px rgba(37,37,37,.07), 0 1px 2px rgba(37,37,37,.05); }
+
+</style>
+</head>
+<body><div id="app">
+
+<section class="slide active textCenter" data-slide="1"><div class="brand">P2 / WILLKOMMEN</div><div class="num">01</div>
+<h1>WILLKOMMEN. <span class="wave">👋</span><br>SCHÖN, DASS DU DA BIST.</h1>
+<p class="lead">Bevor es losgeht, ein kurzes Video von mir — und du weißt in drei Minuten genau, wie dieses Prozessbundle funktioniert und wie du am besten startest.</p>
+<div class="videoPlaceholder"><div class="playIcon">▶</div><b>BEGRÜSSUNGSVIDEO</b><small>Format 9:16<br>[hier kommt dein Video]</small></div>
+<div class="pitchSection">
+<p class="lead pitchHook">Onboarding wird in vielen KMU improvisiert — jede neue Mitarbeiterin, jeder neue Mitarbeiter fängt wieder bei null an, und wichtige Schritte gehen im Alltag unter.</p>
+<div class="grid grid1">
+<div class="tile pitchTile"><b>DAS PROBLEM.</b><small>Ohne festen Prozess hängt der Erfolg der ersten Monate vom Zufall ab: ob jemand an den 30-Tage-Check-in denkt, ob die Probezeit sauber dokumentiert ist, ob eine schwierige Situation rechtzeitig auffällt, bevor sie eskaliert.</small></div>
+<div class="tile pitchTile"><b>DIE LÖSUNG.</b><small>Dieses Prozessbundle nimmt dir das Improvisieren ab: eine klare Linie von Tag 1 bis zum Ende der Probezeit, mit Buddy-Framework, Eskalationsprotokoll und Trennungs-Leitfaden — einmal bauen, für jede neue Person wieder nutzen.</small></div>
+</div>
+</div>
+<p style="margin:18px 0 0;font-size:12px;color:var(--muted);text-align:right">Als Nächstes: du erfährst, wie das Prozessbundle funktioniert.</p>
+<div class="nav"><span></span><span></span><button class="btn" onclick="nextSlide()">Los geht's</button></div>
+</section>
+
+<section class="slide headCenter" data-slide="2"><div class="brand">P2 / SO FUNKTIONIERT'S</div><div class="num">02</div>
+<h1>DREI SCHRITTE.<br>KEIN RÄTSELRATEN.</h1>
+<p class="lead">Das Prozessbundle führt Sie in drei Schritten durch die Probezeit einer neuen Mitarbeiterin oder eines neuen Mitarbeiters.</p>
+<div class="grid">
+<div class="tile"><b>1. MASTERKARTE ÖFFNEN</b><small>„Tag 1 bis 180 auf einen Blick“ zeigt Zeitabschnitte, Schwerpunkte, Buddy-Taktung und Meilensteine.</small></div>
+<div class="tile"><b>2. GESPRÄCHSKARTEN NUTZEN</b><small>Karten für Tag 30, Tag 60, Tag 90 und Tag 150–170. Die Arbeitsfelder werden im Gespräch ausgefüllt.</small></div>
+<div class="tile"><b>3. WENN ES HAKT</b><small>Bei einer sichtbaren Leistungslücke: die Karte „Wenn es hakt – 14-Tage-Eskalationsprotokoll“ nutzen.</small></div>
+</div>
+<div class="note"><b>WEITERE WERKZEUGE.</b><br>Das KMU-Buddy-Framework und der Trennungs-Leitfaden liegen zusätzlich als eigene Werkzeuge in dieser Toolbox bereit.</div>
+<div class="nav"><span></span><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div>
+</section>
+
+<section class="slide headCenter" data-slide="3"><div class="brand">P2 / FÜR WEN</div><div class="num">03</div>
+<h1>FÜR WEN IST<br>DIESES PROZESSBUNDLE?</h1>
+<p class="lead">Für Geschäftsführungen, Inhaberinnen und Inhaber, Teamleitungen und Führungskräfte in deutschen KMU, die die Integration und Probezeit neuer Mitarbeitender systematisch steuern wollen — vom ersten Arbeitstag bis zum Ende der Probezeit. Bis zu 20 Mitarbeitende können einzeln angelegt und begleitet werden.</p>
+<div class="note" style="border-left-color:var(--red)"><b>HINWEIS ZUR VERWENDUNG.</b><br>Die arbeitsrechtlichen Hinweise in diesem Produkt stammen aus dem bereitgestellten Carmen-Fachwissen-Archiv. Sie wurden nicht erweitert oder eigenständig interpretiert. Die arbeitsrechtlichen Hinweise dienen der allgemeinen Orientierung und ersetzen keine individuelle Rechtsberatung. Bei konkreten Einzelfällen sollte fachkundige arbeitsrechtliche Beratung eingeholt werden.</div>
+<div class="nav"><span></span><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div>
+</section>
+
+<section class="slide headCenter" data-slide="4"><div class="brand">P2 / SYSTEM</div><div class="num">04</div>
+<h1>DIE FÜNF<br>MODULE.</h1>
+<div class="note"><b>ERSTELLT VON CARMEN GRUSE-LATEGAHN.</b><br>HR-Generalistin mit 18 Jahren Praxiserfahrung.</div>
+<div class="grid">
+<div class="tile"><b>1 — PROBEZEIT-RADAR &amp; 30-60-90-TAKTUNG</b><small>Tag 1 bis Tag 180 auf einen Blick: Zeitabschnitte, Schwerpunkte, Buddy-Taktung und Meilensteine.</small></div>
+<div class="tile"><b>2 — KMU-BUDDY-FRAMEWORK</b><small>Kultureller Wegweiser für die ersten vier bis sechs Wochen — mit klaren Grenzen.</small></div>
+<div class="tile"><b>3 — 14-TAGE-ESKALATIONSPROTOKOLL</b><small>Führungsinstrument bei sichtbarer Leistungslücke.</small></div>
+<div class="tile"><b>4 — VIER FEEDBACK-GESPRÄCHSLEITFÄDEN</b><small>Tag 30, Tag 60, Tag 90 und Tag 150–170 — mit Fokus, Frage und Ziel je Gespräch.</small></div>
+<div class="tile"><b>5 — TRENNUNGS-LEITFADEN</b><small>10-Minuten-Protokoll für den Fall einer Trennung innerhalb der Probezeit.</small></div>
+</div>
+<div class="nav"><span></span><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div>
+</section>
+
+<section class="slide headCenter" data-slide="5"><div class="brand">P2 / MITARBEITER</div><div class="num">05</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div>
+<h1>IHRE MITARBEITENDEN.</h1>
+<p class="lead"><span id="empCount">0</span> / 20 Plätze belegt. Jede Person bekommt ihre eigene Onboarding-Dokumentation. Klicken Sie eine Person an, um sie als aktiv auszuwählen.</p>
+<p class="lead">Ein kurzes Video erklärt dir, warum Mitarbeitende einzeln angelegt werden, was „aktiv" bedeutet und was die Grenze von 20 Personen für dich heißt.</p>
+<div class="videoPlaceholder"><div class="playIcon">▶</div><b>MITARBEITER-VERWALTUNG</b><small>Format 9:16<br>[hier kommt dein Video]</small></div>
+<button class="btn" onclick="openEmpModal()">+ MITARBEITER HINZUFÜGEN</button>
+<button class="btn alt" onclick="goTo(47)">📄 ZUSAMMENFASSUNG DES AKTIVEN MITARBEITERS</button>
+<div id="empLimitNote" class="note" style="border-left-color:var(--red);display:none">⚠️ Lizenzgrenze erreicht: Dieses Paket erlaubt maximal 20 Mitarbeitende.</div>
+<div class="grid" id="empGrid" style="margin-top:18px"></div>
+<p style="margin:18px 0 0;font-size:12px;color:var(--muted);text-align:right">Als Nächstes: dein Probezeit-Radar — die Übersicht über alle Stationen.</p>
+<div class="nav"><span></span><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div>
+</section>
+<section class="slide headCenter" data-slide="6"><div class="brand">P2 / ÜBERSICHT</div><div class="num">06</div><h1>IHR<br>PROBEZEIT-RADAR.</h1><p class="lead">Tag 1 → Tag 30 → Tag 60 → Tag 90 → Tag 150–170 → Ende der Probezeit. Klicken Sie eine Phase oder ein Werkzeug an, oder gehen Sie der Reihe nach vor. Jede Station ist in kurze Unterseiten aufgeteilt.</p><div class="grid"><div class="tile" style="cursor:pointer" onclick="goTo(7)"><b style="text-align:center">Tage 1–30<br>ORIENTIEREN &amp; VERSTEHEN</b><small>Systemzugänge, Prozesse kennenlernen, Teamkultur aufsaugen<br><b style="color:var(--ci)">Meilenstein:</b> 30-Tage-Check-in mit Erwartungsabgleich und Beseitigung technischer/sozialer Hürden</small></div><div class="tile" style="cursor:pointer" onclick="goTo(13)"><b style="text-align:center">Tage 31–60<br>ANWENDEN &amp; BEITRAGEN</b><small>Erste eigenverantwortliche Aufgaben und Kunden-/Projektfälle<br><b style="color:var(--ci)">Meilenstein:</b> 60-Tage-Review mit Fehleranalyse, Schnittstellenkooperation und Selbstständigkeit</small></div><div class="tile" style="cursor:pointer" onclick="goTo(19)"><b style="text-align:center">Tage 61–90<br>OPTIMIEREN &amp; VERANKERN</b><small>Volle Prozessautonomie<br><b style="color:var(--ci)">Meilenstein:</b> 90-Tage-Standortbestimmung mit Leistungsbeurteilung und erster Übernahmeprognose</small></div><div class="tile" style="cursor:pointer" onclick="goTo(25)"><b style="text-align:center">Tage 150–170<br>ENTSCHEIDUNGS-KORRIDOR</b><small>Finale Weichenstellung<br><b style="color:var(--ci)">Meilenstein:</b> Probezeit-Abschlussgespräch</small></div></div><h2 style="text-align:center">WEITERE WERKZEUGE.</h2><div class="grid"><div class="tile" style="cursor:pointer" onclick="goTo(31)"><b>KMU-BUDDY-FRAMEWORK</b><small>Kultureller Wegweiser für die ersten vier bis sechs Wochen.</small></div><div class="tile" style="cursor:pointer" onclick="goTo(36)"><b>WENN ES HAKT — ESKALATIONSPROTOKOLL</b><small>Bei sichtbarer Leistungslücke: 14-Tage-Eskalationsprotokoll.</small></div><div class="tile" style="cursor:pointer" onclick="goTo(41)"><b>TRENNUNGS-LEITFADEN</b><small>10-Minuten-Protokoll für den Fall einer Trennung.</small></div></div><p style="margin:18px 0 0;font-size:12px;color:var(--muted);text-align:right">Als Nächstes: Tag 30 – Check-in</p><div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div></section>
+<section class="slide headCenter" data-slide="7"><div class="brand">P2 / Tag 30 · GESPRÄCH 1/4 · 1/6 VORBEREITUNG</div><div class="num">07</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div><h1>TAG 30.<br>GESPRÄCHSPHASE „CHECK-IN“.</h1><div class="box"><b>WORUM GEHT ES IN DIESER GESPRÄCHSPHASE?</b><p class="lead" style="margin:10px 0 0">Jedes Gespräch hat einen roten Faden — das Thema, um das sich an diesem Tag alles dreht. Bei diesem Gespräch ist das: Onboarding-Zufriedenheit, Werkzeuge und Teamintegration. Was du dafür genau fragst und worauf du achtest, steht auf den nächsten Seiten.</p></div><div class="box"><b>WIE OFT TRIFFT DER BUDDY DEIN NEUES TEAMMITGLIED GERADE?</b><p style="margin:10px 0 0">Ein Buddy ist eine erfahrene Kollegin oder ein erfahrener Kollege, die/der deinem neuen Teammitglied beim Einleben hilft — nicht du selbst. In dieser Gesprächsphase gilt: Erste zwei Wochen täglicher 10-Minuten-Check-in</p></div><h2>IST DIESE GESPRÄCHSPHASE ABGESCHLOSSEN?</h2><p class="lead">Diese Liste zeigt, was in Tage 1–30 eigentlich passiert sein sollte. Geh sie vor dem Gespräch kurz durch: Was passt schon? Was fehlt noch? Ein offener Punkt ist kein Problem — er wird einfach zum Thema im Gespräch.</p><div class="checks"><div class="choice" data-toggle="m1_chk1" onclick="toggleChoice(this)">Systemzugänge, Prozesse und Teamkultur berücksichtigt<span style="display:block;font-weight:400;font-size:13px;color:var(--ci);margin-top:4px">Kommt die Person in alle Programme rein, die sie braucht? Kennt sie die wichtigsten Abläufe und ein paar ungeschriebene Regeln im Team?</span></div><div class="choice" data-toggle="m1_chk2" onclick="toggleChoice(this)">Erste zwei Wochen: täglicher 10-Minuten-Check-in durchgeführt<span style="display:block;font-weight:400;font-size:13px;color:var(--ci);margin-top:4px">Hat sich der Buddy in den ersten beiden Wochen jeden Tag bei der neuen Person gemeldet?</span></div><div class="choice" data-toggle="m1_chk3" onclick="toggleChoice(this)">Technische und soziale Hürden beseitigt<span style="display:block;font-weight:400;font-size:13px;color:var(--ci);margin-top:4px">Gibt es noch Probleme mit Zugängen oder Geräten — oder Unsicherheiten im Team, die noch gelöst werden sollten?</span></div></div><div class="weeklyCheck"><div class="weeklyCheckIntro"><b>WER NIMMT AM GESPRÄCH TEIL?</b></div><div class="weeklyCheckGrid"><div class="weeklyCheckCard"><label>TEILNEHMER</label><span style="display:block;font-weight:400;font-size:13px;color:var(--ci);margin:-4px 0 8px">Wer nimmt an diesem Gespräch teil? Meist du und die neue Person — bei Bedarf auch der Buddy.</span><textarea data-field="m1_teilnehmer" placeholder="Name(n) eintragen …"></textarea></div></div></div><div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div></section>
+<section class="slide headCenter" data-slide="8"><div class="brand">P2 / Tag 30 · GESPRÄCH 1/4 · 2/6 ZIEL & EINSTIEG</div><div class="num">08</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div><h1>TAG 30.<br>GESPRÄCHSPHASE „CHECK-IN“.</h1><div class="box"><b>DARUM GEHT ES MIR IN DIESEM GESPRÄCH.</b><p class="lead" style="margin:10px 0 0">„Onboarding-Zufriedenheit, Werkzeuge und Teamintegration besprechen.“</p></div><div class="box"><b>FRAGE.</b><p class="lead" style="margin:10px 0 0">„Wo hakt es technisch oder organisatorisch noch?“</p></div><div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div></section>
+<section class="slide headCenter" data-slide="9"><div class="brand">P2 / Tag 30 · GESPRÄCH 1/4 · 3/6 TYPISCHE REAKTIONEN</div><div class="num">09</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div><h1>TAG 30.<br>GESPRÄCHSPHASE „CHECK-IN“.</h1><h2>WAS DIE NEUE PERSON SAGEN KÖNNTE — UND WIE DU ANTWORTEST.</h2><div class="qa"><b>„Ehrlich gesagt läuft alles super, ich hab keine Fragen.“</b><p>Das freut mich. Trotzdem schauen wir kurz gemeinsam auf Systemzugänge, Ansprechpartner und Arbeitsabläufe — manchmal fällt einem erst beim gezielten Nachfragen auf, wo doch noch etwas fehlt.</p></div><div class="qa"><b>„Ich wusste am Anfang gar nicht, an wen ich mich bei welcher Frage wenden soll.“</b><p>Gut, dass du das ansprichst. Lass uns konkret durchgehen: Wer ist dein Ansprechpartner für IT, wer für Fachfragen, wer für organisatorische Themen?</p></div><div class="qa"><b>„Manche Abläufe wirken noch chaotisch.“</b><p>Kannst du mir ein konkretes Beispiel nennen? Dann können wir gezielt klären, ob es an der Kommunikation, am Prozess oder an fehlender Information lag.</p></div><div class="qa"><b>„Ich will nicht direkt am Anfang schon negativ auffallen.“</b><p>Dieses Gespräch dient dazu, offene Punkte früh zu klären, nicht dich zu bewerten. Je konkreter du bist, desto besser können wir dir helfen.</p></div><div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div></section>
+<section class="slide headCenter" data-slide="10"><div class="brand">P2 / Tag 30 · GESPRÄCH 1/4 · 4/6 BESSER SAGEN</div><div class="num">10</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div><h1>TAG 30.<br>GESPRÄCHSPHASE „CHECK-IN“.</h1><h2>SAG DAS NICHT — SAG LIEBER DAS.</h2><p class="lead">Manche Sätze klingen schnell falsch, auch wenn sie nicht böse gemeint sind. Hier siehst du bessere Alternativen.</p><div class="compareHead"><span>Nicht sagen</span><span>Besser sagen</span></div><div class="compareRow"><div class="no">„Läuft doch alles, oder?“</div><div class="yes">„Wo hakt es technisch oder organisatorisch noch?“</div></div><div class="compareRow"><div class="no">„Sie werden sich schon einleben.“</div><div class="yes">„Welche Systemzugänge oder Abläufe sind dir noch nicht ganz klar?“</div></div><div class="compareRow"><div class="no">„Melden Sie sich, falls was ist.“</div><div class="yes">„Wir vereinbaren jetzt konkret: Wer ist Ihr Ansprechpartner, und bis wann klären wir das offene Thema?“</div></div><div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div></section>
+<section class="slide headCenter" data-slide="11"><div class="brand">P2 / Tag 30 · GESPRÄCH 1/4 · 5/6 VEREINBARUNG</div><div class="num">11</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div><h1>TAG 30.<br>GESPRÄCHSPHASE „CHECK-IN“.</h1><p class="lead">Trage hier fest, was ihr im Gespräch besprochen und vereinbart habt — nach Carmens Gesprächsvorlage.</p><div class="weeklyCheck"><div class="weeklyCheckIntro"><b>WAS WURDE BESPROCHEN UND VEREINBART?</b></div><div class="weeklyCheckGrid"><div class="weeklyCheckCard"><label>DOKUMENTATION</label><span style="display:block;font-weight:400;font-size:13px;color:var(--ci);margin:-4px 0 8px">Was habt ihr besprochen? Stichpunkte reichen völlig.</span><textarea data-field="m1_dok" placeholder="Kurz eintragen …"></textarea></div><div class="weeklyCheckCard"><label>NÄCHSTE SCHRITTE</label><span style="display:block;font-weight:400;font-size:13px;color:var(--ci);margin:-4px 0 8px">Was ist bis zum nächsten Gespräch zu tun — und wer macht was bis wann?</span><textarea data-field="m1_next" placeholder="Kurz eintragen …"></textarea></div></div></div><div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div></section>
+<section class="slide headCenter" data-slide="12"><div class="brand">P2 / Tag 30 · GESPRÄCH 1/4 · 6/6 FOLLOW-UP</div><div class="num">12</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div><h1>TAG 30.<br>GESPRÄCHSPHASE „CHECK-IN“.</h1><h2>HAKE AB: IST DIESES GESPRÄCH ERLEDIGT?</h2><div class="checks"><div class="choice" data-toggle="m1_gf1" onclick="toggleChoice(this)">30-Tage-Check-in mit Erwartungsabgleich durchgeführt</div></div><div class="box"><b>WAS ALS NÄCHSTES ANSTEHT.</b><p class="lead" style="margin:10px 0 0"><b>Tage 31–60 — ANWENDEN &amp; BEITRAGEN.</b><br>Erste eigenverantwortliche Aufgaben und Kunden-/Projektfälle</p></div><div class="note"><b>GESPRÄCH DOKUMENTIERT.</b><br>Wie geht es jetzt weiter?</div><div class="grid grid1"><div class="tile" style="cursor:pointer" onclick="goTo(13)"><b>▶ WEITER ZU TAG 60 – REVIEW</b><small>Zur nächsten Station.</small></div><div class="tile" style="cursor:pointer" onclick="goTo(47)"><b>📄 ZUSAMMENFASSUNG &amp; PDF</b><small>Alle bisher dokumentierten Stationen dieses Mitarbeiters ansehen und als PDF drucken.</small></div><div class="tile" style="cursor:pointer" onclick="goTo(5)"><b>👤 ZUR MITARBEITERWAHL</b><small>Mitarbeiter wechseln oder eine neue Person anlegen.</small></div></div><div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><span></span></div></section>
+<section class="slide headCenter" data-slide="13"><div class="brand">P2 / Tag 60 · GESPRÄCH 2/4 · 1/6 VORBEREITUNG</div><div class="num">13</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div><h1>TAG 60.<br>GESPRÄCHSPHASE „REVIEW“.</h1><div class="box"><b>WORUM GEHT ES IN DIESER GESPRÄCHSPHASE?</b><p class="lead" style="margin:10px 0 0">Jedes Gespräch hat einen roten Faden — das Thema, um das sich an diesem Tag alles dreht. Bei diesem Gespräch ist das: Fachliche Fehlerquote und Selbstständigkeit. Was du dafür genau fragst und worauf du achtest, steht auf den nächsten Seiten.</p></div><div class="box"><b>WIE OFT TRIFFT DER BUDDY DEIN NEUES TEAMMITGLIED GERADE?</b><p style="margin:10px 0 0">Ein Buddy ist eine erfahrene Kollegin oder ein erfahrener Kollege, die/der deinem neuen Teammitglied beim Einleben hilft — nicht du selbst. In dieser Gesprächsphase gilt: 1–2 feste Check-ins pro Woche</p></div><h2>IST DIESE GESPRÄCHSPHASE ABGESCHLOSSEN?</h2><p class="lead">Diese Liste zeigt, was in Tage 31–60 eigentlich passiert sein sollte. Geh sie vor dem Gespräch kurz durch: Was passt schon? Was fehlt noch? Ein offener Punkt ist kein Problem — er wird einfach zum Thema im Gespräch.</p><div class="checks"><div class="choice" data-toggle="m2_chk1" onclick="toggleChoice(this)">Erste eigenverantwortliche Aufgaben und Kunden-/Projektfälle übernommen<span style="display:block;font-weight:400;font-size:13px;color:var(--ci);margin-top:4px">Bearbeitet die Person inzwischen eigene Aufgaben oder Kundenfälle, ohne dass jeder Schritt abgesprochen werden muss?</span></div><div class="choice" data-toggle="m2_chk2" onclick="toggleChoice(this)">Buddy-Taktung auf 1–2 feste Check-ins pro Woche reduziert<span style="display:block;font-weight:400;font-size:13px;color:var(--ci);margin-top:4px">Trifft sich der Buddy nur noch ein- bis zweimal pro Woche mit der Person, statt wie am Anfang täglich?</span></div></div><div class="weeklyCheck"><div class="weeklyCheckIntro"><b>WER NIMMT AM GESPRÄCH TEIL?</b></div><div class="weeklyCheckGrid"><div class="weeklyCheckCard"><label>TEILNEHMER</label><span style="display:block;font-weight:400;font-size:13px;color:var(--ci);margin:-4px 0 8px">Wer nimmt an diesem Gespräch teil? Meist du und die neue Person — bei Bedarf auch der Buddy.</span><textarea data-field="m2_teilnehmer" placeholder="Name(n) eintragen …"></textarea></div></div></div><div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div></section>
+<section class="slide headCenter" data-slide="14"><div class="brand">P2 / Tag 60 · GESPRÄCH 2/4 · 2/6 ZIEL & EINSTIEG</div><div class="num">14</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div><h1>TAG 60.<br>GESPRÄCHSPHASE „REVIEW“.</h1><div class="box"><b>DARUM GEHT ES MIR IN DIESEM GESPRÄCH.</b><p class="lead" style="margin:10px 0 0">„Fachliche Fehlerquote und Selbstständigkeit besprechen.“</p></div><div class="box"><b>FRAGE.</b><p class="lead" style="margin:10px 0 0">„Wo fühlst du dich schon sicher, und wo brauchst du noch Unterstützung?“</p></div><div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div></section>
+<section class="slide headCenter" data-slide="15"><div class="brand">P2 / Tag 60 · GESPRÄCH 2/4 · 3/6 TYPISCHE REAKTIONEN</div><div class="num">15</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div><h1>TAG 60.<br>GESPRÄCHSPHASE „REVIEW“.</h1><h2>WAS DIE NEUE PERSON SAGEN KÖNNTE — UND WIE DU ANTWORTEST.</h2><div class="qa"><b>„Ich mach doch alles wie besprochen.“</b><p>Schauen wir uns zwei, drei konkrete Fälle der letzten Wochen gemeinsam an — daran lässt sich am besten festmachen, wo es schon rund läuft und wo noch Fragen offen sind.</p></div><div class="qa"><b>„Bei den Kundenfällen bin ich mir oft unsicher.“</b><p>Gut, das jetzt zu klären. Woran genau merkst du die Unsicherheit — fehlt Information, Erfahrung oder eine klare Abstimmung mit dem Team?</p></div><div class="qa"><b>„Die Zusammenarbeit mit der anderen Abteilung funktioniert nicht gut.“</b><p>Was genau ist an dieser Schnittstelle schwierig? Lass uns das konkret machen, damit wir es gezielt ansprechen können.</p></div><div class="qa"><b>„Ich wollte nicht extra nachfragen, um nicht unselbstständig zu wirken.“</b><p>Nachfragen ist in dieser Phase genau richtig. Woran hättest du in den letzten Wochen gemerkt, dass eine Rückfrage gut gewesen wäre?</p></div><div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div></section>
+<section class="slide headCenter" data-slide="16"><div class="brand">P2 / Tag 60 · GESPRÄCH 2/4 · 4/6 BESSER SAGEN</div><div class="num">16</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div><h1>TAG 60.<br>GESPRÄCHSPHASE „REVIEW“.</h1><h2>SAG DAS NICHT — SAG LIEBER DAS.</h2><p class="lead">Manche Sätze klingen schnell falsch, auch wenn sie nicht böse gemeint sind. Hier siehst du bessere Alternativen.</p><div class="compareHead"><span>Nicht sagen</span><span>Besser sagen</span></div><div class="compareRow"><div class="no">„Passt schon.“</div><div class="yes">„Wo fühlst du dich schon sicher, und wo brauchst du noch Unterstützung?“</div></div><div class="compareRow"><div class="no">„Sie machen zu viele Fehler.“</div><div class="yes">„Bei den letzten zwei Kundenfällen fehlte jeweils die Rückmeldung an die Schnittstelle — wie ist dir das aufgefallen?“</div></div><div class="compareRow"><div class="no">„Sie müssen selbstständiger werden.“</div><div class="yes">„Welche Aufgabe könntest du ab jetzt ohne Rückfrage übernehmen, und wo brauchst du noch eine Freigabe?“</div></div><div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div></section>
+<section class="slide headCenter" data-slide="17"><div class="brand">P2 / Tag 60 · GESPRÄCH 2/4 · 5/6 VEREINBARUNG</div><div class="num">17</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div><h1>TAG 60.<br>GESPRÄCHSPHASE „REVIEW“.</h1><p class="lead">Trage hier fest, was ihr im Gespräch besprochen und vereinbart habt — nach Carmens Gesprächsvorlage.</p><div class="weeklyCheck"><div class="weeklyCheckIntro"><b>WAS WURDE BESPROCHEN UND VEREINBART?</b></div><div class="weeklyCheckGrid"><div class="weeklyCheckCard"><label>DOKUMENTATION</label><span style="display:block;font-weight:400;font-size:13px;color:var(--ci);margin:-4px 0 8px">Was habt ihr besprochen? Stichpunkte reichen völlig.</span><textarea data-field="m2_dok" placeholder="Kurz eintragen …"></textarea></div><div class="weeklyCheckCard"><label>NÄCHSTE SCHRITTE</label><span style="display:block;font-weight:400;font-size:13px;color:var(--ci);margin:-4px 0 8px">Was ist bis zum nächsten Gespräch zu tun — und wer macht was bis wann?</span><textarea data-field="m2_next" placeholder="Kurz eintragen …"></textarea></div></div></div><div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div></section>
+<section class="slide headCenter" data-slide="18"><div class="brand">P2 / Tag 60 · GESPRÄCH 2/4 · 6/6 FOLLOW-UP</div><div class="num">18</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div><h1>TAG 60.<br>GESPRÄCHSPHASE „REVIEW“.</h1><h2>HAKE AB: IST DIESES GESPRÄCH ERLEDIGT?</h2><div class="checks"><div class="choice" data-toggle="m2_gf1" onclick="toggleChoice(this)">60-Tage-Review mit Fehleranalyse, Schnittstellenkooperation und Selbstständigkeit durchgeführt</div></div><div class="box"><b>WAS ALS NÄCHSTES ANSTEHT.</b><p class="lead" style="margin:10px 0 0"><b>Tage 61–90 — OPTIMIEREN &amp; VERANKERN.</b><br>Volle Prozessautonomie</p></div><div class="note"><b>GESPRÄCH DOKUMENTIERT.</b><br>Wie geht es jetzt weiter?</div><div class="grid grid1"><div class="tile" style="cursor:pointer" onclick="goTo(19)"><b>▶ WEITER ZU TAG 90 – STANDORTBESTIMMUNG</b><small>Zur nächsten Station.</small></div><div class="tile" style="cursor:pointer" onclick="goTo(47)"><b>📄 ZUSAMMENFASSUNG &amp; PDF</b><small>Alle bisher dokumentierten Stationen dieses Mitarbeiters ansehen und als PDF drucken.</small></div><div class="tile" style="cursor:pointer" onclick="goTo(5)"><b>👤 ZUR MITARBEITERWAHL</b><small>Mitarbeiter wechseln oder eine neue Person anlegen.</small></div></div><div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><span></span></div></section>
+<section class="slide headCenter" data-slide="19"><div class="brand">P2 / Tag 90 · GESPRÄCH 3/4 · 1/6 VORBEREITUNG</div><div class="num">19</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div><h1>TAG 90.<br>GESPRÄCHSPHASE „STANDORTBESTIMMUNG“.</h1><div class="box"><b>WORUM GEHT ES IN DIESER GESPRÄCHSPHASE?</b><p class="lead" style="margin:10px 0 0">Jedes Gespräch hat einen roten Faden — das Thema, um das sich an diesem Tag alles dreht. Bei diesem Gespräch ist das: Strukturierte Bewertung von Fachlichkeit, Selbststeuerung, Teamfit und Kultur sowie Spiegelung der vorläufigen Übernahmeperspektive. Was du dafür genau fragst und worauf du achtest, steht auf den nächsten Seiten.</p></div><div class="box"><b>WIE OFT TRIFFT DER BUDDY DEIN NEUES TEAMMITGLIED GERADE?</b><p style="margin:10px 0 0">Ein Buddy ist eine erfahrene Kollegin oder ein erfahrener Kollege, die/der deinem neuen Teammitglied beim Einleben hilft — nicht du selbst. In dieser Gesprächsphase gilt: Buddy-Phase spätestens nach 6 Wochen offiziell beendet</p></div><h2>IST DIESE GESPRÄCHSPHASE ABGESCHLOSSEN?</h2><p class="lead">Diese Liste zeigt, was in Tage 61–90 eigentlich passiert sein sollte. Geh sie vor dem Gespräch kurz durch: Was passt schon? Was fehlt noch? Ein offener Punkt ist kein Problem — er wird einfach zum Thema im Gespräch.</p><div class="checks"><div class="choice" data-toggle="m3_chk1" onclick="toggleChoice(this)">Volle Prozessautonomie im Blick<span style="display:block;font-weight:400;font-size:13px;color:var(--ci);margin-top:4px">Kann die Person die meisten Aufgaben inzwischen komplett selbstständig erledigen, ohne dich zu fragen?</span></div><div class="choice" data-toggle="m3_chk2" onclick="toggleChoice(this)">Buddy-Phase spätestens nach 6 Wochen offiziell beendet<span style="display:block;font-weight:400;font-size:13px;color:var(--ci);margin-top:4px">Ist die Begleitung durch den Buddy inzwischen offiziell beendet?</span></div></div><div class="weeklyCheck"><div class="weeklyCheckIntro"><b>WER NIMMT AM GESPRÄCH TEIL?</b></div><div class="weeklyCheckGrid"><div class="weeklyCheckCard"><label>TEILNEHMER</label><span style="display:block;font-weight:400;font-size:13px;color:var(--ci);margin:-4px 0 8px">Wer nimmt an diesem Gespräch teil? Meist du und die neue Person.</span><textarea data-field="m3_teilnehmer" placeholder="Name(n) eintragen …"></textarea></div></div></div><div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div></section>
+<section class="slide headCenter" data-slide="20"><div class="brand">P2 / Tag 90 · GESPRÄCH 3/4 · 2/6 ZIEL & EINSTIEG</div><div class="num">20</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div><h1>TAG 90.<br>GESPRÄCHSPHASE „STANDORTBESTIMMUNG“.</h1><div class="box"><b>DARUM GEHT ES MIR IN DIESEM GESPRÄCH.</b><p class="lead" style="margin:10px 0 0">„Strukturierte Bewertung von Fachlichkeit, Selbststeuerung, Teamfit und Kultur sowie Spiegelung der vorläufigen Übernahmeperspektive.“</p></div><h2>DAS WIRD HEUTE BEWERTET.</h2><p class="lead">Diese vier Bereiche schaut ihr euch heute gemeinsam an. Was du dazu genau notierst, steht auf der Vereinbarungs-Seite.</p><ul class="qlist"><li>Fachlichkeit</li><li>Selbststeuerung</li><li>Teamfit</li><li>Kultur</li></ul><div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div></section>
+<section class="slide headCenter" data-slide="21"><div class="brand">P2 / Tag 90 · GESPRÄCH 3/4 · 3/6 TYPISCHE REAKTIONEN</div><div class="num">21</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div><h1>TAG 90.<br>GESPRÄCHSPHASE „STANDORTBESTIMMUNG“.</h1><h2>WAS DIE NEUE PERSON SAGEN KÖNNTE — UND WIE DU ANTWORTEST.</h2><div class="qa"><b>„Wie stehen meine Chancen auf Übernahme?“</b><p>Genau das besprechen wir jetzt strukturiert entlang der vier Bereiche Fachlichkeit, Selbststeuerung, Teamfit und Kultur — danach kann ich dir eine vorläufige Einschätzung geben.</p></div><div class="qa"><b>„Ich dachte, das läuft schon alles rund.“</b><p>Lass uns die vier Bereiche einzeln durchgehen. Wo siehst du selbst die größten Fortschritte, wo noch offene Punkte?</p></div><div class="qa"><b>„Bei der Teamkultur bin ich mir nicht sicher, ob ich reinpasse.“</b><p>Was genau löst diese Unsicherheit aus? Woran würdest du merken, dass du gut ins Team passt?</p></div><div class="qa"><b>„Ist das schon die endgültige Entscheidung?“</b><p>Nein, das ist eine vorläufige Einschätzung, keine endgültige Entscheidung. Die fällt erst im Abschlussgespräch an Tag 150–170.</p></div><div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div></section>
+<section class="slide headCenter" data-slide="22"><div class="brand">P2 / Tag 90 · GESPRÄCH 3/4 · 4/6 BESSER SAGEN</div><div class="num">22</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div><h1>TAG 90.<br>GESPRÄCHSPHASE „STANDORTBESTIMMUNG“.</h1><h2>SAG DAS NICHT — SAG LIEBER DAS.</h2><p class="lead">Manche Sätze klingen schnell falsch, auch wenn sie nicht böse gemeint sind. Hier siehst du bessere Alternativen.</p><div class="compareHead"><span>Nicht sagen</span><span>Besser sagen</span></div><div class="compareRow"><div class="no">„Grundsätzlich passt das.“</div><div class="yes">„In der Fachlichkeit bist du schon selbstständig, bei der Teamabstimmung sehe ich noch Luft nach oben.“</div></div><div class="compareRow"><div class="no">„Mal schauen, wie's weitergeht.“</div><div class="yes">„Meine vorläufige Einschätzung ist [konkrete Einschätzung]. Das können wir bis Tag 150 gemeinsam noch verändern.“</div></div><div class="compareRow"><div class="no">„Sie müssen sich noch beweisen.“</div><div class="yes">„Bis zum Abschlussgespräch an Tag 150 wollen wir gemeinsam an [konkretem Punkt] arbeiten.“</div></div><div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div></section>
+<section class="slide headCenter" data-slide="23"><div class="brand">P2 / Tag 90 · GESPRÄCH 3/4 · 5/6 VEREINBARUNG</div><div class="num">23</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div><h1>TAG 90.<br>GESPRÄCHSPHASE „STANDORTBESTIMMUNG“.</h1><p class="lead">Trage hier fest, was ihr im Gespräch besprochen und vereinbart habt — nach Carmens Gesprächsvorlage.</p><div class="weeklyCheck"><div class="weeklyCheckIntro"><b>WAS WURDE BESPROCHEN UND VEREINBART?</b></div><div class="weeklyCheckGrid"><div class="weeklyCheckCard"><label>FACHLICHKEIT</label><span style="display:block;font-weight:400;font-size:13px;color:var(--ci);margin:-4px 0 8px">Wie gut beherrscht die Person die fachlichen Aufgaben ihrer Rolle?</span><textarea data-field="m3_fach" placeholder="Kurz eintragen …"></textarea></div><div class="weeklyCheckCard"><label>SELBSTSTEUERUNG</label><span style="display:block;font-weight:400;font-size:13px;color:var(--ci);margin:-4px 0 8px">Wie gut organisiert sich die Person selbst — Prioritäten setzen, Termine einhalten, ohne ständige Anleitung?</span><textarea data-field="m3_selbst" placeholder="Kurz eintragen …"></textarea></div><div class="weeklyCheckCard"><label>TEAMFIT</label><span style="display:block;font-weight:400;font-size:13px;color:var(--ci);margin:-4px 0 8px">Wie gut hat sich die Person ins Team eingefügt?</span><textarea data-field="m3_teamfit" placeholder="Kurz eintragen …"></textarea></div><div class="weeklyCheckCard"><label>KULTUR</label><span style="display:block;font-weight:400;font-size:13px;color:var(--ci);margin:-4px 0 8px">Trägt die Person die Werte und den Umgangston im Unternehmen mit?</span><textarea data-field="m3_kultur" placeholder="Kurz eintragen …"></textarea></div><div class="weeklyCheckCard"><label>VORLÄUFIGE ÜBERNAHMEPERSPEKTIVE</label><span style="display:block;font-weight:400;font-size:13px;color:var(--ci);margin:-4px 0 8px">Wie schätzt du die Chancen auf Übernahme aktuell ein? Das ist noch keine endgültige Entscheidung.</span><textarea data-field="m3_perspektive" placeholder="Kurz eintragen …"></textarea></div><div class="weeklyCheckCard"><label>NÄCHSTE SCHRITTE</label><span style="display:block;font-weight:400;font-size:13px;color:var(--ci);margin:-4px 0 8px">Woran arbeitet ihr bis zum Abschlussgespräch an Tag 150–170?</span><textarea data-field="m3_next" placeholder="Kurz eintragen …"></textarea></div></div></div><div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div></section>
+<section class="slide headCenter" data-slide="24"><div class="brand">P2 / Tag 90 · GESPRÄCH 3/4 · 6/6 FOLLOW-UP</div><div class="num">24</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div><h1>TAG 90.<br>GESPRÄCHSPHASE „STANDORTBESTIMMUNG“.</h1><h2>HAKE AB: IST DIESES GESPRÄCH ERLEDIGT?</h2><div class="checks"><div class="choice" data-toggle="m3_gf1" onclick="toggleChoice(this)">90-Tage-Standortbestimmung mit Leistungsbeurteilung und erster Übernahmeprognose durchgeführt</div></div><div class="box"><b>WAS ALS NÄCHSTES ANSTEHT.</b><p class="lead" style="margin:10px 0 0"><b>Tage 150–170 — ENTSCHEIDUNGS-KORRIDOR.</b><br>Finale Weichenstellung</p></div><div class="note"><b>GESPRÄCH DOKUMENTIERT.</b><br>Wie geht es jetzt weiter?</div><div class="grid grid1"><div class="tile" style="cursor:pointer" onclick="goTo(25)"><b>▶ WEITER ZU TAG 150–170 – PROBEZEIT-ABSCHLUSSGESPRÄCH</b><small>Zur nächsten Station.</small></div><div class="tile" style="cursor:pointer" onclick="goTo(47)"><b>📄 ZUSAMMENFASSUNG &amp; PDF</b><small>Alle bisher dokumentierten Stationen dieses Mitarbeiters ansehen und als PDF drucken.</small></div><div class="tile" style="cursor:pointer" onclick="goTo(5)"><b>👤 ZUR MITARBEITERWAHL</b><small>Mitarbeiter wechseln oder eine neue Person anlegen.</small></div></div><div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><span></span></div></section>
+<section class="slide headCenter" data-slide="25"><div class="brand">P2 / Tag 150–170 · GESPRÄCH 4/4 · 1/6 VORBEREITUNG</div><div class="num">25</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div><h1>TAG 150–170.<br>GESPRÄCHSPHASE „PROBEZEIT-ABSCHLUSSGESPRÄCH“.</h1><h2>IST DIESE GESPRÄCHSPHASE ABGESCHLOSSEN?</h2><p class="lead">Diese Liste zeigt, was in Tage 150–170 eigentlich passiert sein sollte. Geh sie vor dem Gespräch kurz durch: Was passt schon? Was fehlt noch? Ein offener Punkt ist kein Problem — er wird einfach zum Thema im Gespräch.</p><div class="checks"><div class="choice" data-toggle="m4_chk1" onclick="toggleChoice(this)">Finale Weichenstellung im Entscheidungs-Korridor erreicht<span style="display:block;font-weight:400;font-size:13px;color:var(--ci);margin-top:4px">Ist die Entscheidung über die Zeit nach der Probezeit gefallen — und mit der Person besprochen?</span></div></div><div class="weeklyCheck"><div class="weeklyCheckIntro"><b>WER NIMMT AM GESPRÄCH TEIL?</b></div><div class="weeklyCheckGrid"><div class="weeklyCheckCard"><label>TEILNEHMER</label><span style="display:block;font-weight:400;font-size:13px;color:var(--ci);margin:-4px 0 8px">Wer nimmt an diesem Gespräch teil? Meist du und die neue Person — bei Bedarf auch HR.</span><textarea data-field="m4_teilnehmer" placeholder="Name(n) eintragen …"></textarea></div></div></div><div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div></section>
+<section class="slide headCenter" data-slide="26"><div class="brand">P2 / Tag 150–170 · GESPRÄCH 4/4 · 2/6 ZIEL & EINSTIEG</div><div class="num">26</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div><h1>TAG 150–170.<br>GESPRÄCHSPHASE „PROBEZEIT-ABSCHLUSSGESPRÄCH“.</h1><div class="box"><b>DARUM GEHT ES MIR IN DIESEM GESPRÄCH.</b><p class="lead" style="margin:10px 0 0">„Finale Weichenstellung im Entscheidungs-Korridor.“</p></div><div class="box"><b>GOLDENE ABSCHLUSSFRAGE.</b><p class="lead" style="margin:10px 0 0">„Wenn du auf die letzten sechs Monate zurückblickst: An welchem Punkt dachtest du ‚Genau hier will ich die nächsten drei Jahre arbeiten‘ – und was war die Situation, in der du dich am meisten gefragt hast, worauf du dich hier eigentlich eingelassen hast?“</p></div><div class="box"><b>WOZU DIENT DIESE FRAGE?</b><p class="lead" style="margin:10px 0 0">Schönrednerei erkennen und zeigen, ob der Mitarbeiter auch unvermeidbare Reibungspunkte der Firmenkultur mittragen kann.</p></div><div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div></section>
+<section class="slide headCenter" data-slide="27"><div class="brand">P2 / Tag 150–170 · GESPRÄCH 4/4 · 3/6 TYPISCHE REAKTIONEN</div><div class="num">27</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div><h1>TAG 150–170.<br>GESPRÄCHSPHASE „PROBEZEIT-ABSCHLUSSGESPRÄCH“.</h1><h2>WAS DIE NEUE PERSON SAGEN KÖNNTE — UND WIE DU ANTWORTEST.</h2><div class="qa"><b>„Ich fühle mich hier total wohl, alles super.“</b><p>Das freut mich zu hören. Gab es trotzdem einen Moment, an dem du dich gefragt hast, worauf du dich hier eigentlich eingelassen hast?</p></div><div class="qa"><b>„Ehrlich, am Anfang habe ich an manchem gezweifelt.“</b><p>Was genau war der Punkt, an dem du gezweifelt hast — und was hat den Ausschlag gegeben, dass du geblieben bist?</p></div><div class="qa"><b>„Manche Dinge in der Firmenkultur finde ich immer noch schwierig.“</b><p>Das ist eine wichtige Rückmeldung. Kannst du das konkret machen, damit wir wissen, woran wir arbeiten sollten?</p></div><div class="qa"><b>„Kann ich jetzt einfach so weitermachen wie bisher?“</b><p>Ja, mit den vereinbarten nächsten Schritten aus diesem Gespräch als Grundlage für die Zeit nach der Probezeit.</p></div><div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div></section>
+<section class="slide headCenter" data-slide="28"><div class="brand">P2 / Tag 150–170 · GESPRÄCH 4/4 · 4/6 BESSER SAGEN</div><div class="num">28</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div><h1>TAG 150–170.<br>GESPRÄCHSPHASE „PROBEZEIT-ABSCHLUSSGESPRÄCH“.</h1><h2>SAG DAS NICHT — SAG LIEBER DAS.</h2><p class="lead">Manche Sätze klingen schnell falsch, auch wenn sie nicht böse gemeint sind. Hier siehst du bessere Alternativen.</p><div class="compareHead"><span>Nicht sagen</span><span>Besser sagen</span></div><div class="compareRow"><div class="no">„Wie fandest du die letzten sechs Monate?“</div><div class="yes">„Wenn du zurückblickst: An welchem Punkt warst du dir am sichersten, hier richtig zu sein?“</div></div><div class="compareRow"><div class="no">„Passen Sie ins Team, oder?“</div><div class="yes">„Welchen Reibungspunkt der Firmenkultur trägst du mit, und welchen nicht?“</div></div><div class="compareRow"><div class="no">„Wir sind zufrieden.“</div><div class="yes">„Das sind die konkreten nächsten Schritte, auf die wir uns jetzt einigen.“</div></div><div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div></section>
+<section class="slide headCenter" data-slide="29"><div class="brand">P2 / Tag 150–170 · GESPRÄCH 4/4 · 5/6 VEREINBARUNG</div><div class="num">29</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div><h1>TAG 150–170.<br>GESPRÄCHSPHASE „PROBEZEIT-ABSCHLUSSGESPRÄCH“.</h1><p class="lead">Trage hier fest, was ihr im Gespräch besprochen und vereinbart habt — nach Carmens Gesprächsvorlage.</p><div class="weeklyCheck"><div class="weeklyCheckIntro"><b>WAS WURDE BESPROCHEN UND VEREINBART?</b></div><div class="weeklyCheckGrid"><div class="weeklyCheckCard"><label>DOKUMENTATION</label><span style="display:block;font-weight:400;font-size:13px;color:var(--ci);margin:-4px 0 8px">Was habt ihr besprochen? Stichpunkte reichen völlig.</span><textarea data-field="m4_dok" placeholder="Kurz eintragen …"></textarea></div><div class="weeklyCheckCard"><label>NÄCHSTE SCHRITTE</label><span style="display:block;font-weight:400;font-size:13px;color:var(--ci);margin:-4px 0 8px">Wie geht es nach der Probezeit weiter — und was ist bis dahin zu klären?</span><textarea data-field="m4_next" placeholder="Kurz eintragen …"></textarea></div></div></div><div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div></section>
+<section class="slide headCenter" data-slide="30"><div class="brand">P2 / Tag 150–170 · GESPRÄCH 4/4 · 6/6 FOLLOW-UP</div><div class="num">30</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div><h1>TAG 150–170.<br>GESPRÄCHSPHASE „PROBEZEIT-ABSCHLUSSGESPRÄCH“.</h1><h2>HAKE AB: IST DIESES GESPRÄCH ERLEDIGT?</h2><div class="checks"><div class="choice" data-toggle="m4_gf1" onclick="toggleChoice(this)">Tag 150–170 – Probezeit-Abschlussgespräch durchgeführt</div><div class="choice" data-toggle="m4_gf2" onclick="toggleChoice(this)">Goldene Abschlussfrage verwendet</div></div><div class="box"><b>ENDE DER PROBEZEIT.</b><p class="lead" style="margin:10px 0 0">Mit diesem Gespräch endet der Entscheidungs-Korridor. Einmal bauen. Immer wieder nutzen — für die nächste neue Mitarbeiterin oder den nächsten neuen Mitarbeiter.</p></div><div class="note"><b>GESPRÄCH DOKUMENTIERT.</b><br>Wie geht es jetzt weiter?</div><div class="grid grid1"><div class="tile" style="cursor:pointer" onclick="goTo(31)"><b>▶ WEITER ZU BUDDY-FRAMEWORK</b><small>Zur nächsten Station.</small></div><div class="tile" style="cursor:pointer" onclick="goTo(47)"><b>📄 ZUSAMMENFASSUNG &amp; PDF</b><small>Alle bisher dokumentierten Stationen dieses Mitarbeiters ansehen und als PDF drucken.</small></div><div class="tile" style="cursor:pointer" onclick="goTo(5)"><b>👤 ZUR MITARBEITERWAHL</b><small>Mitarbeiter wechseln oder eine neue Person anlegen.</small></div></div><div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><span></span></div></section>
+<section class="slide headCenter" data-slide="31"><div class="brand">P2 / BUDDY-FRAMEWORK · 1/5 ROLLE</div><div class="num">31</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div><h1>BUDDY-FRAMEWORK.<br>WER IST DER BUDDY?</h1><div class="box"><b>ROLLE DES BUDDYS.</b><p class="lead" style="margin:10px 0 0">Der Buddy ist kultureller Wegweiser und kein Co-Chef oder Notnagel. Der Buddy begleitet die neue Person im vorgesehenen Zeitraum und unterstützt Orientierung, Vernetzung und Arbeitsorganisation.</p></div><div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div></section>
+<section class="slide headCenter" data-slide="32"><div class="brand">P2 / BUDDY-FRAMEWORK · 2/5 DAUER & TAKTUNG</div><div class="num">32</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div><h1>BUDDY-FRAMEWORK.<br>WIE LANGE UND WIE OFT?</h1><div class="box"><b>WIE LANGE BEGLEITET DER BUDDY?</b><p style="margin:10px 0 0">Die Rolle ist bewusst zeitlich begrenzt — danach soll die neue Person allein zurechtkommen. Dauer: 4 bis maximal 6 Wochen</p></div><h2>TAKTUNG.</h2><p class="lead">Auch wie oft ihr euch trefft, nimmt mit der Zeit ab:</p><div class="qa"><b>Woche 1–2</b><p>täglich</p></div><div class="qa"><b>Woche 3–6</b><p>punktuell 1–2x pro Woche</p></div><div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div></section>
+<section class="slide headCenter" data-slide="33"><div class="brand">P2 / BUDDY-FRAMEWORK · 3/5 AUFGABEN</div><div class="num">33</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div><h1>BUDDY-FRAMEWORK.<br>WAS DARF DER BUDDY TUN?</h1><p class="lead">Das ist die Aufgabe des Buddys — nicht mehr und nicht weniger:</p><h2>DER BUDDY DARF.</h2><div class="checks"><div class="choice" data-toggle="buddy_auf1" onclick="toggleChoice(this)">Tools zeigen</div><div class="choice" data-toggle="buddy_auf2" onclick="toggleChoice(this)">Ungeschriebene Regeln erklären</div><div class="choice" data-toggle="buddy_auf3" onclick="toggleChoice(this)">Im Team vernetzen</div><div class="choice" data-toggle="buddy_auf4" onclick="toggleChoice(this)">Kollegiale Tipps zur Arbeitsorganisation geben</div><div class="choice" data-toggle="buddy_auf5" onclick="toggleChoice(this)">Erklären, an wen man sich bei HR-Fragen wendet</div></div><div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div></section>
+<section class="slide headCenter" data-slide="34"><div class="brand">P2 / BUDDY-FRAMEWORK · 4/5 GRENZEN & TABUS</div><div class="num">34</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div><h1>BUDDY-FRAMEWORK.<br>WAS DER BUDDY NICHT DARF.</h1><p class="lead">Damit für alle klar bleibt, wer wofür zuständig ist — der Buddy ersetzt weder dich noch HR:</p><div class="note" style="border-left-color:var(--red)"><b>STRIKTE GRENZEN UND TABUS.</b><br>Keine Leistungsbeurteilung oder fachliche Defizite bewerten.<br>Keine HR-/Vertragsthemen übernehmen, insbesondere Urlaub, Überstunden, Gehalt und Krankmeldungen.<br>Keine Arbeit stellvertretend übernehmen.</div><div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div></section>
+<section class="slide headCenter" data-slide="35"><div class="brand">P2 / BUDDY-FRAMEWORK · 5/5 ARBEITSVORLAGE</div><div class="num">35</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div><h1>BUDDY-FRAMEWORK.<br>CHECKLISTE &amp; ARBEITSVORLAGE.</h1><h2>BUDDY-CHECKLISTE.</h2><p class="lead">Das fasst die letzten vier Seiten als Checkliste zusammen — häkel ab, was schon passt.</p><div class="checks"><div class="choice" data-toggle="buddy_chk1" onclick="toggleChoice(this)">Buddy als kultureller Wegweiser benannt</div><div class="choice" data-toggle="buddy_chk2" onclick="toggleChoice(this)">Dauer auf 4 bis maximal 6 Wochen festgelegt</div><div class="choice" data-toggle="buddy_chk3" onclick="toggleChoice(this)">Woche 1–2: tägliche Begleitung vorgesehen</div><div class="choice" data-toggle="buddy_chk4" onclick="toggleChoice(this)">Woche 3–6: punktuell 1–2x pro Woche vorgesehen</div><div class="choice" data-toggle="buddy_chk5" onclick="toggleChoice(this)">Tools gezeigt</div><div class="choice" data-toggle="buddy_chk6" onclick="toggleChoice(this)">Ungeschriebene Regeln erklärt</div><div class="choice" data-toggle="buddy_chk7" onclick="toggleChoice(this)">Im Team vernetzt</div><div class="choice" data-toggle="buddy_chk8" onclick="toggleChoice(this)">Kollegiale Tipps zur Arbeitsorganisation gegeben</div><div class="choice" data-toggle="buddy_chk9" onclick="toggleChoice(this)">Weg zu HR-Fragen erklärt</div><div class="choice" data-toggle="buddy_chk10" onclick="toggleChoice(this)">Keine Leistungsbeurteilung oder Bewertung fachlicher Defizite</div><div class="choice" data-toggle="buddy_chk11" onclick="toggleChoice(this)">Keine HR-/Vertragsthemen übernommen</div><div class="choice" data-toggle="buddy_chk12" onclick="toggleChoice(this)">Keine Arbeit stellvertretend übernommen</div><div class="choice" data-toggle="buddy_chk13" onclick="toggleChoice(this)">Buddy-Phase spätestens nach 6 Wochen beendet</div></div><div class="weeklyCheck"><div class="weeklyCheckIntro"><b>ARBEITSVORLAGE.</b></div><div class="weeklyCheckGrid"><div class="weeklyCheckCard"><label>NAME BUDDY</label><span style="display:block;font-weight:400;font-size:13px;color:var(--ci);margin:-4px 0 8px">Wer übernimmt die Buddy-Rolle für diese Person?</span><textarea data-field="buddy_name" placeholder="Name eintragen …"></textarea></div><div class="weeklyCheckCard"><label>NOTIZEN ZUR BUDDY-PHASE</label><span style="display:block;font-weight:400;font-size:13px;color:var(--ci);margin:-4px 0 8px">Läuft die Begleitung gut, oder gibt es Stolpersteine?</span><textarea data-field="buddy_notizen" placeholder="Kurz eintragen …"></textarea></div></div></div><div class="note"><b>BUDDY-FRAMEWORK DOKUMENTIERT.</b><br>Wie geht es jetzt weiter?</div><div class="grid grid1"><div class="tile" style="cursor:pointer" onclick="goTo(36)"><b>▶ WEITER ZUM ESKALATIONSPROTOKOLL</b><small>Bei sichtbarer Leistungslücke.</small></div><div class="tile" style="cursor:pointer" onclick="goTo(47)"><b>📄 ZUSAMMENFASSUNG &amp; PDF</b><small>Alle bisher dokumentierten Stationen dieses Mitarbeiters ansehen und als PDF drucken.</small></div><div class="tile" style="cursor:pointer" onclick="goTo(6)"><b>◂ ZUR ÜBERSICHT</b><small>Zurück zum Probezeit-Radar.</small></div></div><div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><span></span></div></section>
+<section class="slide headCenter" data-slide="36"><div class="brand">P2 / ESKALATIONSPROTOKOLL · 1/5 WANN GREIFT DAS?</div><div class="num">36</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div><h1>WENN ES HAKT.<br>14-TAGE-ESKALATIONSPROTOKOLL.</h1><p class="lead">Das 14-Tage-Eskalationsprotokoll ist ein Führungsinstrument für eine sichtbare Leistungslücke.</p><div class="note"><b>GRUNDSATZ.</b><br>„Kein Vorwurf und keine emotionalen Phrasen.“</div><h2>DIE DREI SCHRITTE.</h2><div class="grid"><div class="tile"><b>SCHRITT 1</b><small>Faktenabgleich im 1:1-Gespräch (Tag 1–14)</small></div><div class="tile"><b>SCHRITT 2</b><small>Tag 15–28: Lernkurven-Prüfung</small></div><div class="tile"><b>SCHRITT 3</b><small>Entscheidungskonsequenz</small></div></div><div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div></section>
+<section class="slide headCenter" data-slide="37"><div class="brand">P2 / ESKALATIONSPROTOKOLL · 2/5 SCHRITT 1 · FAKTENABGLEICH</div><div class="num">37</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div><h1>SCHRITT 1.<br>FAKTENABGLEICH IM 1:1-GESPRÄCH.</h1><p class="lead">Bei einer sichtbaren Leistungslücke erfolgt innerhalb von Tag 1–14 ein Faktenabgleich im 1:1-Gespräch. Das Arbeitsergebnis wird sachlich mit der Zielerwartung abgeglichen.</p><div class="weeklyCheck"><div class="weeklyCheckIntro"><b>DOKUMENTATION.</b></div><div class="weeklyCheckGrid"><div class="weeklyCheckCard"><label>SICHTBARE LEISTUNGSLÜCKE</label><span style="display:block;font-weight:400;font-size:13px;color:var(--ci);margin:-4px 0 8px">Was genau fällt dir auf? Ein konkretes Beispiel hilft mehr als ein allgemeiner Eindruck.</span><textarea data-field="esk_luecke" placeholder="Kurz eintragen …"></textarea></div><div class="weeklyCheckCard"><label>FAKTENABGLEICH IM 1:1-GESPRÄCH (TAG 1–14)</label><span style="display:block;font-weight:400;font-size:13px;color:var(--ci);margin:-4px 0 8px">Was habt ihr im Gespräch besprochen? Sachlich, ohne Vorwurf.</span><textarea data-field="esk_fakten" placeholder="Kurz eintragen …"></textarea></div></div></div><div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div></section>
+<section class="slide headCenter" data-slide="38"><div class="brand">P2 / ESKALATIONSPROTOKOLL · 3/5 ZWISCHENZIEL</div><div class="num">38</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div><h1>ZWISCHENZIEL &amp;<br>SCHLÜSSELFRAGE.</h1><div class="note"><b>SCHLÜSSELFRAGE.</b><br>„Welche Unterstützung oder Schulung fehlt dir genau dafür?“</div><div class="weeklyCheck"><div class="weeklyCheckIntro"><b>DOKUMENTATION.</b></div><div class="weeklyCheckGrid"><div class="weeklyCheckCard"><label>SACHLICHER ABGLEICH MIT DER ZIELERWARTUNG</label><span style="display:block;font-weight:400;font-size:13px;color:var(--ci);margin:-4px 0 8px">Wie weit liegt das Ergebnis von dem entfernt, was eigentlich erwartet war?</span><textarea data-field="esk_abgleich" placeholder="Kurz eintragen …"></textarea></div><div class="weeklyCheckCard"><label>VERBINDLICHES ZWISCHENZIEL FÜR DIE FOLGENDE WOCHE</label><span style="display:block;font-weight:400;font-size:13px;color:var(--ci);margin:-4px 0 8px">Was soll bis zum nächsten Check konkret erreicht sein?</span><textarea data-field="esk_zwischenziel" placeholder="Kurz eintragen …"></textarea></div><div class="weeklyCheckCard"><label>ANTWORT AUF DIE SCHLÜSSELFRAGE</label><span style="display:block;font-weight:400;font-size:13px;color:var(--ci);margin:-4px 0 8px">Was hat die Person geantwortet, als du gefragt hast, welche Unterstützung fehlt?</span><textarea data-field="esk_antwort" placeholder="Kurz eintragen …"></textarea></div></div></div><div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div></section>
+<section class="slide headCenter" data-slide="39"><div class="brand">P2 / ESKALATIONSPROTOKOLL · 4/5 SCHRITT 2 · LERNKURVE</div><div class="num">39</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div><h1>SCHRITT 2.<br>TAG 15–28: LERNKURVEN-PRÜFUNG.</h1><p class="lead">Von Tag 15 bis Tag 28 erfolgt die Lernkurven-Prüfung. Zeigt sich innerhalb von 14 Tagen nach dem Gespräch keine sichtbare Verbesserung, erfolgt die Eskalation an HR.</p><h2>SICHTBARE VERBESSERUNG INNERHALB VON 14 TAGEN?</h2><div class="checks"><div class="choice" data-toggle="esk_verb_ja" onclick="toggleYesNo(this, 'esk_verb_nein')">Ja</div><div class="choice" data-toggle="esk_verb_nein" onclick="toggleYesNo(this, 'esk_verb_ja')">Nein</div></div><div class="weeklyCheck"><div class="weeklyCheckIntro"><b>DOKUMENTATION.</b></div><div class="weeklyCheckGrid"><div class="weeklyCheckCard"><label>LERNKURVEN-PRÜFUNG (TAG 15–28)</label><span style="display:block;font-weight:400;font-size:13px;color:var(--ci);margin:-4px 0 8px">Was hat sich seit dem letzten Gespräch verändert — zum Besseren oder nicht?</span><textarea data-field="esk_lernkurve" placeholder="Kurz eintragen …"></textarea></div></div></div><div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div></section>
+<section class="slide headCenter" data-slide="40"><div class="brand">P2 / ESKALATIONSPROTOKOLL · 5/5 SCHRITT 3 · ENTSCHEIDUNG</div><div class="num">40</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div><h1>SCHRITT 3.<br>ENTSCHEIDUNGSKONSEQUENZ.</h1><p class="lead">Als Entscheidungskonsequenz gilt: entweder eine schriftliche Zielvereinbarung mit 14-tägiger Bewährungsfrist, oder die Einleitung des Trennungsprozesses.</p><div class="note" style="border-left-color:#c99a2e"><b>ACHTUNG.</b><br>Kein Mitschleppen bis kurz vor Probezeitende.</div><div class="weeklyCheck"><div class="weeklyCheckIntro"><b>DOKUMENTATION.</b></div><div class="weeklyCheckGrid"><div class="weeklyCheckCard"><label>ENTSCHEIDUNG (ZIELVEREINBARUNG ODER TRENNUNGSPROZESS)</label><span style="display:block;font-weight:400;font-size:13px;color:var(--ci);margin:-4px 0 8px">Wie geht es jetzt weiter — schriftliche Zielvereinbarung mit Bewährungsfrist oder Trennungsprozess?</span><textarea data-field="esk_entscheidung" placeholder="Kurz eintragen …"></textarea></div></div></div><h2>CHECKLISTE.</h2><p class="lead">Das fasst das ganze Eskalationsprotokoll zusammen — geh es kurz durch, bevor du weitermachst.</p><div class="checks"><div class="choice" data-toggle="esk_chk1" onclick="toggleChoice(this)">Sichtbare Leistungslücke festgestellt</div><div class="choice" data-toggle="esk_chk2" onclick="toggleChoice(this)">Faktenabgleich innerhalb von Tag 1–14 im 1:1-Gespräch durchgeführt</div><div class="choice" data-toggle="esk_chk3" onclick="toggleChoice(this)">Kein Vorwurf und keine emotionalen Phrasen verwendet</div><div class="choice" data-toggle="esk_chk4" onclick="toggleChoice(this)">Arbeitsergebnis sachlich mit Zielerwartung abgeglichen</div><div class="choice" data-toggle="esk_chk5" onclick="toggleChoice(this)">Verbindliches Zwischenziel für die folgende Woche vereinbart</div><div class="choice" data-toggle="esk_chk6" onclick="toggleChoice(this)">Schlüsselfrage zur fehlenden Unterstützung oder Schulung gestellt</div><div class="choice" data-toggle="esk_chk7" onclick="toggleChoice(this)">Tag 15–28: Lernkurven-Prüfung durchgeführt</div><div class="choice" data-toggle="esk_chk8" onclick="toggleChoice(this)">Bei fehlender sichtbarer Verbesserung innerhalb von 14 Tagen an HR eskaliert</div><div class="choice" data-toggle="esk_chk9" onclick="toggleChoice(this)">Entscheidung zwischen schriftlicher Zielvereinbarung mit 14-tägiger Bewährungsfrist und Einleitung des Trennungsprozesses getroffen</div><div class="choice" data-toggle="esk_chk10" onclick="toggleChoice(this)">Kein Mitschleppen bis kurz vor Probezeitende</div></div><div class="note"><b>ESKALATIONSPROTOKOLL DOKUMENTIERT.</b><br>Wie geht es jetzt weiter?</div><div class="grid grid1"><div class="tile" style="cursor:pointer" onclick="goTo(41)"><b>▶ WEITER ZUM TRENNUNGS-LEITFADEN</b><small>Falls es zur Trennung kommt.</small></div><div class="tile" style="cursor:pointer" onclick="goTo(47)"><b>📄 ZUSAMMENFASSUNG &amp; PDF</b><small>Alle bisher dokumentierten Stationen dieses Mitarbeiters ansehen und als PDF drucken.</small></div><div class="tile" style="cursor:pointer" onclick="goTo(6)"><b>◂ ZUR ÜBERSICHT</b><small>Zurück zum Probezeit-Radar.</small></div></div><div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><span></span></div></section>
+<section class="slide headCenter" data-slide="41"><div class="brand">P2 / TRENNUNGS-LEITFADEN · 1/5 LEITPLANKE</div><div class="num">41</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div><h1>TRENNUNGS-LEITFADEN.<br>10-MINUTEN-PROTOKOLL.</h1><div class="note" style="border-left-color:var(--red)"><b>RECHTLICHE LEITPLANKE.</b><br>Innerhalb der Probezeit (§ 622 Abs. 3 BGB) bedarf die ordentliche Kündigung keiner Begründung. Diese Aussage wird hier ausschließlich als Bestandteil des bereitgestellten Fachwissens-Archivs wiedergegeben und nicht eigenständig erweitert.</div><div class="box"><b>VIER-AUGEN-PRINZIP.</b><p style="margin:10px 0 0">Die Führungskraft führt das Gespräch nicht allein, sondern mit HR oder einer zweiten Führungskraft als Zeuge.</p></div><div class="box"><b>GESPRÄCHSDAUER.</b><p style="margin:10px 0 0">Kurz und klar halten — lange Erklärungen verunsichern in dieser Situation nur. Die Gesprächsdauer beträgt maximal 10–15 Minuten.</p></div><div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div></section>
+<section class="slide headCenter" data-slide="42"><div class="brand">P2 / TRENNUNGS-LEITFADEN · 2/5 SCHRITT 1</div><div class="num">42</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div><h1>1. KLARHEIT IM ERSTEN SATZ.</h1><p class="lead">So beginnst du das Gespräch — wortwörtlich:</p><div class="box"><b>FESTE FORMULIERUNG.</b><p class="lead" style="margin:10px 0 0">„Wir haben die Entscheidung getroffen, das Arbeitsverhältnis innerhalb der Probezeit zu beenden.“</p></div><div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div></section>
+<section class="slide headCenter" data-slide="43"><div class="brand">P2 / TRENNUNGS-LEITFADEN · 3/5 SCHRITT 2</div><div class="num">43</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div><h1>2. KEINE DEBATTE ÜBER DAS „WARUM“.</h1><p class="lead">Nicht rechtfertigen, nicht diskutieren, keine Leistungsbeispiele zerreden.</p><div class="box"><b>FESTE FORMULIERUNG.</b><p class="lead" style="margin:10px 0 0">„Die Entscheidung steht fest.“</p></div><div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div></section>
+<section class="slide headCenter" data-slide="44"><div class="brand">P2 / TRENNUNGS-LEITFADEN · 4/5 SCHRITT 3</div><div class="num">44</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div><h1>3. SACHLICHER ÜBERGANG.</h1><p class="lead">Das sind die praktischen Punkte, die direkt im Anschluss an die Ansage erledigt werden — häkel ab, was schon geklärt ist:</p><div class="checks"><div class="choice" data-toggle="tr_ablauf1" onclick="toggleChoice(this)">Kündigungsschreiben im Original.</div><div class="choice" data-toggle="tr_ablauf2" onclick="toggleChoice(this)">Freistellung.</div><div class="choice" data-toggle="tr_ablauf3" onclick="toggleChoice(this)">Rückgabe von Hardware und Schlüsseln.</div><div class="choice" data-toggle="tr_ablauf4" onclick="toggleChoice(this)">Übergabe offener Aufgaben.</div></div><div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div></section>
+<section class="slide headCenter" data-slide="45"><div class="brand">P2 / TRENNUNGS-LEITFADEN · 5/5 PROTOKOLL</div><div class="num">45</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div><h1>PROTOKOLL &amp;<br>CHECKLISTE.</h1><p class="lead">Das fasst den ganzen Trennungs-Leitfaden zusammen — geh es kurz durch, bevor du das Gespräch führst.</p><div class="checks"><div class="choice" data-toggle="tr_chk1" onclick="toggleChoice(this)">Führungskraft führt das Gespräch nicht allein</div><div class="choice" data-toggle="tr_chk2" onclick="toggleChoice(this)">HR oder zweite Führungskraft als Zeuge beteiligt</div><div class="choice" data-toggle="tr_chk3" onclick="toggleChoice(this)">Gesprächsdauer auf maximal 10–15 Minuten ausgerichtet</div><div class="choice" data-toggle="tr_chk4" onclick="toggleChoice(this)">Kündigungsschreiben im Original vorhanden</div><div class="choice" data-toggle="tr_chk5" onclick="toggleChoice(this)">Freistellung geklärt</div><div class="choice" data-toggle="tr_chk6" onclick="toggleChoice(this)">Rückgabe von Hardware und Schlüsseln vorbereitet</div><div class="choice" data-toggle="tr_chk7" onclick="toggleChoice(this)">Übergabe offener Aufgaben vorbereitet</div></div><div class="weeklyCheck"><div class="weeklyCheckIntro"><b>ARBEITSFELDER.</b></div><div class="weeklyCheckGrid"><div class="weeklyCheckCard"><label>NOTIZEN ZUM PROTOKOLL</label><span style="display:block;font-weight:400;font-size:13px;color:var(--ci);margin:-4px 0 8px">Was ist während oder nach dem Gespräch wichtig festzuhalten?</span><textarea data-field="tr_notizen" placeholder="Kurz eintragen …"></textarea></div></div></div><div class="note" style="border-left-color:var(--red)"><b>RECHTLICHER HINWEIS.</b><br>Die arbeitsrechtlichen Hinweise in diesem Produkt stammen aus dem bereitgestellten Carmen-Fachwissen-Archiv. Sie wurden nicht erweitert oder eigenständig interpretiert. Die arbeitsrechtlichen Hinweise dienen der allgemeinen Orientierung und ersetzen keine individuelle Rechtsberatung. Bei konkreten Einzelfällen sollte fachkundige arbeitsrechtliche Beratung eingeholt werden.</div><div class="note"><b>TRENNUNGS-LEITFADEN DOKUMENTIERT.</b><br>Wie geht es jetzt weiter?</div><div class="grid grid1"><div class="tile" style="cursor:pointer" onclick="goTo(46)"><b>▶ WEITER ZUM TEAM-BERICHT</b><small>Übersicht über alle Mitarbeitenden.</small></div><div class="tile" style="cursor:pointer" onclick="goTo(47)"><b>📄 ZUSAMMENFASSUNG &amp; PDF</b><small>Alle bisher dokumentierten Stationen dieses Mitarbeiters ansehen und als PDF drucken.</small></div><div class="tile" style="cursor:pointer" onclick="goTo(6)"><b>◂ ZUR ÜBERSICHT</b><small>Zurück zum Probezeit-Radar.</small></div></div><div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><span></span></div></section>
+<section class="slide headCenter" data-slide="46"><div class="brand">P2 / TEAM-BERICHT</div><div class="num">46</div><h1>IHR TEAM.<br>AUF EINEN BLICK.</h1><p class="lead">Übersicht über alle angelegten Mitarbeitenden und den Stand ihrer vier Kernkonversationen (Tag 30, 60, 90, 150–170).</p><div class="bigCounts"><div><strong id="cntTeamVorbereitet">0</strong><small>GESPRÄCHE VORBEREITET</small></div><div><strong id="cntTeamDokumentiert">0</strong><small>GESPRÄCHE DOKUMENTIERT</small></div><div><strong id="cntTeamMA">0</strong><small>MITARBEITENDE ANGELEGT</small></div></div><table class="teamTable"><thead><tr><th>MITARBEITER</th><th>VORBEREITET</th><th>DOKUMENTIERT</th></tr></thead><tbody id="teamTableBody"></tbody></table><button class="pdfBtn" onclick="window.print()">🖨 ALS PDF DRUCKEN</button><button class="btn alt" onclick="goTo(47)">📄 Einzel-Zusammenfassung ansehen</button><p style="margin:18px 0 0;font-size:12px;color:var(--muted);text-align:right">Als Nächstes: die Einzel-Zusammenfassung eines Mitarbeiters</p><div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter zur Zusammenfassung</button></div></section>
+<section class="slide headCenter" data-slide="47"><div class="brand">P2 / ZUSAMMENFASSUNG</div><div class="num">47</div><div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div>
+<h1>ONBOARDING-<br>ZUSAMMENFASSUNG.</h1>
+<p class="lead">Alle Notizen zum aktiven Mitarbeiter, Station für Station — zum Ausdrucken, als PDF speichern oder weitergeben.</p>
+<div id="summaryOutput"></div>
+<button class="pdfBtn" onclick="window.print()">🖨 ALS PDF DRUCKEN</button>
+<div class="nav"><button class="btn alt homeBtn" onclick="goTo(6)">◂ Übersicht</button><button class="btn alt" onclick="prevSlide()">Zurück</button><button class="btn" onclick="nextSlide()">Weiter</button></div>
+</section>
+
+<section class="slide headCenter" data-slide="48"><div class="brand">P2 / ABSCHLUSS</div><div class="num">48</div>
+<h1>EINMAL BAUEN.<br>IMMER WIEDER NUTZEN.</h1>
+<p class="lead">Produkt 2 führt die Carmen-Onboarding-Produktwelt vom ersten Arbeitstag über die 30-60-90-Tage-Taktung und den Entscheidungs-Korridor Tag 150–170 bis zum Ende der Probezeit.</p>
+<div class="ctaHero"><b>ÜBER CARMEN GRUSE-LATEGAHN</b><p style="margin:10px 0 0;line-height:1.5">Carmen Gruse-Lategahn ist HR-Generalistin mit 18 Jahren Praxiserfahrung. Sie übersetzt typische HR- und Führungssituationen in klare, praxistaugliche Werkzeuge für kleine und mittlere Unternehmen. Das Onboarding-Prozessbundle ist eine praktische Prozesshilfe. Es ersetzt kein individuelles Coaching und keine Rechtsberatung.</p></div>
+<div class="nav"><button class="btn alt homeBtn" onclick="goTo(1)">◂ Von vorn</button><button class="btn alt" onclick="prevSlide()">Zurück</button><span></span></div>
+</section>
+
+<div class="modal" id="empModal"><div class="dialog">
+<h2>MITARBEITER HINZUFÜGEN</h2>
+<label>Name<input type="text" id="empNameInput" placeholder="z. B. Julia Berger"></label>
+<label>Position<input type="text" id="empPositionInput" placeholder="z. B. Sachbearbeiterin Einkauf"></label>
+<label>Abteilung<input type="text" id="empAbteilungInput" placeholder="z. B. Einkauf"></label>
+<div class="row"><button class="btn alt" onclick="closeEmpModal()">Abbrechen</button><button class="btn" onclick="confirmAddEmployee()">Hinzufügen</button></div>
+</div></div>
+
+<button class="themeTrigger" onclick="openThemeModal()" title="Farbe ändern" aria-label="Farbe ändern">🎨</button>
+<div class="modal" id="themeModal"><div class="dialog">
+<h2>FARBE WÄHLEN</h2>
+<p style="margin:0;color:var(--ci);font-size:13px">Zehn abgestimmte Farbmodelle — jederzeit wechselbar, bleibt gespeichert.</p>
+<div class="themeSwatches" id="themeSwatches"></div>
+<div class="row"><button class="btn alt" onclick="closeThemeModal()">Schließen</button></div>
+</div></div>
+
+</div>
+
+<script>
+/* ============================================================================
+   CARMEN NEXT — MOTOR / engine.js
+   Geteilte Logik für die gesamte P1–P8 Produktfamilie: Slide-Navigation,
+   localStorage, Mitarbeiterverwaltung mit Lizenzgrenze, Feld-Bindung,
+   Auswahl-Toggles, Team-Report-Rendering, Modal-Handling.
+
+   Enthält KEINE Produktinhalte. Produktinhalte kommen aus products/*.config.js
+   und werden von build/build.js zu einer einzelnen HTML-Datei zusammengefügt.
+
+   Bekannter Bug (siehe CLAUDE.md): beim dynamischen Erzeugen von onclick="..."
+   Attributen NICHT mit \' escapen. Stattdessen HTML-Entities nutzen
+   (&quot;...&quot;) — siehe renderGrid() unten.
+   ============================================================================ */
+(function (global) {
+  'use strict';
+
+  function escapeHtml(str) {
+    return String(str == null ? '' : str).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  // ---------------------------------------------------------------------
+  // Storage: ein generischer localStorage-Store pro Produkt.
+  // ---------------------------------------------------------------------
+  function createStore(key, defaultDataFn) {
+    function load() {
+      try {
+        const raw = localStorage.getItem(key);
+        if (!raw) return defaultDataFn();
+        return Object.assign(defaultDataFn(), JSON.parse(raw));
+      } catch (e) {
+        return defaultDataFn();
+      }
+    }
+    const store = { data: load() };
+    store.save = function () {
+      try { localStorage.setItem(key, JSON.stringify(store.data)); } catch (e) { /* storage unavailable */ }
+    };
+    store.reload = function () { store.data = load(); };
+    return store;
+  }
+
+  // ---------------------------------------------------------------------
+  // Slide-Navigation: funktioniert für jedes Interaktionsmuster
+  // (wochenbasierter Zyklus wie P1, situative Karten-Auswahl wie P6),
+  // solange Slides als <section class="slide" data-slide="N"> vorliegen.
+  // ---------------------------------------------------------------------
+  function createNav() {
+    const SLIDES = Array.from(document.querySelectorAll('.slide'));
+    let current = SLIDES.findIndex(function (s) { return s.classList.contains('active'); });
+    if (current < 0) current = 0;
+    const enterHooks = {};
+
+    function show(i) {
+      if (i < 0 || i >= SLIDES.length) return;
+      if (SLIDES[current]) SLIDES[current].classList.remove('active');
+      current = i;
+      SLIDES[current].classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      const num = SLIDES[current].dataset.slide;
+      if (enterHooks[num]) enterHooks[num]();
+    }
+    function goTo(n) { show(n - 1); }
+    function next() { show(current + 1); }
+    function prev() { show(current - 1); }
+    function onEnter(slideNumber, fn) { enterHooks[String(slideNumber)] = fn; }
+
+    return {
+      goTo: goTo,
+      next: next,
+      prev: prev,
+      onEnter: onEnter,
+      get current() { return current + 1; },
+      get length() { return SLIDES.length; }
+    };
+  }
+
+  // ---------------------------------------------------------------------
+  // Mitarbeiterverwaltung mit Lizenzgrenze.
+  // Felder werden pro Mitarbeiter-ID in store.data.byEmployee[id].fields
+  // gespeichert, damit Daten verschiedener Personen sich nicht vermischen.
+  // ---------------------------------------------------------------------
+  function createEmployeeManager(opts) {
+    const store = opts.store;
+    const license = opts.license || { maxEmployees: 20 };
+    const D = store.data;
+    if (!D.employees) D.employees = {};
+    if (!D.employeeOrder) D.employeeOrder = [];
+    if (!D.byEmployee) D.byEmployee = {};
+    if (D.activeEmployeeId === undefined) D.activeEmployeeId = null;
+
+    function bucketFor(id) {
+      const key = id || '__unassigned__';
+      if (!D.byEmployee[key]) D.byEmployee[key] = { fields: {} };
+      if (!D.byEmployee[key].fields) D.byEmployee[key].fields = {};
+      return D.byEmployee[key];
+    }
+    function currentBucket() { return bucketFor(D.activeEmployeeId); }
+    function newId() { return 'emp_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+
+    function isFull() { return D.employeeOrder.length >= license.maxEmployees; }
+
+    function add(name, extra) {
+      name = (name || '').trim();
+      if (!name) return null;
+      if (isFull()) return null;
+      const id = newId();
+      D.employees[id] = Object.assign({ id: id, name: name }, extra || {});
+      D.employeeOrder.push(id);
+      D.activeEmployeeId = id;
+      store.save();
+      render();
+      opts.onChange && opts.onChange();
+      return id;
+    }
+    function remove(id) {
+      D.employeeOrder = D.employeeOrder.filter(function (e) { return e !== id; });
+      delete D.employees[id];
+      if (D.activeEmployeeId === id) D.activeEmployeeId = null;
+      store.save();
+      render();
+      opts.onChange && opts.onChange();
+    }
+    function setActive(id) {
+      D.activeEmployeeId = id;
+      store.save();
+      render();
+      opts.onChange && opts.onChange();
+    }
+
+    function render() {
+      const grid = opts.gridSelector && document.querySelector(opts.gridSelector);
+      if (grid) {
+        grid.innerHTML = '';
+        D.employeeOrder.forEach(function (id) {
+          const emp = D.employees[id];
+          if (!emp) return;
+          const div = document.createElement('div');
+          div.className = 'tile' + (D.activeEmployeeId === id ? ' activeEmp' : '');
+          div.style.cursor = 'pointer';
+          div.onclick = function () { setActive(id); };
+          const small = opts.tileLabel ? opts.tileLabel(bucketFor(id)) : '';
+          const subtitle = opts.tileSubtitle ? opts.tileSubtitle(emp) : '';
+          const removeFn = opts.removeFnName || 'removeEmployee';
+          div.innerHTML =
+            '<span class="rm" onclick="' + removeFn + '(&quot;' + id + '&quot;, event)">entfernen</span>' +
+            '<b>' + escapeHtml(emp.name) + '</b>' +
+            (subtitle ? '<small class="tileSubtitle">' + escapeHtml(subtitle) + '</small>' : '') +
+            (small ? '<small>' + escapeHtml(small) + '</small>' : '');
+          grid.appendChild(div);
+        });
+      }
+      const countEl = opts.countSelector && document.querySelector(opts.countSelector);
+      if (countEl) countEl.textContent = D.employeeOrder.length;
+      const limitNote = opts.limitNoteSelector && document.querySelector(opts.limitNoteSelector);
+      if (limitNote) limitNote.style.display = isFull() ? 'block' : 'none';
+      updateContextbars();
+    }
+    function updateContextbars() {
+      if (!opts.ctxNameSelector) return;
+      const name = D.activeEmployeeId ? (D.employees[D.activeEmployeeId] || {}).name : null;
+      document.querySelectorAll(opts.ctxNameSelector).forEach(function (el) {
+        el.textContent = name || '— keiner ausgewählt —';
+      });
+    }
+
+    function removeWithConfirm(id, ev) {
+      if (ev) ev.stopPropagation();
+      if (!global.confirm('Mitarbeiter wirklich entfernen? Die Dokumentation bleibt gespeichert, ist aber keiner Person mehr zugeordnet.')) return;
+      remove(id);
+    }
+
+    return {
+      get data() { return D; },
+      bucketFor: bucketFor,
+      currentBucket: currentBucket,
+      add: add,
+      remove: removeWithConfirm,
+      removeSilently: remove,
+      setActive: setActive,
+      isFull: isFull,
+      render: render,
+      updateContextbars: updateContextbars
+    };
+  }
+
+  // ---------------------------------------------------------------------
+  // Feld-Bindung: <textarea data-field="..."> wird automatisch im Bucket
+  // des aktiven Mitarbeiters gespeichert/wiederhergestellt.
+  // ---------------------------------------------------------------------
+  function bindFields(store, manager) {
+    document.querySelectorAll('textarea[data-field]').forEach(function (el) {
+      el.addEventListener('input', function () {
+        manager.currentBucket().fields[el.dataset.field] = el.value;
+        store.save();
+      });
+    });
+  }
+  function restoreFields(manager) {
+    const b = manager.currentBucket();
+    document.querySelectorAll('textarea[data-field]').forEach(function (el) {
+      el.value = b.fields[el.dataset.field] || '';
+    });
+  }
+
+  // ---------------------------------------------------------------------
+  // Auswahl-Toggles: <div data-toggle="key" onclick="Motor.choices.toggle(this)">
+  // ---------------------------------------------------------------------
+  function createChoices(store) {
+    const D = store.data;
+    if (!D.choices) D.choices = {};
+    function bindAll() {
+      document.querySelectorAll('[data-toggle]').forEach(function (el) {
+        const key = el.dataset.toggle;
+        if (D.choices[key]) el.classList.add('on');
+      });
+    }
+    function toggle(el) {
+      const key = el.dataset.toggle;
+      el.classList.toggle('on');
+      D.choices[key] = el.classList.contains('on');
+      store.save();
+    }
+    return { bindAll: bindAll, toggle: toggle };
+  }
+
+  // ---------------------------------------------------------------------
+  // Farbmodelle: jedes Modell ist ein vollständig abgestimmtes Set aus
+  // neun Tokens (Seiten-Hintergrund, Papier/Slide, Fläche/Karten, Text,
+  // gedämpfter Text, Rahmen, Marke/Buttons, Akzent, Seitenzahl-Akzent) —
+  // nicht nur ein einzelner Akzent. So bleibt Kontrast innerhalb eines
+  // Modells garantiert, auch beim dunklen "Anthrazit"-Modell. Die
+  // Ampelfarben (--green/--orange/--red) bleiben absichtlich über alle
+  // Modelle hinweg fest, damit "Erfolg/Warnung/Fehler" nie mit der Marke
+  // kippt. Persistiert die Wahl in localStorage wie Mitarbeiterdaten.
+  // ---------------------------------------------------------------------
+  const THEME_KEYS = ['pagebg', 'paper', 'surface', 'ink', 'muted', 'line', 'ci', 'mint', 'num'];
+  const DEFAULT_THEMES = [
+    { id: 'salbei', name: 'Salbei (Standard)', pagebg: '#ebe8e3', paper: '#f6f4f0', surface: '#ffffff', ink: '#252525', muted: '#777672', line: '#d9d5cf', ci: '#7f7a74', mint: '#8fe3cf', num: '#55cdb2' },
+    { id: 'ozean', name: 'Ozean', pagebg: '#e3ebf1', paper: '#eef4f9', surface: '#ffffff', ink: '#252525', muted: '#5b7185', line: '#c9d9e6', ci: '#3867b0', mint: '#a8d4ef', num: '#3d84c9' },
+    { id: 'bordeaux', name: 'Bordeaux', pagebg: '#f1e5e3', paper: '#faf1ef', surface: '#ffffff', ink: '#252525', muted: '#8a6a66', line: '#e6d1cd', ci: '#7a3b3b', mint: '#e8b8b8', num: '#c2605f' },
+    { id: 'wald', name: 'Waldgrün', pagebg: '#e5ece7', paper: '#f0f6f2', surface: '#ffffff', ink: '#252525', muted: '#5f7a68', line: '#cfe0d5', ci: '#2f6b4f', mint: '#b3e8cb', num: '#3f9c6d' },
+    { id: 'terrakotta', name: 'Terrakotta', pagebg: '#f1e8de', paper: '#faf2e9', surface: '#ffffff', ink: '#252525', muted: '#8a6a4c', line: '#e6d3ba', ci: '#a2542f', mint: '#f0c9a3', num: '#c46f3c' },
+    { id: 'graphit', name: 'Graphit', pagebg: '#e6e8eb', paper: '#f1f2f4', surface: '#ffffff', ink: '#252525', muted: '#5c6472', line: '#d4d8de', ci: '#4a5568', mint: '#b8cbe0', num: '#5c7290' },
+    { id: 'aubergine', name: 'Aubergine', pagebg: '#ece5ee', paper: '#f6f0f8', surface: '#ffffff', ink: '#252525', muted: '#7a6a82', line: '#ddd0e3', ci: '#5b3a6b', mint: '#d3b8e8', num: '#8354a0' },
+    { id: 'senf', name: 'Senfgelb', pagebg: '#efe9db', paper: '#f8f3e6', surface: '#ffffff', ink: '#252525', muted: '#8a7a45', line: '#e3d8b0', ci: '#8a6d1f', mint: '#f0dfa8', num: '#b5911f' },
+    { id: 'petrol', name: 'Petrol', pagebg: '#e2ecea', paper: '#edf5f3', surface: '#ffffff', ink: '#252525', muted: '#4e7371', line: '#c7ddd9', ci: '#1d6b6b', mint: '#a8e3da', num: '#28918f' },
+    { id: 'anthrazit', name: 'Anthrazit (Dunkel)', pagebg: '#181818', paper: '#222222', surface: '#2b2b2b', ink: '#f0efec', muted: '#a19a90', line: '#3a3a3a', ci: '#6b6560', mint: '#c9c2b8', num: '#c9c2b8' }
+  ];
+
+  function createColorThemes(themes, storageKey) {
+    const KEY = storageKey || 'carmen_theme_v1';
+    const list = themes || DEFAULT_THEMES;
+    function find(id) {
+      let t = null;
+      for (let i = 0; i < list.length; i++) { if (list[i].id === id) t = list[i]; }
+      return t || list[0];
+    }
+    function apply(id) {
+      const t = find(id);
+      const root = document.documentElement.style;
+      THEME_KEYS.forEach(function (k) { root.setProperty('--' + k, t[k]); });
+      try { localStorage.setItem(KEY, t.id); } catch (e) { /* storage unavailable */ }
+    }
+    function current() {
+      try { return localStorage.getItem(KEY) || list[0].id; } catch (e) { return list[0].id; }
+    }
+    function init() { apply(current()); }
+    function renderSwatches(selector) {
+      const el = document.querySelector(selector);
+      if (!el) return;
+      el.innerHTML = '';
+      const active = current();
+      list.forEach(function (t) {
+        const btn = document.createElement('div');
+        btn.className = 'themeSwatch' + (t.id === active ? ' active' : '');
+        btn.title = t.name;
+        btn.style.background = 'linear-gradient(135deg, ' + t.paper + ' 50%, ' + t.ci + ' 50%)';
+        btn.onclick = function () { apply(t.id); renderSwatches(selector); };
+        el.appendChild(btn);
+      });
+    }
+    return { apply: apply, current: current, init: init, renderSwatches: renderSwatches, themes: list };
+  }
+
+  // ---------------------------------------------------------------------
+  // Team-Report: iteriert alle Mitarbeitenden, lässt das Produkt pro Person
+  // eine Tabellenzeile + Zählwerte berechnen (rowFn), summiert automatisch.
+  // Der letzte Eintrag in totalsSelectors bekommt immer die Mitarbeiterzahl.
+  // ---------------------------------------------------------------------
+  function renderTeamReport(cfg) {
+    const manager = cfg.manager;
+    const D = manager.data;
+    const rows = [];
+    const sums = [];
+    D.employeeOrder.forEach(function (id) {
+      const emp = D.employees[id];
+      if (!emp) return;
+      const bucket = manager.bucketFor(id);
+      const r = cfg.rowFn(emp, bucket);
+      rows.push(r.html);
+      if (r.counts) r.counts.forEach(function (v, i) { sums[i] = (sums[i] || 0) + v; });
+    });
+    const tbody = cfg.tbodySelector && document.querySelector(cfg.tbodySelector);
+    if (tbody) tbody.innerHTML = rows.join('') || (cfg.emptyHtml || '');
+    if (cfg.totalsSelectors) {
+      cfg.totalsSelectors.forEach(function (sel, i) {
+        const el = sel && document.querySelector(sel);
+        if (!el) return;
+        el.textContent = (i < sums.length) ? sums[i] : D.employeeOrder.length;
+      });
+    }
+  }
+
+  // ---------------------------------------------------------------------
+  // Modal-Handling (generisch, per id).
+  // ---------------------------------------------------------------------
+  function openModal(id) { const el = document.getElementById(id); if (el) el.classList.add('open'); }
+  function closeModal(id) { const el = document.getElementById(id); if (el) el.classList.remove('open'); }
+
+  global.MotorEngine = {
+    escapeHtml: escapeHtml,
+    createStore: createStore,
+    createNav: createNav,
+    createEmployeeManager: createEmployeeManager,
+    bindFields: bindFields,
+    restoreFields: restoreFields,
+    createChoices: createChoices,
+    createColorThemes: createColorThemes,
+    DEFAULT_THEMES: DEFAULT_THEMES,
+    renderTeamReport: renderTeamReport,
+    openModal: openModal,
+    closeModal: closeModal
+  };
+})(window);
+
+const CARD_META = [{"n":1,"title":"Tag 30 – Check-in","prepFieldIds":["m1_teilnehmer","m1_dok","m1_next"],"docFieldId":"m1_dok"},{"n":2,"title":"Tag 60 – Review","prepFieldIds":["m2_teilnehmer","m2_dok","m2_next"],"docFieldId":"m2_dok"},{"n":3,"title":"Tag 90 – Standortbestimmung","prepFieldIds":["m3_fach","m3_selbst","m3_teamfit","m3_kultur","m3_perspektive","m3_teilnehmer","m3_next"],"docFieldId":"m3_perspektive"},{"n":4,"title":"Tag 150–170 – Probezeit-Abschlussgespräch","prepFieldIds":["m4_teilnehmer","m4_dok","m4_next"],"docFieldId":"m4_dok"}];
+const SECTION_META = {"milestones":[{"title":"TAG 30 – CHECK-IN","prepEntries":[{"id":"m1_teilnehmer","label":"TEILNEHMER"}],"vereinbarungEntries":[{"id":"m1_dok","label":"DOKUMENTATION"},{"id":"m1_next","label":"NÄCHSTE SCHRITTE"}]},{"title":"TAG 60 – REVIEW","prepEntries":[{"id":"m2_teilnehmer","label":"TEILNEHMER"}],"vereinbarungEntries":[{"id":"m2_dok","label":"DOKUMENTATION"},{"id":"m2_next","label":"NÄCHSTE SCHRITTE"}]},{"title":"TAG 90 – STANDORTBESTIMMUNG","prepEntries":[{"id":"m3_teilnehmer","label":"TEILNEHMER"}],"vereinbarungEntries":[{"id":"m3_fach","label":"FACHLICHKEIT"},{"id":"m3_selbst","label":"SELBSTSTEUERUNG"},{"id":"m3_teamfit","label":"TEAMFIT"},{"id":"m3_kultur","label":"KULTUR"},{"id":"m3_perspektive","label":"VORLÄUFIGE ÜBERNAHMEPERSPEKTIVE"},{"id":"m3_next","label":"NÄCHSTE SCHRITTE"}]},{"title":"TAG 150–170 – PROBEZEIT-ABSCHLUSSGESPRÄCH","prepEntries":[{"id":"m4_teilnehmer","label":"TEILNEHMER"}],"vereinbarungEntries":[{"id":"m4_dok","label":"DOKUMENTATION"},{"id":"m4_next","label":"NÄCHSTE SCHRITTE"}]}],"tools":[{"title":"KMU-BUDDY-FRAMEWORK","entries":[{"id":"buddy_name","label":"NAME BUDDY"},{"id":"buddy_notizen","label":"NOTIZEN ZUR BUDDY-PHASE"}]},{"title":"WENN ES HAKT — ESKALATIONSPROTOKOLL","entries":[{"id":"esk_luecke","label":"SICHTBARE LEISTUNGSLÜCKE"},{"id":"esk_fakten","label":"FAKTENABGLEICH IM 1:1-GESPRÄCH (TAG 1–14)"},{"id":"esk_abgleich","label":"SACHLICHER ABGLEICH MIT DER ZIELERWARTUNG"},{"id":"esk_zwischenziel","label":"VERBINDLICHES ZWISCHENZIEL FÜR DIE FOLGENDE WOCHE"},{"id":"esk_antwort","label":"ANTWORT AUF DIE SCHLÜSSELFRAGE"},{"id":"esk_lernkurve","label":"LERNKURVEN-PRÜFUNG (TAG 15–28)"},{"id":"esk_entscheidung","label":"ENTSCHEIDUNG (ZIELVEREINBARUNG ODER TRENNUNGSPROZESS)"}]},{"title":"TRENNUNGS-LEITFADEN","entries":[{"id":"tr_notizen","label":"NOTIZEN ZUM PROTOKOLL"}]}]};
+const store = MotorEngine.createStore("p2_data_v2", function(){ return { employees:{}, employeeOrder:[], activeEmployeeId:null, byEmployee:{}, choices:{} }; });
+const manager = MotorEngine.createEmployeeManager({
+  store: store,
+  license: { maxEmployees: 20 },
+  gridSelector: "#empGrid",
+  countSelector: "#empCount",
+  limitNoteSelector: "#empLimitNote",
+  ctxNameSelector: "#ctxName",
+  removeFnName: "removeEmployee",
+  onChange: function(){ restoreFieldsForActive(); },
+  tileLabel: function(bucket){
+    let docCount = 0;
+    CARD_META.forEach(function(c){ if((bucket.fields[c.docFieldId]||"").trim()) docCount++; });
+    return docCount + " von " + CARD_META.length + " Kernkonversationen dokumentiert";
+  },
+  tileSubtitle: function(emp){
+    return [emp.position, emp.abteilung].filter(function(v){ return (v||"").trim(); }).join(" — ");
+  }
+});
+const choices = MotorEngine.createChoices(store);
+const theme = MotorEngine.createColorThemes(MotorEngine.DEFAULT_THEMES, "p2_theme_v1");
+const nav = MotorEngine.createNav();
+
+function openThemeModal(){ theme.renderSwatches("#themeSwatches"); MotorEngine.openModal("themeModal"); }
+function closeThemeModal(){ MotorEngine.closeModal("themeModal"); }
+function goTo(n){ nav.goTo(n); }
+function nextSlide(){ nav.next(); }
+function prevSlide(){ nav.prev(); }
+function toggleChoice(el){ choices.toggle(el); }
+function toggleYesNo(el, otherKey){
+  const wasOn = el.classList.contains("on");
+  choices.toggle(el);
+  if(!wasOn){
+    const other = document.querySelector('[data-toggle="'+otherKey+'"]');
+    if(other && other.classList.contains("on")){ choices.toggle(other); }
+  }
+}
+function openEmpModal(){
+  if(manager.isFull()){ const note=document.getElementById("empLimitNote"); if(note) note.style.display="block"; return; }
+  document.getElementById("empNameInput").value = "";
+  document.getElementById("empPositionInput").value = "";
+  document.getElementById("empAbteilungInput").value = "";
+  MotorEngine.openModal("empModal");
+  document.getElementById("empNameInput").focus();
+}
+function closeEmpModal(){ MotorEngine.closeModal("empModal"); }
+function confirmAddEmployee(){
+  const name = document.getElementById("empNameInput").value;
+  const position = document.getElementById("empPositionInput").value.trim();
+  const abteilung = document.getElementById("empAbteilungInput").value.trim();
+  const id = manager.add(name, { position: position, abteilung: abteilung });
+  if(id){ closeEmpModal(); }
+  else if((name||"").trim()){ closeEmpModal(); const note=document.getElementById("empLimitNote"); if(note) note.style.display="block"; }
+}
+function removeEmployee(id, ev){ manager.remove(id, ev); }
+function restoreFieldsForActive(){ MotorEngine.restoreFields(manager); }
+
+nav.onEnter(46, function(){
+  MotorEngine.renderTeamReport({
+    manager: manager,
+    tbodySelector: "#teamTableBody",
+    emptyHtml: '<tr><td colspan="3" style="color:#999">Noch keine Mitarbeitenden angelegt.</td></tr>',
+    totalsSelectors: ["#cntTeamVorbereitet", "#cntTeamDokumentiert", "#cntTeamMA"],
+    rowFn: function(emp, bucket){
+      let prep = 0, doc = 0;
+      CARD_META.forEach(function(c){
+        const prepFilled = c.prepFieldIds.some(function(f){ return (bucket.fields[f]||"").trim().length>0; });
+        const docFilled = (bucket.fields[c.docFieldId]||"").trim().length>0;
+        if(prepFilled) prep++;
+        if(docFilled) doc++;
+      });
+      return {
+        html: "<tr><td>" + MotorEngine.escapeHtml(emp.name) + "</td><td>" + prep + " / " + CARD_META.length + "</td><td>" + doc + " / " + CARD_META.length + "</td></tr>",
+        counts: [prep, doc]
+      };
+    }
+  });
+});
+
+function renderZusammenfassung(){
+  const out = document.getElementById("summaryOutput");
+  if(!out) return;
+  const id = manager.data.activeEmployeeId;
+  const emp = id ? manager.data.employees[id] : null;
+  if(!emp){
+    out.innerHTML = '<div class="summaryEmpty">Bitte wähle zuerst einen Mitarbeiter aus, um dessen Zusammenfassung zu sehen.<br><button class="btn" onclick="goTo(5)">Zu den Mitarbeitenden</button></div>';
+    return;
+  }
+  const bucket = manager.bucketFor(id);
+  const dateStr = new Date().toLocaleDateString("de-DE", { day: "numeric", month: "long", year: "numeric" });
+  let step = 0;
+  function entriesHtml(entries){
+    return entries.filter(function(e){ return (bucket.fields[e.id]||"").trim().length>0; })
+      .map(function(e){ return '<div class="summaryField"><label>'+e.label+'</label><p>'+MotorEngine.escapeHtml(bucket.fields[e.id])+'</p></div>'; })
+      .join("");
+  }
+  const milestoneHtml = SECTION_META.milestones.map(function(s){
+    const prepHtml = entriesHtml(s.prepEntries);
+    const vereinbarungHtml = entriesHtml(s.vereinbarungEntries);
+    if(!prepHtml && !vereinbarungHtml) return "";
+    step++;
+    return '<div class="summaryCard"><div class="summaryCardHead"><span class="summaryCardNum">'+step+'</span><h3>'+MotorEngine.escapeHtml(s.title)+'</h3></div>' +
+      (prepHtml ? '<div class="summarySection"><b>TEILNEHMER</b>'+prepHtml+'</div>' : "") +
+      (vereinbarungHtml ? '<div class="summarySection"><b>VEREINBARUNG</b>'+vereinbarungHtml+'</div>' : "") +
+      "</div>";
+  }).join("");
+  const toolHtml = SECTION_META.tools.map(function(s){
+    const entriesRendered = entriesHtml(s.entries);
+    if(!entriesRendered) return "";
+    step++;
+    return '<div class="summaryCard"><div class="summaryCardHead"><span class="summaryCardNum">'+step+'</span><h3>'+MotorEngine.escapeHtml(s.title)+'</h3></div>' +
+      '<div class="summarySection">'+entriesRendered+'</div></div>';
+  }).join("");
+  const cardsHtml = milestoneHtml + toolHtml;
+  const posAbt = [emp.position, emp.abteilung].filter(function(v){ return (v||"").trim(); }).join(" — ");
+  const metaHtml = '<div class="summaryMeta"><b>Mitarbeiter:</b> '+MotorEngine.escapeHtml(emp.name)+
+    (posAbt ? '<br><b>Position:</b> '+MotorEngine.escapeHtml(posAbt) : "")+
+    '<br><b>Erstellt am:</b> '+dateStr+'</div>';
+  out.innerHTML = cardsHtml
+    ? (metaHtml + cardsHtml)
+    : (metaHtml + '<div class="summaryEmpty">Für '+MotorEngine.escapeHtml(emp.name)+' wurden noch keine Notizen erfasst.</div>');
+}
+nav.onEnter(47, renderZusammenfassung);
+
+document.addEventListener("DOMContentLoaded", function(){
+  theme.init();
+  manager.render();
+  choices.bindAll();
+  MotorEngine.bindFields(store, manager);
+  restoreFieldsForActive();
+});
+
+</script>
+
+</html>
