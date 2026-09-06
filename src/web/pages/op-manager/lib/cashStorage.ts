@@ -7,6 +7,9 @@ interface CashPersistedState {
   expenses: CashExpense[];
   categories: string[];
   soundEnabled: boolean;
+  // Manual adjustment on top of the Kontoauszug-derived Bar-Abhebungen total
+  // — for a withdrawal the bank CSV never reported (or reported late).
+  barabhebungenKorrektur: number;
 }
 
 export function loadCashState(): CashPersistedState {
@@ -14,6 +17,7 @@ export function loadCashState(): CashPersistedState {
     expenses: [],
     categories: [...DEFAULT_CASH_CATEGORIES],
     soundEnabled: true,
+    barabhebungenKorrektur: 0,
   };
 
   try {
@@ -27,6 +31,8 @@ export function loadCashState(): CashPersistedState {
           ? parsed.categories
           : fallback.categories,
       soundEnabled: typeof parsed.soundEnabled === "boolean" ? parsed.soundEnabled : fallback.soundEnabled,
+      barabhebungenKorrektur:
+        typeof parsed.barabhebungenKorrektur === "number" ? parsed.barabhebungenKorrektur : fallback.barabhebungenKorrektur,
     };
   } catch {
     return fallback;

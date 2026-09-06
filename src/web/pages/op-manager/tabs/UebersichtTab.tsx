@@ -24,8 +24,8 @@ export function UebersichtTab() {
     [kontoauszugState]
   );
   const barabhebungenTotal = useMemo(
-    () => computeBarabhebungenTotal(kontoauszugState.transactions),
-    [kontoauszugState]
+    () => Math.round((computeBarabhebungenTotal(kontoauszugState.transactions) + cashState.barabhebungenKorrektur) * 100) / 100,
+    [kontoauszugState, cashState]
   );
   const bargeldBestand = useMemo(
     () => computeCashBalance(barabhebungenTotal, cashState.expenses),

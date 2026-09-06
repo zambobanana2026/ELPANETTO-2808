@@ -1,5 +1,5 @@
 import { GlaeubigerCell } from "./GlaeubigerCell";
-import { GELDTRANSIT_LABEL } from "../lib/constants";
+import { isInterneBewegung } from "../lib/balance";
 import { formatDateDE, formatSignedAmount } from "../lib/format";
 import type { Transaction } from "../types";
 
@@ -31,8 +31,11 @@ export function TransactionTable({ transactions, onToggleBarAbhebung, onSetGlaeu
         </thead>
         <tbody>
           {transactions.map((tx) => {
-            const isGeldtransit = tx.verwendungszweck === GELDTRANSIT_LABEL;
-            const isBarAbhebungCandidate = isGeldtransit && tx.betrag < 0;
+            // Any negative amount can be marked as a Bar-Abhebung — a real
+            // cash withdrawal often carries the merchant's own text (e.g.
+            // "Bargeld ROSSMANN 3404"), not the generic Geldtransit label.
+            const isBarAbhebungCandidate = tx.betrag < 0;
+            const isInterne = isInterneBewegung(tx);
             return (
               <tr key={tx.id} className="border-b border-stone-100 last:border-0">
                 <td className="px-4 py-2.5">
@@ -61,7 +64,7 @@ export function TransactionTable({ transactions, onToggleBarAbhebung, onSetGlaeu
                 </td>
                 <td
                   className={`px-4 py-2.5 text-right font-medium tabular-nums ${
-                    isGeldtransit ? "text-stone-400" : tx.betrag >= 0 ? "text-green-600" : "text-red-600"
+                    isInterne ? "text-stone-400" : tx.betrag >= 0 ? "text-green-600" : "text-red-600"
                   }`}
                 >
                   {formatSignedAmount(tx.betrag)}

@@ -3,6 +3,7 @@ interface SummaryTile {
   value: string;
   color: string;
   highlight?: boolean;
+  sub?: string;
 }
 
 interface SummaryTilesProps {
@@ -27,6 +28,9 @@ export function SummaryTiles({ tiles }: SummaryTilesProps) {
             {tile.label}
           </p>
           <p className={`mt-1 text-xl font-semibold tabular-nums ${tile.color}`}>{tile.value}</p>
+          {tile.sub && (
+            <p className={`mt-1 text-xs ${tile.highlight ? "text-indigo-500" : "text-stone-400"}`}>{tile.sub}</p>
+          )}
         </div>
       ))}
     </div>

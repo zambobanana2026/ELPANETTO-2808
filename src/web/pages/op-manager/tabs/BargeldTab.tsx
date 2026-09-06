@@ -1,4 +1,5 @@
 import { useMemo, useRef, useState } from "react";
+import { BarabhebungenKorrekturInput } from "../components/BarabhebungenKorrekturInput";
 import { CashExpenseForm } from "../components/CashExpenseForm";
 import { CashExpenseTable } from "../components/CashExpenseTable";
 import { CategoryBarChart } from "../components/CategoryBarChart";
@@ -25,6 +26,7 @@ export function BargeldTab() {
   const [expenses, setExpenses] = useState<CashExpense[]>(initial.expenses);
   const [categories, setCategories] = useState<string[]>(initial.categories);
   const [soundEnabled, setSoundEnabled] = useState(initial.soundEnabled);
+  const [barabhebungenKorrektur, setBarabhebungenKorrektur] = useState(initial.barabhebungenKorrektur);
   const [justAdded, setJustAdded] = useState(false);
   const justAddedTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -33,6 +35,7 @@ export function BargeldTab() {
       expenses: next.expenses ?? expenses,
       categories: next.categories ?? categories,
       soundEnabled: next.soundEnabled ?? soundEnabled,
+      barabhebungenKorrektur: next.barabhebungenKorrektur ?? barabhebungenKorrektur,
     });
   };
 
@@ -70,10 +73,11 @@ export function BargeldTab() {
     persist({ categories: next });
   };
 
-  const barabhebungenTotal = useMemo(
+  const barabhebungenAbgeleitet = useMemo(
     () => computeBarabhebungenTotal(kontoauszugState.transactions),
     [kontoauszugState]
   );
+  const barabhebungenTotal = Math.round((barabhebungenAbgeleitet + barabhebungenKorrektur) * 100) / 100;
   const sortedExpenses = useMemo(() => sortExpensesByDate(expenses), [expenses]);
   const totalExpenses = useMemo(() => computeTotalExpenses(expenses), [expenses]);
   const cashBalance = useMemo(() => computeCashBalance(barabhebungenTotal, expenses), [barabhebungenTotal, expenses]);
@@ -99,7 +103,14 @@ export function BargeldTab() {
 
       <SummaryTiles
         tiles={[
-          { label: "Bar-Abhebungen gesamt", value: formatEuro(barabhebungenTotal), color: "text-stone-700" },
+          {
+            label: "Bar-Abhebungen gesamt",
+            value: formatEuro(barabhebungenTotal),
+            color: "text-stone-700",
+            sub: `Aus Kontoauszug ${formatEuro(barabhebungenAbgeleitet)}${
+              barabhebungenKorrektur !== 0 ? ` + Korrektur ${formatEuro(barabhebungenKorrektur)}` : ""
+            }`,
+          },
           { label: "Ausgegeben", value: formatEuro(totalExpenses), color: "text-red-600" },
           {
             label: "Verbleibender Bargeldbestand",
@@ -110,10 +121,21 @@ export function BargeldTab() {
         ]}
       />
 
+      <div className="flex items-center gap-3 rounded-xl border border-stone-200 bg-white p-3">
+        <span className="text-xs text-stone-400">Fehlt eine Abhebung in der CSV? Hier korrigieren:</span>
+        <BarabhebungenKorrekturInput
+          korrektur={barabhebungenKorrektur}
+          onChange={(v) => {
+            setBarabhebungenKorrektur(v);
+            persist({ barabhebungenKorrektur: v });
+          }}
+        />
+      </div>
+
       {barabhebungenTotal === 0 && (
         <p className="text-sm text-stone-500">
-          Noch keine Bar-Abhebungen markiert. Geh in den Kontoauszug-Tab und markiere eine negative
-          Geldtransit-Buchung mit 💵, um deinen Bargeldbestand hier zu starten.
+          Noch keine Bar-Abhebungen markiert. Geh in den Kontoauszug-Tab und markiere eine Buchung mit 💵, oder trage
+          die Abhebung oben als Korrektur ein.
         </p>
       )}
 

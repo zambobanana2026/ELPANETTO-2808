@@ -8,7 +8,7 @@ import type { ImportResult, Transaction } from "../types";
 // same CSV after naming an IBAN would compute a different fingerprint and
 // wrongly re-add every row as "new" (this happened; see git history).
 export function buildFingerprint(row: ParsedRow): string {
-  return [row.iban.toLowerCase(), row.datum, row.betrag.toFixed(2), row.verwendungszweck.trim().toLowerCase()].join(
+  return [(row.iban || "").toLowerCase(), row.datum, row.betrag.toFixed(2), row.verwendungszweck.trim().toLowerCase()].join(
     "|"
   );
 }

@@ -1,6 +1,17 @@
 import { GELDTRANSIT_LABEL } from "./constants";
 import type { AccountSummary, Transaction } from "../types";
 
+// A transaction is "internal" (not a real business Einnahme/Ausgabe, and
+// not part of the Kontostand either) when it's either the auto-filled
+// Geldtransit label OR explicitly marked by the user as a Bar-Abhebung —
+// money withdrawn as cash isn't spent yet, it's just moved into a form
+// tracked separately in the Bargeld tab. A Bar-Abhebung can carry any real
+// merchant text (e.g. cashback withdrawn at a Rossmann checkout), so this
+// no longer requires the Geldtransit label.
+export function isInterneBewegung(tx: Transaction): boolean {
+  return tx.verwendungszweck === GELDTRANSIT_LABEL || Boolean(tx.istBarAbhebung);
+}
+
 export function computeSummary(
   transactions: Transaction[],
   anfangsbestand: number,
@@ -11,11 +22,10 @@ export function computeSummary(
   let bewegungenSeitStart = 0;
 
   for (const tx of transactions) {
-    // Geldtransit = internal transfer between the user's own accounts —
-    // explicitly excluded from Einnahmen/Ausgaben AND from the balance
-    // itself, per the user's own instruction: it is not money the business
-    // earned or spent, so it must not move this number either.
-    if (tx.verwendungszweck === GELDTRANSIT_LABEL) continue;
+    // Excluded from Einnahmen/Ausgaben AND from the balance itself, per the
+    // user's own instruction: neither an internal transfer nor a cash
+    // withdrawal is money the business earned or spent.
+    if (isInterneBewegung(tx)) continue;
 
     if (tx.betrag >= 0) gesamtEinnahmen += tx.betrag;
     else gesamtAusgaben += tx.betrag;

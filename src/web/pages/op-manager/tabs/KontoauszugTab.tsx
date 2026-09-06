@@ -1,11 +1,12 @@
 import { useMemo, useState } from "react";
 import { CsvImporter } from "../components/CsvImporter";
+import { ManualTransactionForm } from "../components/ManualTransactionForm";
 import { StartBalanceInput } from "../components/StartBalanceInput";
 import { SummaryBar } from "../components/SummaryBar";
 import { TransactionTable } from "../components/TransactionTable";
 import { computeSummary, sortByDateAscending } from "../lib/balance";
 import type { ParsedRow } from "../lib/csvParser";
-import { mergeNewRows } from "../lib/duplicateDetection";
+import { buildFingerprint, mergeNewRows } from "../lib/duplicateDetection";
 import { applyKnownGlaeubigerNames } from "../lib/glaeubigerNames";
 import { loadState, saveState } from "../lib/storage";
 import type { ImportResult, Transaction } from "../types";
@@ -40,6 +41,23 @@ export function KontoauszugTab() {
       persist({ transactions: next });
     }
     return result;
+  };
+
+  const handleManualAdd = (row: { glaeubiger: string; iban: string; verwendungszweck: string; betrag: number; datum: string }) => {
+    const fingerprint = buildFingerprint(row);
+    const newTx: Transaction = {
+      id: `${fingerprint}-${crypto.randomUUID()}`,
+      glaeubiger: row.glaeubiger,
+      iban: row.iban,
+      verwendungszweck: row.verwendungszweck,
+      betrag: row.betrag,
+      datum: row.datum,
+      fingerprint,
+      importedAt: new Date().toISOString(),
+    };
+    const next = applyKnownGlaeubigerNames([...transactions, newTx], ibanNamen);
+    setTransactions(next);
+    persist({ transactions: next });
   };
 
   const handleToggleBarAbhebung = (id: string) => {
@@ -104,6 +122,8 @@ export function KontoauszugTab() {
       </div>
 
       <CsvImporter onFileParsed={handleFileParsed} soundEnabled={soundEnabled} />
+
+      <ManualTransactionForm onAdd={handleManualAdd} />
 
       <TransactionTable
         transactions={sortedTransactions}

@@ -1,14 +1,14 @@
-import { GELDTRANSIT_LABEL } from "./constants";
 import type { CashExpense, CategoryTotal, Transaction } from "../types";
 
 // Sum of Kontoauszug transactions the user has explicitly marked as real
-// cash withdrawals. Only negative Geldtransit rows qualify — money leaving
-// the bank account is what puts cash in hand; a positive Geldtransit is a
-// transfer the other way and isn't a withdrawal.
+// cash withdrawals. Only negative amounts qualify — money leaving the bank
+// account is what puts cash in hand. Any negative transaction can carry the
+// mark, not just ones labeled Geldtransit — a real cash withdrawal often
+// carries the merchant's own text (e.g. "Bargeldauszahlung Rossmann").
 export function computeBarabhebungenTotal(transactions: Transaction[]): number {
   let total = 0;
   for (const tx of transactions) {
-    if (tx.verwendungszweck === GELDTRANSIT_LABEL && tx.betrag < 0 && tx.istBarAbhebung) {
+    if (tx.betrag < 0 && tx.istBarAbhebung) {
       total += Math.abs(tx.betrag);
     }
   }
