@@ -62,6 +62,11 @@ function milestoneHeadline(m) {
   return esc(tagPart.toUpperCase()) + '.<br>GESPRÄCHSPHASE „' + esc(namePart.toUpperCase()) + '“.';
 }
 function ctxbar() { return '<div class="ctxbar">AKTIVER MITARBEITER: <b id="ctxName">— keiner ausgewählt —</b></div>'; }
+// Plain-language instruction at the top of every slide, before the headline —
+// spells out in one short sentence what to actually do on this page.
+function stepHint(text) {
+  return '<div class="stepHint">👉 <b>Nächster Schritt:</b> ' + esc(text) + '</div>';
+}
 function navBar(nextLabel, nextPreview) {
   // Carmen-Klar convention: only at big section changes, not on every slide.
   const preview = nextPreview ? '<p style="margin:18px 0 0;font-size:12px;color:var(--muted);text-align:right">Als Nächstes: ' + esc(nextPreview) + '</p>' : '';
@@ -111,6 +116,7 @@ function slideOverview(data) {
   }).join('');
   return (
     '<section class="slide headCenter" data-slide="6"><div class="brand">P2 / ÜBERSICHT</div><div class="num">06</div>' +
+    stepHint('Klicke auf eine Phase oder ein Werkzeug, um dort weiterzumachen — oder gehe einfach der Reihe nach mit „Weiter" vor.') +
     '<h1>IHR<br>PROBEZEIT-RADAR.</h1>' +
     '<p class="lead">Tag 1 → Tag 30 → Tag 60 → Tag 90 → Tag 150–170 → Ende der Probezeit. Klicken Sie eine Phase oder ein Werkzeug an, oder gehen Sie der Reihe nach vor. Jede Station ist in kurze Unterseiten aufgeteilt.</p>' +
     '<div class="grid">' + phaseTiles + '</div>' +
@@ -138,6 +144,7 @@ function slideMilestoneVorbereitung(m, num, phase) {
   const zeitraum = phase ? phase.zeitraum : '';
   return (
     '<section class="slide headCenter" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 0) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
+    stepHint('Geh die Checkliste durch, trage ein, wer am Gespräch dabei ist, und klicke dann auf „Weiter".') +
     '<h1>' + milestoneHeadline(m) + '</h1>' +
     fokusBox + buddyBox +
     '<h2>IST DIESE GESPRÄCHSPHASE ABGESCHLOSSEN?</h2>' +
@@ -157,6 +164,7 @@ function slideMilestoneZielEinstieg(m, num) {
     : '';
   return (
     '<section class="slide headCenter" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 1) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
+    stepHint('Lies dir Ziel und Frage für dieses Gespräch durch, bevor es losgeht.') +
     '<h1>' + milestoneHeadline(m) + '</h1>' +
     '<div class="box"><b>DARUM GEHT ES MIR IN DIESEM GESPRÄCH.</b><p class="lead" style="margin:10px 0 0">„' + esc(m.ziel) + '“</p></div>' +
     frageBox + zweckBox + bereicheBox +
@@ -171,6 +179,7 @@ function slideMilestoneReaktionen(m, num) {
   }).join('');
   return (
     '<section class="slide headCenter" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 2) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
+    stepHint('Lies dir an, was die neue Person sagen könnte — und wie du am besten antwortest.') +
     '<h1>' + milestoneHeadline(m) + '</h1>' +
     '<h2>WAS DIE NEUE PERSON SAGEN KÖNNTE — UND WIE DU ANTWORTEST.</h2>' +
     qaHtml +
@@ -185,6 +194,7 @@ function slideMilestoneBesserSagen(m, num) {
   }).join('');
   return (
     '<section class="slide headCenter" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 3) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
+    stepHint('Schau dir die Beispiele an: links steht, was du besser nicht sagst — rechts eine bessere Formulierung.') +
     '<h1>' + milestoneHeadline(m) + '</h1>' +
     '<h2>SAG DAS NICHT — SAG LIEBER DAS.</h2>' +
     '<p class="lead">Manche Sätze klingen schnell falsch, auch wenn sie nicht böse gemeint sind. Hier siehst du bessere Alternativen.</p>' +
@@ -199,6 +209,7 @@ function slideMilestoneVereinbarung(m, num) {
   const restFields = omitFields(m.fields, ['teilnehmer']);
   return (
     '<section class="slide headCenter" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 4) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
+    stepHint('Trage nach dem Gespräch ein, was ihr besprochen und vereinbart habt.') +
     '<h1>' + milestoneHeadline(m) + '</h1>' +
     '<p class="lead">Trage hier fest, was ihr im Gespräch besprochen und vereinbart habt — nach Carmens Gesprächsvorlage.</p>' +
     '<div class="weeklyCheck"><div class="weeklyCheckIntro"><b>WAS WURDE BESPROCHEN UND VEREINBART?</b></div>' + fieldsGrid('m' + m.n, restFields) + '</div>' +
@@ -216,6 +227,7 @@ function slideMilestoneFollowUp(m, num, nextPhase, nextMilestone, isLast) {
   // Station — stattdessen bewusst wählen lassen, wie es weitergeht.
   return (
     '<section class="slide headCenter" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 5) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
+    stepHint('Hake ab, ob das Gespräch erledigt ist, und klicke dann auf eine der Kacheln unten, um zu entscheiden, wie es weitergeht.') +
     '<h1>' + milestoneHeadline(m) + '</h1>' +
     '<h2>HAKE AB: IST DIESES GESPRÄCH ERLEDIGT?</h2>' +
     checksList('m' + m.n + '_gf', m.gespraechsfolge) +
@@ -259,11 +271,13 @@ function buildBuddySlides(b) {
   const taktungHtml = b.taktung.map(function (t) { return '<div class="qa"><b>' + esc(t[0]) + '</b><p>' + esc(t[1]) + '</p></div>'; }).join('');
   return [
     '<section class="slide headCenter" data-slide="' + s1 + '"><div class="brand">' + buddyBrand(0) + '</div><div class="num">' + pad2(s1) + '</div>' + ctxbar() +
+    stepHint('Lies dir durch, welche Rolle der Buddy hat.') +
     '<h1>BUDDY-FRAMEWORK.<br>WER IST DER BUDDY?</h1>' +
     '<div class="box"><b>ROLLE DES BUDDYS.</b><p class="lead" style="margin:10px 0 0">' + esc(b.rolle) + '</p></div>' +
     navBar('Weiter') + '</section>',
 
     '<section class="slide headCenter" data-slide="' + s2 + '"><div class="brand">' + buddyBrand(1) + '</div><div class="num">' + pad2(s2) + '</div>' + ctxbar() +
+    stepHint('Lies dir durch, wie lange und wie oft sich Buddy und neue Person treffen.') +
     '<h1>BUDDY-FRAMEWORK.<br>WIE LANGE UND WIE OFT?</h1>' +
     '<div class="box"><b>WIE LANGE BEGLEITET DER BUDDY?</b><p style="margin:10px 0 0">Die Rolle ist bewusst zeitlich begrenzt — danach soll die neue Person allein zurechtkommen. Dauer: ' + esc(b.dauer) + '</p></div>' +
     '<h2>TAKTUNG.</h2>' +
@@ -272,6 +286,7 @@ function buildBuddySlides(b) {
     navBar('Weiter') + '</section>',
 
     '<section class="slide headCenter" data-slide="' + s3 + '"><div class="brand">' + buddyBrand(2) + '</div><div class="num">' + pad2(s3) + '</div>' + ctxbar() +
+    stepHint('Lies dir durch, was der Buddy tun darf.') +
     '<h1>BUDDY-FRAMEWORK.<br>WAS DARF DER BUDDY TUN?</h1>' +
     '<p class="lead">Das ist die Aufgabe des Buddys — nicht mehr und nicht weniger:</p>' +
     '<h2>DER BUDDY DARF.</h2>' +
@@ -279,12 +294,14 @@ function buildBuddySlides(b) {
     navBar('Weiter') + '</section>',
 
     '<section class="slide headCenter" data-slide="' + s4 + '"><div class="brand">' + buddyBrand(3) + '</div><div class="num">' + pad2(s4) + '</div>' + ctxbar() +
+    stepHint('Lies dir die klaren Grenzen und Tabus für den Buddy durch.') +
     '<h1>BUDDY-FRAMEWORK.<br>WAS DER BUDDY NICHT DARF.</h1>' +
     '<p class="lead">Damit für alle klar bleibt, wer wofür zuständig ist — der Buddy ersetzt weder dich noch HR:</p>' +
     '<div class="note" style="border-left-color:var(--red)"><b>STRIKTE GRENZEN UND TABUS.</b><br>' + b.tabus.map(esc).join('<br>') + '</div>' +
     navBar('Weiter') + '</section>',
 
     '<section class="slide headCenter" data-slide="' + s5 + '"><div class="brand">' + buddyBrand(4) + '</div><div class="num">' + pad2(s5) + '</div>' + ctxbar() +
+    stepHint('Hake die Checkliste ab, trage deine Notizen ein und wähle dann, wie es weitergeht.') +
     '<h1>BUDDY-FRAMEWORK.<br>CHECKLISTE &amp; ARBEITSVORLAGE.</h1>' +
     '<h2>BUDDY-CHECKLISTE.</h2>' +
     '<p class="lead">Das fasst die letzten vier Seiten als Checkliste zusammen — häkel ab, was schon passt.</p>' +
@@ -313,6 +330,7 @@ function buildEskalationSlides(e) {
     '<div class="tile"><b>SCHRITT 3</b><small>' + esc(e.schritt3.titel) + '</small></div></div>';
   return [
     '<section class="slide headCenter" data-slide="' + s1 + '"><div class="brand">' + eskBrand(0) + '</div><div class="num">' + pad2(s1) + '</div>' + ctxbar() +
+    stepHint('Lies dir die drei Schritte des Eskalationsprotokolls durch, bevor du startest.') +
     '<h1>WENN ES HAKT.<br>14-TAGE-ESKALATIONSPROTOKOLL.</h1>' +
     '<p class="lead">' + esc(e.intro) + '</p>' +
     '<div class="note"><b>GRUNDSATZ.</b><br>„' + esc(e.grundsatz) + '“</div>' +
@@ -320,18 +338,21 @@ function buildEskalationSlides(e) {
     navBar('Weiter') + '</section>',
 
     '<section class="slide headCenter" data-slide="' + s2 + '"><div class="brand">' + eskBrand(1) + '</div><div class="num">' + pad2(s2) + '</div>' + ctxbar() +
+    stepHint('Trage die Fakten zur Leistungslücke ein.') +
     '<h1>SCHRITT 1.<br>' + esc(e.schritt1.titel.toUpperCase()) + '.</h1>' +
     '<p class="lead">' + esc(e.schritt1.text) + '</p>' +
     '<div class="weeklyCheck"><div class="weeklyCheckIntro"><b>DOKUMENTATION.</b></div>' + fieldsGrid('esk', pickFields(e.fields, ['luecke', 'fakten'])) + '</div>' +
     navBar('Weiter') + '</section>',
 
     '<section class="slide headCenter" data-slide="' + s3 + '"><div class="brand">' + eskBrand(2) + '</div><div class="num">' + pad2(s3) + '</div>' + ctxbar() +
+    stepHint('Lies die Schlüsselfrage und trage Zwischenziel und Antwort ein.') +
     '<h1>ZWISCHENZIEL &amp;<br>SCHLÜSSELFRAGE.</h1>' +
     '<div class="note"><b>SCHLÜSSELFRAGE.</b><br>„' + esc(e.schluesselfrage) + '“</div>' +
     '<div class="weeklyCheck"><div class="weeklyCheckIntro"><b>DOKUMENTATION.</b></div>' + fieldsGrid('esk', pickFields(e.fields, ['abgleich', 'zwischenziel', 'antwort'])) + '</div>' +
     navBar('Weiter') + '</section>',
 
     '<section class="slide headCenter" data-slide="' + s4 + '"><div class="brand">' + eskBrand(3) + '</div><div class="num">' + pad2(s4) + '</div>' + ctxbar() +
+    stepHint('Kreuze an, ob sich die Leistung verbessert hat, und trage deine Notizen ein.') +
     '<h1>SCHRITT 2.<br>' + esc(e.schritt2.titel.toUpperCase()) + '.</h1>' +
     '<p class="lead">' + esc(e.schritt2.text) + '</p>' +
     '<h2>SICHTBARE VERBESSERUNG INNERHALB VON 14 TAGEN?</h2>' +
@@ -343,6 +364,7 @@ function buildEskalationSlides(e) {
     navBar('Weiter') + '</section>',
 
     '<section class="slide headCenter" data-slide="' + s5 + '"><div class="brand">' + eskBrand(4) + '</div><div class="num">' + pad2(s5) + '</div>' + ctxbar() +
+    stepHint('Triff die Entscheidung, hake die Checkliste ab und wähle dann, wie es weitergeht.') +
     '<h1>SCHRITT 3.<br>' + esc(e.schritt3.titel.toUpperCase()) + '.</h1>' +
     '<p class="lead">' + esc(e.schritt3.text) + '</p>' +
     '<div class="note" style="border-left-color:#c99a2e"><b>ACHTUNG.</b><br>' + esc(e.schritt3.rechtshinweis) + '</div>' +
@@ -371,6 +393,7 @@ function buildTrennungSlides(t, rechtlicherHinweisAllgemein) {
   const a1 = t.ablauf[0], a2 = t.ablauf[1], a3 = t.ablauf[2];
   return [
     '<section class="slide headCenter" data-slide="' + s1 + '"><div class="brand">' + trBrand(0) + '</div><div class="num">' + pad2(s1) + '</div>' + ctxbar() +
+    stepHint('Lies die rechtliche Leitplanke und die Rahmenbedingungen, bevor du das Gespräch führst.') +
     '<h1>TRENNUNGS-LEITFADEN.<br>10-MINUTEN-PROTOKOLL.</h1>' +
     '<div class="note" style="border-left-color:var(--red)"><b>RECHTLICHE LEITPLANKE.</b><br>' + esc(t.rechtlicheLeitplanke) + '</div>' +
     '<div class="box"><b>VIER-AUGEN-PRINZIP.</b><p style="margin:10px 0 0">' + esc(t.vierAugen) + '</p></div>' +
@@ -378,24 +401,28 @@ function buildTrennungSlides(t, rechtlicherHinweisAllgemein) {
     navBar('Weiter') + '</section>',
 
     '<section class="slide headCenter" data-slide="' + s2 + '"><div class="brand">' + trBrand(1) + '</div><div class="num">' + pad2(s2) + '</div>' + ctxbar() +
+    stepHint('Lies dir die feste Formulierung durch, mit der du das Gespräch beginnst.') +
     '<h1>' + esc(a1.titel.toUpperCase()) + '.</h1>' +
     '<p class="lead">So beginnst du das Gespräch — wortwörtlich:</p>' +
     '<div class="box"><b>FESTE FORMULIERUNG.</b><p class="lead" style="margin:10px 0 0">„' + esc(a1.formulierung) + '“</p></div>' +
     navBar('Weiter') + '</section>',
 
     '<section class="slide headCenter" data-slide="' + s3 + '"><div class="brand">' + trBrand(2) + '</div><div class="num">' + pad2(s3) + '</div>' + ctxbar() +
+    stepHint('Lies dir den Hinweis und die feste Formulierung durch.') +
     '<h1>' + esc(a2.titel.toUpperCase()) + '.</h1>' +
     '<p class="lead">' + esc(a2.hinweis) + '</p>' +
     '<div class="box"><b>FESTE FORMULIERUNG.</b><p class="lead" style="margin:10px 0 0">„' + esc(a2.formulierung) + '“</p></div>' +
     navBar('Weiter') + '</section>',
 
     '<section class="slide headCenter" data-slide="' + s4 + '"><div class="brand">' + trBrand(3) + '</div><div class="num">' + pad2(s4) + '</div>' + ctxbar() +
+    stepHint('Hake ab, welche praktischen Punkte schon erledigt sind.') +
     '<h1>' + esc(a3.titel.toUpperCase()) + '.</h1>' +
     '<p class="lead">Das sind die praktischen Punkte, die direkt im Anschluss an die Ansage erledigt werden — häkel ab, was schon geklärt ist:</p>' +
     checksList('tr_ablauf', a3.punkte) +
     navBar('Weiter') + '</section>',
 
     '<section class="slide headCenter" data-slide="' + s5 + '"><div class="brand">' + trBrand(4) + '</div><div class="num">' + pad2(s5) + '</div>' + ctxbar() +
+    stepHint('Hake die Checkliste ab, trage deine Notizen ein und wähle dann, wie es weitergeht.') +
     '<h1>PROTOKOLL &amp;<br>CHECKLISTE.</h1>' +
     '<p class="lead">Das fasst den ganzen Trennungs-Leitfaden zusammen — geh es kurz durch, bevor du das Gespräch führst.</p>' +
     checksList('tr_chk', t.checks) +
@@ -418,6 +445,7 @@ function buildTrennungSlides(t, rechtlicherHinweisAllgemein) {
 function slideTeamBericht() {
   return (
     '<section class="slide headCenter" data-slide="' + TEAMBERICHT_SLIDE + '"><div class="brand">P2 / TEAM-BERICHT</div><div class="num">' + pad2(TEAMBERICHT_SLIDE) + '</div>' +
+    stepHint('Schau dir den Stand aller Mitarbeitenden an, oder klicke auf „Weiter", um die Einzel-Zusammenfassung zu sehen.') +
     '<h1>IHR TEAM.<br>AUF EINEN BLICK.</h1>' +
     '<p class="lead">Übersicht über alle angelegten Mitarbeitenden und den Stand ihrer vier Kernkonversationen (Tag 30, 60, 90, 150–170).</p>' +
     '<div class="bigCounts">' +
@@ -633,6 +661,10 @@ module.exports = {
     '#app h1 { font-weight: 900; text-shadow: 0 2px 3px rgba(37,37,37,.15); }',
     '#app h2 { font-weight: 800; }',
     // Give the flat white content boxes a soft lift instead of a bare border.
-    '#app .box, #app .tile, #app .note, #app .qa, #app .choice, #app .weeklyCheckCard, #app .weeklyCheckIntro, #app .compareRow > div, #app .bigCounts > div, #app .ctaHero { box-shadow: 0 2px 8px rgba(37,37,37,.07), 0 1px 2px rgba(37,37,37,.05); }'
+    '#app .box, #app .tile, #app .note, #app .qa, #app .choice, #app .weeklyCheckCard, #app .weeklyCheckIntro, #app .compareRow > div, #app .bigCounts > div, #app .ctaHero { box-shadow: 0 2px 8px rgba(37,37,37,.07), 0 1px 2px rgba(37,37,37,.05); }',
+    // Plain-language "what to do on this slide" strip, shown before every headline.
+    '#app .stepHint { display:block; background:var(--surface); border-left:6px solid var(--num); padding:12px 18px; margin:18px 0 0; font-size:15px; font-weight:700; line-height:1.4; box-shadow:0 2px 8px rgba(37,37,37,.07), 0 1px 2px rgba(37,37,37,.05); }',
+    '#app .stepHint b { color:var(--num); text-transform:uppercase; letter-spacing:.5px; margin-right:4px; }',
+    '#app .headCenter .stepHint, #app .textCenter .stepHint { text-align:center; }'
   ].join('\n')
 };
