@@ -21,6 +21,10 @@ export interface ImportResult {
 export interface AccountSummary {
   gesamtEinnahmen: number;
   gesamtAusgaben: number;
+  // Net of all Bar-Abhebung-marked transactions — excluded from
+  // Einnahmen/Ausgaben but still factored into aktuellerKontostand, since
+  // the money genuinely left the bank account.
+  barabhebungenNetto: number;
   anfangsbestand: number;
   aktuellerKontostand: number;
 }

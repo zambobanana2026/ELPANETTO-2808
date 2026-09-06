@@ -22,6 +22,11 @@ export function SummaryBar({ summary, balanceLabel = "Aktueller Kontostand" }: S
         <p className="mt-1 text-xl font-semibold text-indigo-700 tabular-nums">
           {formatEuro(summary.aktuellerKontostand)}
         </p>
+        <p className="mt-1 text-xs text-indigo-500">
+          Anfangsbestand {formatEuro(summary.anfangsbestand)} + Einnahmen {formatEuro(summary.gesamtEinnahmen)} +
+          Ausgaben {formatEuro(summary.gesamtAusgaben)}
+          {summary.barabhebungenNetto !== 0 && <> + Bar-Abhebungen {formatEuro(summary.barabhebungenNetto)}</>}
+        </p>
       </div>
     </div>
   );
