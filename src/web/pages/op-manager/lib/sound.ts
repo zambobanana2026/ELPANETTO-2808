@@ -25,7 +25,7 @@ function playTone(ctx: AudioContext, frequency: number, startTime: number, durat
   oscillator.stop(startTime + duration);
 }
 
-export function playImportSuccessSound(): void {
+export function playSuccessChime(): void {
   const ctx = getContext();
   if (!ctx) return;
   const now = ctx.currentTime;
@@ -34,7 +34,7 @@ export function playImportSuccessSound(): void {
   playTone(ctx, 783.99, now + 0.2, 0.28); // G5
 }
 
-export function playImportEmptySound(): void {
+export function playNeutralChime(): void {
   const ctx = getContext();
   if (!ctx) return;
   const now = ctx.currentTime;

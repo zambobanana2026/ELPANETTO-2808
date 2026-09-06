@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { TabNav } from "./components/TabNav";
+import { BargeldTab } from "./tabs/BargeldTab";
 import { KontoauszugTab } from "./tabs/KontoauszugTab";
 import { PlaceholderTab } from "./tabs/PlaceholderTab";
 import type { OpManagerTabId } from "./types";
@@ -24,7 +25,7 @@ export default function OpManager() {
         </div>
 
         {activeTab === "kontoauszug" && <KontoauszugTab />}
-        {activeTab === "bargeld" && <PlaceholderTab title="Bargeld" />}
+        {activeTab === "bargeld" && <BargeldTab />}
         {activeTab === "offene-posten" && <PlaceholderTab title="Offene Posten" />}
         {activeTab === "uebersicht" && <PlaceholderTab title="Übersicht" />}
       </main>

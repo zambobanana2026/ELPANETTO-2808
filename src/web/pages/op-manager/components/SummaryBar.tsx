@@ -1,14 +1,12 @@
+import { formatEuro } from "../lib/format";
 import type { AccountSummary } from "../types";
 
 interface SummaryBarProps {
   summary: AccountSummary;
+  balanceLabel?: string;
 }
 
-function formatEuro(value: number): string {
-  return new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(value);
-}
-
-export function SummaryBar({ summary }: SummaryBarProps) {
+export function SummaryBar({ summary, balanceLabel = "Aktueller Kontostand" }: SummaryBarProps) {
   return (
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
       <div className="rounded-xl border border-stone-200 bg-white p-4">
@@ -20,7 +18,7 @@ export function SummaryBar({ summary }: SummaryBarProps) {
         <p className="mt-1 text-xl font-semibold text-red-600 tabular-nums">{formatEuro(summary.gesamtAusgaben)}</p>
       </div>
       <div className="rounded-xl border border-indigo-200 bg-indigo-50 p-4">
-        <p className="text-xs font-medium uppercase tracking-wide text-indigo-500">Aktueller Kontostand</p>
+        <p className="text-xs font-medium uppercase tracking-wide text-indigo-500">{balanceLabel}</p>
         <p className="mt-1 text-xl font-semibold text-indigo-700 tabular-nums">
           {formatEuro(summary.aktuellerKontostand)}
         </p>

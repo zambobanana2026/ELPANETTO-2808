@@ -1,20 +1,8 @@
+import { formatDateDE, formatSignedAmount } from "../lib/format";
 import type { Transaction } from "../types";
 
 interface TransactionTableProps {
   transactions: Transaction[];
-}
-
-function formatAmount(value: number): string {
-  const formatted = new Intl.NumberFormat("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(
-    Math.abs(value)
-  );
-  return `${value >= 0 ? "+" : "-"}${formatted} €`;
-}
-
-function formatDate(iso: string): string {
-  const [year, month, day] = iso.split("-");
-  if (!year || !month || !day) return iso;
-  return `${day}.${month}.${year}`;
 }
 
 export function TransactionTable({ transactions }: TransactionTableProps) {
@@ -47,9 +35,9 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
                   tx.betrag >= 0 ? "text-green-600" : "text-red-600"
                 }`}
               >
-                {formatAmount(tx.betrag)}
+                {formatSignedAmount(tx.betrag)}
               </td>
-              <td className="px-4 py-2.5 text-right text-stone-500 tabular-nums">{formatDate(tx.datum)}</td>
+              <td className="px-4 py-2.5 text-right text-stone-500 tabular-nums">{formatDateDE(tx.datum)}</td>
             </tr>
           ))}
         </tbody>

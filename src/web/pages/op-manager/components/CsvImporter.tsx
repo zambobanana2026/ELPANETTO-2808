@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { parseBankCsv } from "../lib/csvParser";
-import { playImportEmptySound, playImportSuccessSound } from "../lib/sound";
+import { playNeutralChime, playSuccessChime } from "../lib/sound";
 import type { ImportResult } from "../types";
 
 interface CsvImporterProps {
@@ -34,13 +34,13 @@ export function CsvImporter({ onFileParsed, soundEnabled }: CsvImporterProps) {
               ? `🎉 ${result.added.length} neue Buchungen importiert, ${result.duplicateCount} Duplikate übersprungen.`
               : `🎉 ${result.added.length} neue Buchungen importiert!`,
         });
-        if (soundEnabled) playImportSuccessSound();
+        if (soundEnabled) playSuccessChime();
       } else if (result.totalRows === 0) {
         setFeedback({ kind: "error", message: "Es konnten keine Buchungen aus dieser Datei erkannt werden." });
-        if (soundEnabled) playImportEmptySound();
+        if (soundEnabled) playNeutralChime();
       } else {
         setFeedback({ kind: "empty", message: "Alle Buchungen aus dieser Datei wurden bereits importiert." });
-        if (soundEnabled) playImportEmptySound();
+        if (soundEnabled) playNeutralChime();
       }
     } catch {
       setFeedback({ kind: "error", message: "Die Datei konnte nicht gelesen werden." });
