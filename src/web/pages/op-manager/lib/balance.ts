@@ -11,13 +11,14 @@ export function computeSummary(
   let bewegungenSeitStart = 0;
 
   for (const tx of transactions) {
-    // Geldtransit = internal transfer between the user's own accounts, not
-    // real business income/expense — excluded from the totals below, but
-    // still counted toward the balance since the money actually moved.
-    if (tx.verwendungszweck !== GELDTRANSIT_LABEL) {
-      if (tx.betrag >= 0) gesamtEinnahmen += tx.betrag;
-      else gesamtAusgaben += tx.betrag;
-    }
+    // Geldtransit = internal transfer between the user's own accounts —
+    // explicitly excluded from Einnahmen/Ausgaben AND from the balance
+    // itself, per the user's own instruction: it is not money the business
+    // earned or spent, so it must not move this number either.
+    if (tx.verwendungszweck === GELDTRANSIT_LABEL) continue;
+
+    if (tx.betrag >= 0) gesamtEinnahmen += tx.betrag;
+    else gesamtAusgaben += tx.betrag;
 
     if (tx.datum >= startDatum) bewegungenSeitStart += tx.betrag;
   }

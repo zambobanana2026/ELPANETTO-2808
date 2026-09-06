@@ -334,6 +334,19 @@ export function parseBankCsv(text: string): ParsedRow[] {
   const [header, ...dataRows] = rows;
   const mapping = detectColumns(header, dataRows);
 
+  // Some banks (e.g. bunq-style exports) only have ONE iban-shaped column,
+  // and it holds the user's OWN account number on every single row, not the
+  // counterparty's. Naming a Gläubiger by that "iban" would then rename
+  // every unrelated transaction that happens to share the same own-account
+  // number — i.e. all of them. Detect this by checking whether the column
+  // actually varies across the file; if it's constant, it isn't identifying
+  // counterparties at all, so drop it rather than treat it as one.
+  const ibanColumnValues =
+    mapping.iban >= 0
+      ? dataRows.map((r) => (r[mapping.iban] ?? "").trim().replace(/\s+/g, "").toUpperCase()).filter((v) => v.length > 0)
+      : [];
+  const ibanIdentifiesCounterparty = new Set(ibanColumnValues).size > 1;
+
   const results: ParsedRow[] = [];
   for (const row of dataRows) {
     const rawBetrag = mapping.betrag >= 0 ? row[mapping.betrag] ?? "" : "";
@@ -353,7 +366,8 @@ export function parseBankCsv(text: string): ParsedRow[] {
     if (!datum) continue;
 
     const glaeubigerRaw = mapping.glaeubiger >= 0 ? (row[mapping.glaeubiger] ?? "").trim() : "";
-    const iban = mapping.iban >= 0 ? (row[mapping.iban] ?? "").trim().replace(/\s+/g, "") : "";
+    const iban =
+      mapping.iban >= 0 && ibanIdentifiesCounterparty ? (row[mapping.iban] ?? "").trim().replace(/\s+/g, "") : "";
     const vwzRaw = mapping.verwendungszweck >= 0 ? (row[mapping.verwendungszweck] ?? "").trim() : "";
     const verwendungszweck = vwzRaw.length > 0 ? vwzRaw : GELDTRANSIT_LABEL;
 

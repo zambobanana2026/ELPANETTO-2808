@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { isGlaeubigerPlaceholder } from "../lib/glaeubigerNames";
+import { useEffect, useState } from "react";
 import type { Transaction } from "../types";
 
 interface GlaeubigerCellProps {
@@ -7,28 +6,22 @@ interface GlaeubigerCellProps {
   onSetName: (id: string, iban: string, name: string) => void;
 }
 
+// Always an editable input, pre-filled with the current name (if any) —
+// never a locked read-only span. A previous version switched to a plain
+// <span> once a name was set, which meant a Gläubiger could be named once
+// but never corrected afterwards.
 export function GlaeubigerCell({ tx, onSetName }: GlaeubigerCellProps) {
-  const [draft, setDraft] = useState("");
-  const isPlaceholder = isGlaeubigerPlaceholder(tx);
+  const [draft, setDraft] = useState(tx.glaeubiger || "");
+  useEffect(() => {
+    setDraft(tx.glaeubiger || "");
+  }, [tx.glaeubiger]);
 
   const commit = () => {
     const trimmed = draft.trim();
-    if (trimmed.length === 0) {
-      setDraft(""); // clear a whitespace-only draft so the placeholder text reappears
-      return;
-    }
+    setDraft(trimmed);
+    if (trimmed === (tx.glaeubiger || "")) return; // no actual change — skip the write
     onSetName(tx.id, tx.iban, trimmed);
-    setDraft("");
   };
-
-  if (!isPlaceholder) {
-    return (
-      <span className="flex items-baseline gap-2">
-        <span className="text-stone-800">{tx.glaeubiger}</span>
-        {tx.iban && <span className="text-xs text-stone-400">{tx.iban}</span>}
-      </span>
-    );
-  }
 
   return (
     <span className="flex items-baseline gap-2">
@@ -41,10 +34,12 @@ export function GlaeubigerCell({ tx, onSetName }: GlaeubigerCellProps) {
         onKeyDown={(e) => {
           if (e.key === "Enter") {
             e.preventDefault();
-            commit();
+            e.currentTarget.blur();
           }
         }}
-        className="w-32 rounded border border-dashed border-stone-300 px-1.5 py-0.5 text-sm text-stone-700 focus:border-indigo-500 focus:border-solid focus:outline-none"
+        className={`w-32 rounded border px-1.5 py-0.5 text-sm text-stone-700 focus:border-indigo-500 focus:border-solid focus:outline-none ${
+          tx.glaeubiger ? "border-stone-300" : "border-dashed border-stone-300"
+        }`}
       />
       {tx.iban && <span className="text-xs text-stone-400">{tx.iban}</span>}
     </span>
