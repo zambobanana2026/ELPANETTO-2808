@@ -3,7 +3,7 @@ import { OverviewSummaryCards } from "../components/OverviewSummaryCards";
 import { RecentActivityList } from "../components/RecentActivityList";
 import { UpcomingDueList } from "../components/UpcomingDueList";
 import { computeSummary } from "../lib/balance";
-import { computeCashSummary } from "../lib/cashBalance";
+import { computeBarabhebungenTotal, computeCashBalance } from "../lib/cashBalance";
 import { loadCashState } from "../lib/cashStorage";
 import { computeOverviewSummary, buildRecentActivity } from "../lib/overview";
 import { computeOpenItemsSummary, sortOpenItems } from "../lib/openItems";
@@ -23,19 +23,23 @@ export function UebersichtTab() {
     () => computeSummary(kontoauszugState.transactions, kontoauszugState.anfangsbestand, kontoauszugState.startDatum),
     [kontoauszugState]
   );
-  const cashSummary = useMemo(
-    () => computeCashSummary(cashState.entries, cashState.anfangsbestand, cashState.startDatum),
-    [cashState]
+  const barabhebungenTotal = useMemo(
+    () => computeBarabhebungenTotal(kontoauszugState.transactions),
+    [kontoauszugState]
+  );
+  const bargeldBestand = useMemo(
+    () => computeCashBalance(barabhebungenTotal, cashState.expenses),
+    [barabhebungenTotal, cashState]
   );
   const openItemsSummary = useMemo(() => computeOpenItemsSummary(openItemsState.items), [openItemsState]);
   const overviewSummary = useMemo(
-    () => computeOverviewSummary(kontoauszugSummary, cashSummary, openItemsSummary),
-    [kontoauszugSummary, cashSummary, openItemsSummary]
+    () => computeOverviewSummary(kontoauszugSummary, bargeldBestand, openItemsSummary),
+    [kontoauszugSummary, bargeldBestand, openItemsSummary]
   );
 
   const sortedOpenItems = useMemo(() => sortOpenItems(openItemsState.items), [openItemsState]);
   const recentActivity = useMemo(
-    () => buildRecentActivity(kontoauszugState.transactions, cashState.entries),
+    () => buildRecentActivity(kontoauszugState.transactions, cashState.expenses),
     [kontoauszugState, cashState]
   );
 

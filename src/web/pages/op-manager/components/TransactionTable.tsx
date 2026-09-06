@@ -4,9 +4,10 @@ import type { Transaction } from "../types";
 
 interface TransactionTableProps {
   transactions: Transaction[];
+  onToggleBarAbhebung: (id: string) => void;
 }
 
-export function TransactionTable({ transactions }: TransactionTableProps) {
+export function TransactionTable({ transactions, onToggleBarAbhebung }: TransactionTableProps) {
   if (transactions.length === 0) {
     return (
       <div className="rounded-xl border border-dashed border-stone-300 bg-white py-16 text-center text-stone-400">
@@ -29,10 +30,31 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
         <tbody>
           {transactions.map((tx) => {
             const isGeldtransit = tx.verwendungszweck === GELDTRANSIT_LABEL;
+            const isBarAbhebungCandidate = isGeldtransit && tx.betrag < 0;
             return (
               <tr key={tx.id} className="border-b border-stone-100 last:border-0">
                 <td className="px-4 py-2.5 text-stone-800">{tx.glaeubiger}</td>
-                <td className="px-4 py-2.5 text-stone-600">{tx.verwendungszweck}</td>
+                <td className="px-4 py-2.5 text-stone-600">
+                  {tx.verwendungszweck}
+                  {isBarAbhebungCandidate && (
+                    <button
+                      type="button"
+                      onClick={() => onToggleBarAbhebung(tx.id)}
+                      title={
+                        tx.istBarAbhebung
+                          ? "Als Bar-Abhebung markiert — fließt in den Bargeld-Tab ein. Klicken zum Entfernen."
+                          : "Als Bar-Abhebung markieren (Betrag fließt in den Bargeld-Tab ein)"
+                      }
+                      className={`ml-1.5 rounded-full px-1.5 py-0.5 text-xs transition-colors ${
+                        tx.istBarAbhebung
+                          ? "bg-emerald-100 text-emerald-700"
+                          : "text-stone-400 hover:bg-stone-100 hover:text-stone-600"
+                      }`}
+                    >
+                      💵{tx.istBarAbhebung ? " ✓" : ""}
+                    </button>
+                  )}
+                </td>
                 <td
                   className={`px-4 py-2.5 text-right font-medium tabular-nums ${
                     isGeldtransit ? "text-stone-400" : tx.betrag >= 0 ? "text-green-600" : "text-red-600"

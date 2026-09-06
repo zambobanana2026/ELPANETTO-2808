@@ -39,6 +39,12 @@ export function KontoauszugTab() {
     return result;
   };
 
+  const handleToggleBarAbhebung = (id: string) => {
+    const next = transactions.map((tx) => (tx.id === id ? { ...tx, istBarAbhebung: !tx.istBarAbhebung } : tx));
+    setTransactions(next);
+    persist({ transactions: next });
+  };
+
   const handleAnfangsbestandChange = (value: number) => {
     setAnfangsbestand(value);
     persist({ anfangsbestand: value });
@@ -80,7 +86,7 @@ export function KontoauszugTab() {
 
       <CsvImporter onFileParsed={handleFileParsed} soundEnabled={soundEnabled} />
 
-      <TransactionTable transactions={sortedTransactions} />
+      <TransactionTable transactions={sortedTransactions} onToggleBarAbhebung={handleToggleBarAbhebung} />
 
       <SummaryBar summary={summary} />
     </div>

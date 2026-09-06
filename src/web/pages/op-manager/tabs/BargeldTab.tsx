@@ -1,111 +1,88 @@
-import { useMemo, useState } from "react";
-import { CashCountForm } from "../components/CashCountForm";
-import { CashCountHistory } from "../components/CashCountHistory";
-import { CashEntryForm } from "../components/CashEntryForm";
-import { CashLedgerTable } from "../components/CashLedgerTable";
-import { StartBalanceInput } from "../components/StartBalanceInput";
-import { SummaryBar } from "../components/SummaryBar";
-import { computeCashBalanceAsOf, computeCashSummary, sortCashEntriesByDate } from "../lib/cashBalance";
+import { useMemo, useRef, useState } from "react";
+import { CashExpenseForm } from "../components/CashExpenseForm";
+import { CashExpenseTable } from "../components/CashExpenseTable";
+import { CategoryBarChart } from "../components/CategoryBarChart";
+import { SummaryTiles } from "../components/SummaryTiles";
+import {
+  computeBarabhebungenTotal,
+  computeCashBalance,
+  computeExpensesByCategory,
+  computeTotalExpenses,
+  sortExpensesByDate,
+} from "../lib/cashBalance";
 import { loadCashState, saveCashState, type CashPersistedState } from "../lib/cashStorage";
-import { todayIso } from "../lib/format";
-import type { CashCount, CashEntry } from "../types";
+import { formatEuro } from "../lib/format";
+import { playCashRegisterChime } from "../lib/sound";
+import { loadState } from "../lib/storage";
+import type { CashExpense } from "../types";
 
 export function BargeldTab() {
+  // Read-only snapshot of Kontoauszug's transactions — this tab derives its
+  // balance from bank withdrawals marked there, but owns no part of that
+  // tab's data or state management (stays independently editable).
+  const [kontoauszugState] = useState(() => loadState());
   const [initial] = useState(() => loadCashState());
-  const [entries, setEntries] = useState<CashEntry[]>(initial.entries);
-  const [counts, setCounts] = useState<CashCount[]>(initial.counts);
-  const [anfangsbestand, setAnfangsbestand] = useState(initial.anfangsbestand);
-  const [startDatum, setStartDatum] = useState(initial.startDatum);
+  const [expenses, setExpenses] = useState<CashExpense[]>(initial.expenses);
+  const [categories, setCategories] = useState<string[]>(initial.categories);
   const [soundEnabled, setSoundEnabled] = useState(initial.soundEnabled);
+  const [justAdded, setJustAdded] = useState(false);
+  const justAddedTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const persist = (next: Partial<CashPersistedState>) => {
     saveCashState({
-      entries: next.entries ?? entries,
-      counts: next.counts ?? counts,
-      anfangsbestand: next.anfangsbestand ?? anfangsbestand,
-      startDatum: next.startDatum ?? startDatum,
+      expenses: next.expenses ?? expenses,
+      categories: next.categories ?? categories,
       soundEnabled: next.soundEnabled ?? soundEnabled,
     });
   };
 
-  const handleAddEntry = (input: { datum: string; beschreibung: string; betrag: number }) => {
-    const entry: CashEntry = {
+  const handleAddExpense = (input: { datum: string; betrag: number; kategorie: string }) => {
+    const expense: CashExpense = {
       id: crypto.randomUUID(),
       datum: input.datum,
-      beschreibung: input.beschreibung,
       betrag: input.betrag,
+      kategorie: input.kategorie,
       erfasstAm: new Date().toISOString(),
-      quelle: "manuell",
     };
-    const next = [...entries, entry];
-    setEntries(next);
-    persist({ entries: next });
+    const next = [...expenses, expense];
+    setExpenses(next);
+    persist({ expenses: next });
+
+    if (soundEnabled) playCashRegisterChime();
+    setJustAdded(true);
+    // Cancel any still-pending hide from a rapid previous add, so this
+    // banner gets its own full 900ms instead of being cut short by it.
+    if (justAddedTimeoutRef.current) clearTimeout(justAddedTimeoutRef.current);
+    justAddedTimeoutRef.current = setTimeout(() => setJustAdded(false), 900);
   };
 
-  const handleSaveCount = (istBestand: number, denominationCounts: Record<string, number>) => {
-    const sollBestand = computeCashBalanceAsOf(entries, anfangsbestand, startDatum, todayIso());
-    const count: CashCount = {
-      id: crypto.randomUUID(),
-      datum: todayIso(),
-      erfasstAm: new Date().toISOString(),
-      sollBestand,
-      istBestand,
-      differenz: Math.round((istBestand - sollBestand) * 100) / 100,
-      denominationCounts,
-      ausgeglichen: false,
-    };
-    const next = [...counts, count];
-    setCounts(next);
-    persist({ counts: next });
+  const handleAddCategory = (kategorie: string) => {
+    if (categories.includes(kategorie)) return;
+    const next = [...categories, kategorie];
+    setCategories(next);
+    persist({ categories: next });
   };
 
-  const handleCreateAdjustment = (differenz: number) => {
-    const entry: CashEntry = {
-      id: crypto.randomUUID(),
-      datum: todayIso(),
-      beschreibung: differenz >= 0 ? "Kassensturz-Ausgleich (Überschuss)" : "Kassensturz-Ausgleich (Fehlbetrag)",
-      betrag: differenz,
-      erfasstAm: new Date().toISOString(),
-      quelle: "manuell",
-    };
-    const nextEntries = [...entries, entry];
-    const nextCounts = counts.map((c, i) => (i === counts.length - 1 ? { ...c, ausgeglichen: true } : c));
-    setEntries(nextEntries);
-    setCounts(nextCounts);
-    persist({ entries: nextEntries, counts: nextCounts });
+  const handleDeleteCategory = (kategorie: string) => {
+    if (categories.length <= 1) return;
+    const next = categories.filter((c) => c !== kategorie);
+    setCategories(next);
+    persist({ categories: next });
   };
 
-  const handleAnfangsbestandChange = (value: number) => {
-    setAnfangsbestand(value);
-    persist({ anfangsbestand: value });
-  };
-
-  const handleStartDatumChange = (value: string) => {
-    setStartDatum(value);
-    persist({ startDatum: value });
-  };
-
-  const sortedEntries = useMemo(() => sortCashEntriesByDate(entries), [entries]);
-  const summary = useMemo(
-    () => computeCashSummary(entries, anfangsbestand, startDatum),
-    [entries, anfangsbestand, startDatum]
+  const barabhebungenTotal = useMemo(
+    () => computeBarabhebungenTotal(kontoauszugState.transactions),
+    [kontoauszugState]
   );
-  // Deliberately not memoized on entries/anfangsbestand/startDatum alone: it
-  // also depends on "today", which changes independently of those and a
-  // stale memo would silently disagree with the fresh value handleSaveCount
-  // computes at click time. The underlying calc is a cheap array sum, so
-  // recomputing on every render costs nothing.
-  const aktuellerSollBestand = computeCashBalanceAsOf(entries, anfangsbestand, startDatum, todayIso());
+  const sortedExpenses = useMemo(() => sortExpensesByDate(expenses), [expenses]);
+  const totalExpenses = useMemo(() => computeTotalExpenses(expenses), [expenses]);
+  const cashBalance = useMemo(() => computeCashBalance(barabhebungenTotal, expenses), [barabhebungenTotal, expenses]);
+  const expensesByCategory = useMemo(() => computeExpensesByCategory(expenses), [expenses]);
 
   return (
-    <div className="flex flex-col gap-8 p-4 sm:p-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <StartBalanceInput
-          anfangsbestand={anfangsbestand}
-          startDatum={startDatum}
-          onAnfangsbestandChange={handleAnfangsbestandChange}
-          onStartDatumChange={handleStartDatumChange}
-        />
+    <div className="flex flex-col gap-6 p-4 sm:p-6">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-stone-500">💶 Bargeld</h2>
         <label className="flex items-center gap-2 text-sm text-stone-500">
           <input
             type="checkbox"
@@ -120,24 +97,55 @@ export function BargeldTab() {
         </label>
       </div>
 
-      <SummaryBar summary={summary} balanceLabel="Aktueller Kassenbestand" />
+      <SummaryTiles
+        tiles={[
+          { label: "Bar-Abhebungen gesamt", value: formatEuro(barabhebungenTotal), color: "text-stone-700" },
+          { label: "Ausgegeben", value: formatEuro(totalExpenses), color: "text-red-600" },
+          {
+            label: "Verbleibender Bargeldbestand",
+            value: formatEuro(cashBalance),
+            color: "text-indigo-700",
+            highlight: true,
+          },
+        ]}
+      />
 
-      <section className="flex flex-col gap-4">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-stone-500">💶 Kassenbuch</h2>
-        <CashEntryForm onAdd={handleAddEntry} />
-        <CashLedgerTable entries={sortedEntries} />
-      </section>
+      {barabhebungenTotal === 0 && (
+        <p className="text-sm text-stone-500">
+          Noch keine Bar-Abhebungen markiert. Geh in den Kontoauszug-Tab und markiere eine negative
+          Geldtransit-Buchung mit 💵, um deinen Bargeldbestand hier zu starten.
+        </p>
+      )}
 
-      <section className="flex flex-col gap-4">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-stone-500">🧮 Kassensturz</h2>
-        <CashCountForm
-          sollBestand={aktuellerSollBestand}
-          soundEnabled={soundEnabled}
-          onSaveCount={handleSaveCount}
-          onCreateAdjustment={handleCreateAdjustment}
-        />
-        <CashCountHistory counts={counts} />
-      </section>
+      <CashExpenseForm
+        categories={categories}
+        onAdd={handleAddExpense}
+        onAddCategory={handleAddCategory}
+        onDeleteCategory={handleDeleteCategory}
+      />
+
+      {justAdded && (
+        <div className="animate-op-feedback-in rounded-lg border border-green-200 bg-green-50 px-4 py-2 text-sm font-medium text-green-700">
+          💸 Ausgabe eingetragen!
+        </div>
+      )}
+
+      <CashExpenseTable expenses={sortedExpenses} />
+
+      <div className="flex flex-col gap-3">
+        <h3 className="text-sm font-semibold uppercase tracking-wide text-stone-500">
+          Ausgaben nach Kategorie
+        </h3>
+        <CategoryBarChart totals={expensesByCategory} />
+      </div>
+
+      <style>{`
+        @keyframes op-feedback-in {
+          from { opacity: 0; transform: translateY(-6px) scale(0.98); }
+          to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .animate-op-feedback-in { animation: op-feedback-in 0.35s ease-out; }
+      `}</style>
     </div>
   );
 }

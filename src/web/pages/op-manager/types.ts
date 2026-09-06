@@ -7,6 +7,9 @@ export interface Transaction {
   datum: string; // ISO format YYYY-MM-DD
   fingerprint: string;
   importedAt: string;
+  // Set by the user on a negative Geldtransit row to mark it as an actual
+  // cash withdrawal — its amount then feeds the Bargeld tab's balance.
+  istBarAbhebung?: boolean;
 }
 
 export interface ImportResult {
@@ -24,26 +27,17 @@ export interface AccountSummary {
 
 export type OpManagerTabId = "kontoauszug" | "bargeld" | "offene-posten" | "uebersicht";
 
-export interface CashEntry {
+export interface CashExpense {
   id: string;
   datum: string; // ISO format YYYY-MM-DD
-  beschreibung: string;
-  betrag: number;
+  betrag: number; // always positive — an outgoing cash expense
+  kategorie: string;
   erfasstAm: string;
-  // "manuell" today; a later Kontoauszug-Verknüpfung can add e.g. "kontoauszug-transfer"
-  // without touching existing entries or the code that reads this field.
-  quelle: "manuell";
 }
 
-export interface CashCount {
-  id: string;
-  datum: string; // ISO date the till was counted
-  erfasstAm: string;
-  sollBestand: number;
-  istBestand: number;
-  differenz: number;
-  denominationCounts: Record<string, number>;
-  ausgeglichen: boolean;
+export interface CategoryTotal {
+  kategorie: string;
+  summe: number;
 }
 
 export type OpenItemStatus = "offen" | "bezahlt";

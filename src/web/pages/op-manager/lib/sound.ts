@@ -41,3 +41,12 @@ export function playNeutralChime(): void {
   playTone(ctx, 349.23, now, 0.18); // F4
   playTone(ctx, 293.66, now + 0.12, 0.22); // D4
 }
+
+// A quick "cha-ching" for logging a cash expense — two fast high notes.
+export function playCashRegisterChime(): void {
+  const ctx = getContext();
+  if (!ctx) return;
+  const now = ctx.currentTime;
+  playTone(ctx, 987.77, now, 0.08); // B5
+  playTone(ctx, 1318.51, now + 0.06, 0.14); // E6
+}

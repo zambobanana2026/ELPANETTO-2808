@@ -1,4 +1,4 @@
-import type { AccountSummary, CashEntry, OpenItemsSummary, Transaction } from "../types";
+import type { AccountSummary, CashExpense, OpenItemsSummary, Transaction } from "../types";
 
 export interface OverviewSummary {
   gesamtGuthaben: number;
@@ -9,11 +9,11 @@ export interface OverviewSummary {
 
 export function computeOverviewSummary(
   kontoauszug: AccountSummary,
-  bargeld: AccountSummary,
+  bargeldBestand: number,
   offenePosten: OpenItemsSummary
 ): OverviewSummary {
   return {
-    gesamtGuthaben: kontoauszug.aktuellerKontostand + bargeld.aktuellerKontostand,
+    gesamtGuthaben: kontoauszug.aktuellerKontostand + bargeldBestand,
     offeneVerbindlichkeitenSumme: offenePosten.summeOffen,
     ueberfaelligSumme: offenePosten.summeUeberfaellig,
     anzahlOffenePosten: offenePosten.anzahlOffen,
@@ -29,7 +29,7 @@ export interface ActivityEntry {
   sortKey: string;
 }
 
-export function buildRecentActivity(transactions: Transaction[], cashEntries: CashEntry[], limit = 8): ActivityEntry[] {
+export function buildRecentActivity(transactions: Transaction[], cashExpenses: CashExpense[], limit = 8): ActivityEntry[] {
   const fromTransactions: ActivityEntry[] = transactions.map((tx) => ({
     id: tx.id,
     datum: tx.datum,
@@ -39,13 +39,13 @@ export function buildRecentActivity(transactions: Transaction[], cashEntries: Ca
     sortKey: tx.importedAt,
   }));
 
-  const fromCash: ActivityEntry[] = cashEntries.map((entry) => ({
-    id: entry.id,
-    datum: entry.datum,
-    beschreibung: entry.beschreibung,
-    betrag: entry.betrag,
+  const fromCash: ActivityEntry[] = cashExpenses.map((expense) => ({
+    id: expense.id,
+    datum: expense.datum,
+    beschreibung: expense.kategorie,
+    betrag: -expense.betrag, // expenses are always stored positive — shown as an outflow here
     quelle: "Bargeld",
-    sortKey: entry.erfasstAm,
+    sortKey: expense.erfasstAm,
   }));
 
   return [...fromTransactions, ...fromCash]

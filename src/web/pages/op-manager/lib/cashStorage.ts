@@ -1,22 +1,18 @@
-import { todayIso } from "./format";
-import type { CashCount, CashEntry } from "../types";
+import { DEFAULT_CASH_CATEGORIES } from "./constants";
+import type { CashExpense } from "../types";
 
-const STORAGE_KEY = "op-manager.bargeld.v1";
+const STORAGE_KEY = "op-manager.bargeld.v2";
 
 interface CashPersistedState {
-  entries: CashEntry[];
-  anfangsbestand: number;
-  startDatum: string;
-  counts: CashCount[];
+  expenses: CashExpense[];
+  categories: string[];
   soundEnabled: boolean;
 }
 
 export function loadCashState(): CashPersistedState {
   const fallback: CashPersistedState = {
-    entries: [],
-    anfangsbestand: 80,
-    startDatum: todayIso(),
-    counts: [],
+    expenses: [],
+    categories: [...DEFAULT_CASH_CATEGORIES],
     soundEnabled: true,
   };
 
@@ -25,10 +21,11 @@ export function loadCashState(): CashPersistedState {
     if (!raw) return fallback;
     const parsed = JSON.parse(raw) as Partial<CashPersistedState>;
     return {
-      entries: Array.isArray(parsed.entries) ? parsed.entries : fallback.entries,
-      anfangsbestand: typeof parsed.anfangsbestand === "number" ? parsed.anfangsbestand : fallback.anfangsbestand,
-      startDatum: typeof parsed.startDatum === "string" ? parsed.startDatum : fallback.startDatum,
-      counts: Array.isArray(parsed.counts) ? parsed.counts : fallback.counts,
+      expenses: Array.isArray(parsed.expenses) ? parsed.expenses : fallback.expenses,
+      categories:
+        Array.isArray(parsed.categories) && parsed.categories.length > 0
+          ? parsed.categories
+          : fallback.categories,
       soundEnabled: typeof parsed.soundEnabled === "boolean" ? parsed.soundEnabled : fallback.soundEnabled,
     };
   } catch {
