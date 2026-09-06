@@ -45,3 +45,28 @@ export interface CashCount {
   denominationCounts: Record<string, number>;
   ausgeglichen: boolean;
 }
+
+export type OpenItemStatus = "offen" | "bezahlt";
+
+export interface OpenItem {
+  id: string;
+  glaeubiger: string;
+  rechnungsnummer: string;
+  verwendungszweck: string;
+  betrag: number; // always positive — the amount owed
+  rechnungsdatum: string; // ISO format YYYY-MM-DD
+  faelligkeitsdatum: string; // ISO format YYYY-MM-DD
+  notiz: string;
+  status: OpenItemStatus;
+  bezahltAm: string | null; // ISO date, set when marked paid
+  erfasstAm: string;
+  // "manuell" today; a later Kontoauszug-Verknüpfung can add e.g. "kontoauszug-match"
+  // without touching existing entries or the code that reads this field.
+  quelle: "manuell";
+}
+
+export interface OpenItemsSummary {
+  anzahlOffen: number;
+  summeOffen: number;
+  summeUeberfaellig: number;
+}

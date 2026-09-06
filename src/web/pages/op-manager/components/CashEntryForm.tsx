@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { parseAmount } from "../lib/csvParser";
 import { todayIso } from "../lib/format";
 
 type EntryType = "einnahme" | "ausgabe";
@@ -15,7 +16,7 @@ export function CashEntryForm({ onAdd }: CashEntryFormProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const parsed = parseFloat(betragText.replace(",", "."));
+    const parsed = parseAmount(betragText);
     if (!Number.isFinite(parsed) || parsed <= 0 || beschreibung.trim().length === 0) return;
 
     onAdd({
