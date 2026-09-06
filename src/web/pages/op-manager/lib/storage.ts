@@ -1,3 +1,4 @@
+import { buildFingerprint } from "./duplicateDetection";
 import type { Transaction } from "../types";
 
 const STORAGE_KEY = "op-manager.kontoauszug.v1";
@@ -31,8 +32,15 @@ export function loadState(): PersistedState {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return fallback;
     const parsed = JSON.parse(raw) as Partial<PersistedState>;
+    const transactions = Array.isArray(parsed.transactions) ? parsed.transactions : fallback.transactions;
     return {
-      transactions: Array.isArray(parsed.transactions) ? parsed.transactions : fallback.transactions,
+      // Re-derive every fingerprint from the transaction's own stable fields
+      // on each load, so a past change to the fingerprint formula (it used
+      // to include the editable Gläubiger name) can't leave already-stored
+      // transactions stuck with a stale value that no longer matches what a
+      // fresh CSV import computes — that mismatch is what let a duplicate
+      // import through undetected.
+      transactions: transactions.map((tx) => ({ ...tx, fingerprint: buildFingerprint(tx) })),
       anfangsbestand: typeof parsed.anfangsbestand === "number" ? parsed.anfangsbestand : fallback.anfangsbestand,
       startDatum: typeof parsed.startDatum === "string" ? parsed.startDatum : fallback.startDatum,
       soundEnabled: typeof parsed.soundEnabled === "boolean" ? parsed.soundEnabled : fallback.soundEnabled,
