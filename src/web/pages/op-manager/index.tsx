@@ -3,7 +3,7 @@ import { TabNav } from "./components/TabNav";
 import { BargeldTab } from "./tabs/BargeldTab";
 import { KontoauszugTab } from "./tabs/KontoauszugTab";
 import { OffenePostenTab } from "./tabs/OffenePostenTab";
-import { PlaceholderTab } from "./tabs/PlaceholderTab";
+import { UebersichtTab } from "./tabs/UebersichtTab";
 import type { OpManagerTabId } from "./types";
 
 export default function OpManager() {
@@ -28,7 +28,7 @@ export default function OpManager() {
         {activeTab === "kontoauszug" && <KontoauszugTab />}
         {activeTab === "bargeld" && <BargeldTab />}
         {activeTab === "offene-posten" && <OffenePostenTab />}
-        {activeTab === "uebersicht" && <PlaceholderTab title="Übersicht" />}
+        {activeTab === "uebersicht" && <UebersichtTab />}
       </main>
     </div>
   );

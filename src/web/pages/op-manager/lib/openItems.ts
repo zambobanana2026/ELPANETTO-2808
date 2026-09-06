@@ -26,6 +26,18 @@ export function computeOpenItemsSummary(items: OpenItem[], asOfDatum: string = t
   return { anzahlOffen, summeOffen, summeUeberfaellig };
 }
 
+export const STATUS_STYLES: Record<DisplayStatus, string> = {
+  offen: "bg-amber-50 text-amber-700 border border-amber-200",
+  ueberfaellig: "bg-red-50 text-red-700 border border-red-200",
+  bezahlt: "bg-green-50 text-green-700 border border-green-200",
+};
+
+export const STATUS_LABELS: Record<DisplayStatus, string> = {
+  offen: "Offen",
+  ueberfaellig: "⚠ Überfällig",
+  bezahlt: "✓ Bezahlt",
+};
+
 export function sortOpenItems(items: OpenItem[]): OpenItem[] {
   return [...items].sort((a, b) => {
     const aPaid = a.status === "bezahlt";

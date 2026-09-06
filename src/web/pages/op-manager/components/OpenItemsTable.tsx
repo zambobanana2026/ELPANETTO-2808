@@ -1,4 +1,4 @@
-import { deriveDisplayStatus, type DisplayStatus } from "../lib/openItems";
+import { deriveDisplayStatus, STATUS_LABELS, STATUS_STYLES } from "../lib/openItems";
 import { formatDateDE, formatEuro } from "../lib/format";
 import type { OpenItem } from "../types";
 
@@ -7,18 +7,6 @@ interface OpenItemsTableProps {
   onMarkPaid: (id: string) => void;
   onUnmarkPaid: (id: string) => void;
 }
-
-const STATUS_STYLES: Record<DisplayStatus, string> = {
-  offen: "bg-amber-50 text-amber-700 border border-amber-200",
-  ueberfaellig: "bg-red-50 text-red-700 border border-red-200",
-  bezahlt: "bg-green-50 text-green-700 border border-green-200",
-};
-
-const STATUS_LABELS: Record<DisplayStatus, string> = {
-  offen: "Offen",
-  ueberfaellig: "⚠ Überfällig",
-  bezahlt: "✓ Bezahlt",
-};
 
 export function OpenItemsTable({ items, onMarkPaid, onUnmarkPaid }: OpenItemsTableProps) {
   if (items.length === 0) {
