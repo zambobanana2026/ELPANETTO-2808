@@ -14,7 +14,7 @@ interface CashPersistedState {
 export function loadCashState(): CashPersistedState {
   const fallback: CashPersistedState = {
     entries: [],
-    anfangsbestand: 0,
+    anfangsbestand: 80,
     startDatum: todayIso(),
     counts: [],
     soundEnabled: true,

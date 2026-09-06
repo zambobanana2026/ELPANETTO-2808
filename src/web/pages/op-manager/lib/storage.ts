@@ -17,7 +17,7 @@ export function defaultStartDatum(): string {
 export function loadState(): PersistedState {
   const fallback: PersistedState = {
     transactions: [],
-    anfangsbestand: 80,
+    anfangsbestand: 0,
     startDatum: defaultStartDatum(),
     soundEnabled: true,
   };
