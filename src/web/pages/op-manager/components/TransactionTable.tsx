@@ -1,3 +1,4 @@
+import { GELDTRANSIT_LABEL } from "../lib/constants";
 import { formatDateDE, formatSignedAmount } from "../lib/format";
 import type { Transaction } from "../types";
 
@@ -26,20 +27,23 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
           </tr>
         </thead>
         <tbody>
-          {transactions.map((tx) => (
-            <tr key={tx.id} className="border-b border-stone-100 last:border-0">
-              <td className="px-4 py-2.5 text-stone-800">{tx.glaeubiger}</td>
-              <td className="px-4 py-2.5 text-stone-600">{tx.verwendungszweck}</td>
-              <td
-                className={`px-4 py-2.5 text-right font-medium tabular-nums ${
-                  tx.betrag >= 0 ? "text-green-600" : "text-red-600"
-                }`}
-              >
-                {formatSignedAmount(tx.betrag)}
-              </td>
-              <td className="px-4 py-2.5 text-right text-stone-500 tabular-nums">{formatDateDE(tx.datum)}</td>
-            </tr>
-          ))}
+          {transactions.map((tx) => {
+            const isGeldtransit = tx.verwendungszweck === GELDTRANSIT_LABEL;
+            return (
+              <tr key={tx.id} className="border-b border-stone-100 last:border-0">
+                <td className="px-4 py-2.5 text-stone-800">{tx.glaeubiger}</td>
+                <td className="px-4 py-2.5 text-stone-600">{tx.verwendungszweck}</td>
+                <td
+                  className={`px-4 py-2.5 text-right font-medium tabular-nums ${
+                    isGeldtransit ? "text-stone-400" : tx.betrag >= 0 ? "text-green-600" : "text-red-600"
+                  }`}
+                >
+                  {formatSignedAmount(tx.betrag)}
+                </td>
+                <td className="px-4 py-2.5 text-right text-stone-500 tabular-nums">{formatDateDE(tx.datum)}</td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>

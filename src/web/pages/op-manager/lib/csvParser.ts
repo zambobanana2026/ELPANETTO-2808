@@ -2,6 +2,8 @@
 // Works by scoring each column against header-keyword and content-pattern
 // heuristics, then picking the best candidate per field.
 
+import { GELDTRANSIT_LABEL } from "./constants";
+
 const DELIMITERS = [";", ",", "\t", "|"];
 
 // Each keyword carries a weight: a strong, unambiguous match (e.g. a header
@@ -353,7 +355,7 @@ export function parseBankCsv(text: string): ParsedRow[] {
     const glaeubiger = mapping.glaeubiger >= 0 ? (row[mapping.glaeubiger] ?? "").trim() : "";
     const iban = mapping.iban >= 0 ? (row[mapping.iban] ?? "").trim().replace(/\s+/g, "") : "";
     const vwzRaw = mapping.verwendungszweck >= 0 ? (row[mapping.verwendungszweck] ?? "").trim() : "";
-    const verwendungszweck = vwzRaw.length > 0 ? vwzRaw : "Geldtransit";
+    const verwendungszweck = vwzRaw.length > 0 ? vwzRaw : GELDTRANSIT_LABEL;
 
     results.push({
       glaeubiger: glaeubiger.length > 0 ? glaeubiger : "Unbekannt",

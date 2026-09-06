@@ -1,3 +1,4 @@
+import { GELDTRANSIT_LABEL } from "./constants";
 import type { AccountSummary, Transaction } from "../types";
 
 export function computeSummary(
@@ -10,8 +11,13 @@ export function computeSummary(
   let bewegungenSeitStart = 0;
 
   for (const tx of transactions) {
-    if (tx.betrag >= 0) gesamtEinnahmen += tx.betrag;
-    else gesamtAusgaben += tx.betrag;
+    // Geldtransit = internal transfer between the user's own accounts, not
+    // real business income/expense — excluded from the totals below, but
+    // still counted toward the balance since the money actually moved.
+    if (tx.verwendungszweck !== GELDTRANSIT_LABEL) {
+      if (tx.betrag >= 0) gesamtEinnahmen += tx.betrag;
+      else gesamtAusgaben += tx.betrag;
+    }
 
     if (tx.datum >= startDatum) bewegungenSeitStart += tx.betrag;
   }
