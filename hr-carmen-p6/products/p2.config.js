@@ -665,7 +665,7 @@ module.exports = {
     '#app .box, #app .tile, #app .note, #app .qa, #app .choice, #app .weeklyCheckCard, #app .weeklyCheckIntro, #app .compareRow > div, #app .bigCounts > div, #app .ctaHero { box-shadow: 0 2px 8px rgba(37,37,37,.07), 0 1px 2px rgba(37,37,37,.05); }',
     // Plain-language "what to do on this slide" block, shown before every headline —
     // big, green, centered, so it can't be missed.
-    '#app .stepHint { display:block; background:var(--num); color:var(--ink); padding:24px 30px; margin:18px 0 0; font-size:19px; font-weight:600; line-height:1.55; text-align:center; max-width:820px; margin-left:auto; margin-right:auto; box-shadow:0 4px 14px rgba(85,205,178,.5); }',
-    '#app .stepHint b { display:block; font-size:13px; letter-spacing:2px; text-transform:uppercase; font-weight:800; margin-bottom:10px; color:var(--ink); opacity:.65; }'
+    '#app .stepHint { display:block; background:var(--num); color:#ffffff; padding:24px 30px; margin:18px 0 0; font-size:19px; font-weight:700; line-height:1.55; text-align:center; max-width:820px; margin-left:auto; margin-right:auto; box-shadow:0 4px 14px rgba(85,205,178,.5); text-shadow:0 1px 2px rgba(0,0,0,.15); }',
+    '#app .stepHint b { display:block; font-size:13px; letter-spacing:2px; text-transform:uppercase; font-weight:800; margin-bottom:10px; color:#ffffff; opacity:.95; }'
   ].join('\n')
 };
