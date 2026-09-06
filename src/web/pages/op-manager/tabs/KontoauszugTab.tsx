@@ -6,6 +6,7 @@ import { TransactionTable } from "../components/TransactionTable";
 import { computeSummary, sortByDateAscending } from "../lib/balance";
 import type { ParsedRow } from "../lib/csvParser";
 import { mergeNewRows } from "../lib/duplicateDetection";
+import { applyKnownGlaeubigerNames } from "../lib/glaeubigerNames";
 import { loadState, saveState } from "../lib/storage";
 import type { ImportResult, Transaction } from "../types";
 
@@ -15,6 +16,7 @@ export function KontoauszugTab() {
   const [anfangsbestand, setAnfangsbestand] = useState(initial.anfangsbestand);
   const [startDatum, setStartDatum] = useState(initial.startDatum);
   const [soundEnabled, setSoundEnabled] = useState(initial.soundEnabled);
+  const [ibanNamen, setIbanNamen] = useState<Record<string, string>>(initial.ibanNamen);
 
   const persist = (next: Partial<ReturnType<typeof loadState>>) => {
     saveState({
@@ -22,6 +24,7 @@ export function KontoauszugTab() {
       anfangsbestand: next.anfangsbestand ?? anfangsbestand,
       startDatum: next.startDatum ?? startDatum,
       soundEnabled: next.soundEnabled ?? soundEnabled,
+      ibanNamen: next.ibanNamen ?? ibanNamen,
     });
   };
 
@@ -32,7 +35,7 @@ export function KontoauszugTab() {
     }
     const result = mergeNewRows(rows, existingFingerprintCounts);
     if (result.added.length > 0) {
-      const next = [...transactions, ...result.added];
+      const next = applyKnownGlaeubigerNames([...transactions, ...result.added], ibanNamen);
       setTransactions(next);
       persist({ transactions: next });
     }
@@ -43,6 +46,22 @@ export function KontoauszugTab() {
     const next = transactions.map((tx) => (tx.id === id ? { ...tx, istBarAbhebung: !tx.istBarAbhebung } : tx));
     setTransactions(next);
     persist({ transactions: next });
+  };
+
+  const handleSetGlaeubigerName = (id: string, iban: string, name: string) => {
+    // With a known IBAN, remember the name for every transaction from that
+    // account (past and future); without one, just fix this single row.
+    if (iban) {
+      const nextIbanNamen = { ...ibanNamen, [iban]: name };
+      const next = applyKnownGlaeubigerNames(transactions, nextIbanNamen);
+      setIbanNamen(nextIbanNamen);
+      setTransactions(next);
+      persist({ ibanNamen: nextIbanNamen, transactions: next });
+    } else {
+      const next = transactions.map((tx) => (tx.id === id ? { ...tx, glaeubiger: name } : tx));
+      setTransactions(next);
+      persist({ transactions: next });
+    }
   };
 
   const handleAnfangsbestandChange = (value: number) => {
@@ -86,7 +105,11 @@ export function KontoauszugTab() {
 
       <CsvImporter onFileParsed={handleFileParsed} soundEnabled={soundEnabled} />
 
-      <TransactionTable transactions={sortedTransactions} onToggleBarAbhebung={handleToggleBarAbhebung} />
+      <TransactionTable
+        transactions={sortedTransactions}
+        onToggleBarAbhebung={handleToggleBarAbhebung}
+        onSetGlaeubigerName={handleSetGlaeubigerName}
+      />
 
       <SummaryBar summary={summary} />
     </div>

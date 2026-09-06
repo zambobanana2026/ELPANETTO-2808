@@ -7,6 +7,10 @@ interface PersistedState {
   anfangsbestand: number;
   startDatum: string;
   soundEnabled: boolean;
+  // Learned IBAN -> Gläubiger name, keyed by IBAN. Filled in whenever the
+  // user names a counterparty the bank only reported by IBAN, then applied
+  // to every transaction (past and future) for that IBAN.
+  ibanNamen: Record<string, string>;
 }
 
 export function defaultStartDatum(): string {
@@ -20,6 +24,7 @@ export function loadState(): PersistedState {
     anfangsbestand: 0,
     startDatum: defaultStartDatum(),
     soundEnabled: true,
+    ibanNamen: {},
   };
 
   try {
@@ -31,6 +36,8 @@ export function loadState(): PersistedState {
       anfangsbestand: typeof parsed.anfangsbestand === "number" ? parsed.anfangsbestand : fallback.anfangsbestand,
       startDatum: typeof parsed.startDatum === "string" ? parsed.startDatum : fallback.startDatum,
       soundEnabled: typeof parsed.soundEnabled === "boolean" ? parsed.soundEnabled : fallback.soundEnabled,
+      ibanNamen:
+        parsed.ibanNamen && typeof parsed.ibanNamen === "object" ? parsed.ibanNamen : fallback.ibanNamen,
     };
   } catch {
     return fallback;

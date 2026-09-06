@@ -158,7 +158,7 @@ function looksLikeDate(value: string): boolean {
   return DATE_PATTERNS.some((p) => p.test(value.trim()));
 }
 
-function looksLikeIban(value: string): boolean {
+export function looksLikeIban(value: string): boolean {
   return IBAN_PATTERN.test(value.trim().replace(/\s+/g, ""));
 }
 
@@ -352,13 +352,18 @@ export function parseBankCsv(text: string): ParsedRow[] {
     const datum = parseDateToIso(datumRaw);
     if (!datum) continue;
 
-    const glaeubiger = mapping.glaeubiger >= 0 ? (row[mapping.glaeubiger] ?? "").trim() : "";
+    const glaeubigerRaw = mapping.glaeubiger >= 0 ? (row[mapping.glaeubiger] ?? "").trim() : "";
     const iban = mapping.iban >= 0 ? (row[mapping.iban] ?? "").trim().replace(/\s+/g, "") : "";
     const vwzRaw = mapping.verwendungszweck >= 0 ? (row[mapping.verwendungszweck] ?? "").trim() : "";
     const verwendungszweck = vwzRaw.length > 0 ? vwzRaw : GELDTRANSIT_LABEL;
 
+    // Some banks report only the counterparty's IBAN when no name is on
+    // file (common for transfers between the user's own accounts) — that's
+    // not a name, so leave it blank rather than showing the IBAN twice.
+    const glaeubiger = glaeubigerRaw.length > 0 && !looksLikeIban(glaeubigerRaw) ? glaeubigerRaw : "";
+
     results.push({
-      glaeubiger: glaeubiger.length > 0 ? glaeubiger : "Unbekannt",
+      glaeubiger,
       iban,
       verwendungszweck,
       betrag,

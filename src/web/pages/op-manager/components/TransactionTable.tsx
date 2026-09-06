@@ -1,3 +1,4 @@
+import { GlaeubigerCell } from "./GlaeubigerCell";
 import { GELDTRANSIT_LABEL } from "../lib/constants";
 import { formatDateDE, formatSignedAmount } from "../lib/format";
 import type { Transaction } from "../types";
@@ -5,9 +6,10 @@ import type { Transaction } from "../types";
 interface TransactionTableProps {
   transactions: Transaction[];
   onToggleBarAbhebung: (id: string) => void;
+  onSetGlaeubigerName: (id: string, iban: string, name: string) => void;
 }
 
-export function TransactionTable({ transactions, onToggleBarAbhebung }: TransactionTableProps) {
+export function TransactionTable({ transactions, onToggleBarAbhebung, onSetGlaeubigerName }: TransactionTableProps) {
   if (transactions.length === 0) {
     return (
       <div className="rounded-xl border border-dashed border-stone-300 bg-white py-16 text-center text-stone-400">
@@ -33,7 +35,9 @@ export function TransactionTable({ transactions, onToggleBarAbhebung }: Transact
             const isBarAbhebungCandidate = isGeldtransit && tx.betrag < 0;
             return (
               <tr key={tx.id} className="border-b border-stone-100 last:border-0">
-                <td className="px-4 py-2.5 text-stone-800">{tx.glaeubiger}</td>
+                <td className="px-4 py-2.5">
+                  <GlaeubigerCell tx={tx} onSetName={onSetGlaeubigerName} />
+                </td>
                 <td className="px-4 py-2.5 text-stone-600">
                   {tx.verwendungszweck}
                   {isBarAbhebungCandidate && (
