@@ -45,7 +45,11 @@ export function UebersichtTab() {
 
   return (
     <div className="flex flex-col gap-8 p-4 sm:p-6">
-      <OverviewSummaryCards summary={overviewSummary} />
+      <OverviewSummaryCards
+        summary={overviewSummary}
+        kontoauszugSummary={kontoauszugSummary}
+        bargeldBestand={bargeldBestand}
+      />
 
       <section className="flex flex-col gap-4">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-stone-500">📅 Nächste Fälligkeiten</h2>
