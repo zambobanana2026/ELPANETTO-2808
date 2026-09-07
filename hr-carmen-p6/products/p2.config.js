@@ -142,9 +142,11 @@ function slideMilestoneVorbereitung(m, num, phase) {
     : '';
   const fokusBox = m.fokus ? '<div class="box"><b>WORUM GEHT ES IN DIESER GESPRÄCHSPHASE?</b><p class="lead" style="margin:10px 0 0">Jedes Gespräch hat einen roten Faden — das Thema, um das sich an diesem Tag alles dreht. Bei diesem Gespräch ist das: ' + esc(m.fokus) + ' Was du dafür genau fragst und worauf du achtest, steht auf den nächsten Seiten.</p></div>' : '';
   // Carmen-Next-Ergänzung (nicht aus dem Original-PDF): ein fertiger
-  // Fragenkatalog fürs Gespräch, damit sich niemand selbst Fragen ausdenken muss.
+  // Fragenkatalog fürs Gespräch, damit sich niemand selbst Fragen ausdenken muss
+  // — plus ein Freitextfeld, falls der Nutzer noch eigene Fragen ergänzen will.
+  const eigeneFragenField = pickFields(m.fields, ['eigenefragen']);
   const fragenBox = (m.vorschlagsfragen && m.vorschlagsfragen.length)
-    ? '<div class="box"><b>FRAGEN, DIE DU STELLEN KANNST.</b><p class="lead" style="margin:10px 0 12px">Du musst dir vorher nichts überlegen — nutze diese Fragen einfach als Leitfaden im Gespräch.</p><ul class="qlist">' + m.vorschlagsfragen.map(function (q) { return '<li>' + esc(q) + '</li>'; }).join('') + '</ul></div>'
+    ? '<div class="box"><b>FRAGEN, DIE DU STELLEN KANNST.</b><p class="lead" style="margin:10px 0 12px">Du musst dir vorher nichts überlegen — nutze diese Fragen einfach als Leitfaden im Gespräch.</p><ul class="qlist">' + m.vorschlagsfragen.map(function (q) { return '<li>' + esc(q) + '</li>'; }).join('') + '</ul>' + fieldsGrid('m' + m.n, eigeneFragenField) + '</div>'
     : '';
   const teilnehmerFields = pickFields(m.fields, ['teilnehmer']);
   const zeitraum = phase ? phase.zeitraum : '';
@@ -212,7 +214,7 @@ function slideMilestoneBesserSagen(m, num) {
 }
 
 function slideMilestoneVereinbarung(m, num) {
-  const restFields = omitFields(m.fields, ['teilnehmer']);
+  const restFields = omitFields(m.fields, ['teilnehmer', 'eigenefragen']);
   return (
     '<section class="slide headCenter" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 4) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
     stepHint('Auf dieser Seite hältst du fest, was im Gespräch besprochen wurde. Trage in die Felder ein, was ihr gemeinsam vereinbart habt. Das hilft dir, später nachzuschauen, was ihr abgemacht hattet. Klicke danach auf „Weiter".') +
@@ -491,8 +493,8 @@ function cardFieldMeta(data) {
 // actually filled in show up.
 function sectionFieldMeta(data) {
   const milestoneSections = data.milestones.map(function (m) {
-    const prepEntries = pickFields(m.fields, ['teilnehmer']).map(function (f) { return { id: 'm' + m.n + '_' + f[1], label: f[0] }; });
-    const vereinbarungEntries = omitFields(m.fields, ['teilnehmer']).map(function (f) { return { id: 'm' + m.n + '_' + f[1], label: f[0] }; });
+    const prepEntries = pickFields(m.fields, ['teilnehmer', 'eigenefragen']).map(function (f) { return { id: 'm' + m.n + '_' + f[1], label: f[0] }; });
+    const vereinbarungEntries = omitFields(m.fields, ['teilnehmer', 'eigenefragen']).map(function (f) { return { id: 'm' + m.n + '_' + f[1], label: f[0] }; });
     return { title: m.title.toUpperCase(), prepEntries: prepEntries, vereinbarungEntries: vereinbarungEntries };
   });
   function toolEntries(fields, prefix) {

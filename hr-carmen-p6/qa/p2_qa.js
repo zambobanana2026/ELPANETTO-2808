@@ -97,7 +97,7 @@ function assert(cond, msg) {
 
   // Tag 30 Vorbereitung holds the "teilnehmer" field, with its explanatory hint; Vereinbarung holds dok/next
   await page.evaluate((n) => window.goTo(n), ms(0, 0));
-  assert((await page.locator('.slide.active textarea[data-field]').count()) === 1, 'Tag30 Vorbereitung slide has exactly 1 field (Teilnehmer)');
+  assert((await page.locator('.slide.active textarea[data-field]').count()) === 2, 'Tag30 Vorbereitung slide has exactly 2 fields (Eigene Fragen + Teilnehmer)');
   assert((await page.locator('.slide.active .weeklyCheckCard span').first().textContent()).length > 0, 'Tag30 Teilnehmer field carries an explanatory hint');
   await page.evaluate((n) => window.goTo(n), ms(0, 4)); // Vereinbarung
   await page.fill('textarea[data-field="m1_dok"]', 'Ben-Notiz');

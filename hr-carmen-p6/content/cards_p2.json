@@ -69,6 +69,7 @@
       ],
       "gespraechsfolge": ["30-Tage-Check-in mit Erwartungsabgleich durchgeführt"],
       "fields": [
+        ["EIGENE FRAGEN", "eigenefragen", "Eigene Fragen ergänzen …", "Hast du noch eigene Fragen, die du stellen möchtest? Trag sie hier ein — sie werden genauso gespeichert wie alle anderen Notizen."],
         ["TEILNEHMER", "teilnehmer", "Name(n) eintragen …", "Wer nimmt an diesem Gespräch teil? Meist du und die neue Person — bei Bedarf auch der Buddy."],
         ["DOKUMENTATION", "dok", "Kurz eintragen …", "Was habt ihr besprochen? Stichpunkte reichen völlig."],
         ["NÄCHSTE SCHRITTE", "next", "Kurz eintragen …", "Was ist bis zum nächsten Gespräch zu tun — und wer macht was bis wann?"]
@@ -109,6 +110,7 @@
       ],
       "gespraechsfolge": ["60-Tage-Review mit Fehleranalyse, Schnittstellenkooperation und Selbstständigkeit durchgeführt"],
       "fields": [
+        ["EIGENE FRAGEN", "eigenefragen", "Eigene Fragen ergänzen …", "Hast du noch eigene Fragen, die du stellen möchtest? Trag sie hier ein — sie werden genauso gespeichert wie alle anderen Notizen."],
         ["TEILNEHMER", "teilnehmer", "Name(n) eintragen …", "Wer nimmt an diesem Gespräch teil? Meist du und die neue Person — bei Bedarf auch der Buddy."],
         ["DOKUMENTATION", "dok", "Kurz eintragen …", "Was habt ihr besprochen? Stichpunkte reichen völlig."],
         ["NÄCHSTE SCHRITTE", "next", "Kurz eintragen …", "Was ist bis zum nächsten Gespräch zu tun — und wer macht was bis wann?"]
@@ -150,6 +152,7 @@
       ],
       "gespraechsfolge": ["90-Tage-Standortbestimmung mit Leistungsbeurteilung und erster Übernahmeprognose durchgeführt"],
       "fields": [
+        ["EIGENE FRAGEN", "eigenefragen", "Eigene Fragen ergänzen …", "Hast du noch eigene Fragen, die du stellen möchtest? Trag sie hier ein — sie werden genauso gespeichert wie alle anderen Notizen."],
         ["FACHLICHKEIT", "fach", "Kurz eintragen …", "Wie gut beherrscht die Person die fachlichen Aufgaben ihrer Rolle?"],
         ["SELBSTSTEUERUNG", "selbst", "Kurz eintragen …", "Wie gut organisiert sich die Person selbst — Prioritäten setzen, Termine einhalten, ohne ständige Anleitung?"],
         ["TEAMFIT", "teamfit", "Kurz eintragen …", "Wie gut hat sich die Person ins Team eingefügt?"],
@@ -194,6 +197,7 @@
       ],
       "gespraechsfolge": ["Tag 150–170 – Probezeit-Abschlussgespräch durchgeführt", "Goldene Abschlussfrage verwendet"],
       "fields": [
+        ["EIGENE FRAGEN", "eigenefragen", "Eigene Fragen ergänzen …", "Hast du noch eigene Fragen, die du stellen möchtest? Trag sie hier ein — sie werden genauso gespeichert wie alle anderen Notizen."],
         ["TEILNEHMER", "teilnehmer", "Name(n) eintragen …", "Wer nimmt an diesem Gespräch teil? Meist du und die neue Person — bei Bedarf auch HR."],
         ["DOKUMENTATION", "dok", "Kurz eintragen …", "Was habt ihr besprochen? Stichpunkte reichen völlig."],
         ["NÄCHSTE SCHRITTE", "next", "Kurz eintragen …", "Wie geht es nach der Probezeit weiter — und was ist bis dahin zu klären?"]

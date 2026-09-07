@@ -21,7 +21,14 @@ Zwei Verständlichkeits-Ergänzungen nach Martins Feedback, beide P2-eigen
   keine eigenen Fragen mehr überlegen muss. Wie bei der "Typische
   Reaktionen"-Seite (siehe unten) ist dieser Inhalt neu verfasst, nicht aus
   dem PDF übernommen — Fragen orientieren sich eng am jeweiligen `fokus`/
-  `bewertungsbereiche` des Meilensteins.
+  `bewertungsbereiche` des Meilensteins. Direkt darunter ein neues,
+  persistentes Freitextfeld "EIGENE FRAGEN" (`eigenefragen` in `m.fields`,
+  je Mitarbeiter gespeichert wie alle anderen Felder), falls der Nutzer noch
+  eigene Fragen ergänzen will. Bewusst nicht auch auf der Vereinbarungs-
+  Seite gezeigt (dieselbe `data-field`-Bindung an zwei Stellen hätte zu
+  veralteten Anzeigen geführt) — dafür `pickFields`/`omitFields` in
+  `slideMilestoneVorbereitung`/`-Vereinbarung` und `sectionFieldMeta` (für
+  die Zusammenfassung) entsprechend angepasst.
 
 ## P2 — Umstieg auf den Carmen-Klar-Motor, 48 Slides (v4)
 
