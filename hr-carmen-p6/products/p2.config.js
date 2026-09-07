@@ -141,13 +141,18 @@ function slideMilestoneVorbereitung(m, num, phase) {
     ? '<div class="box"><b>WIE OFT TRIFFT DER BUDDY DEIN NEUES TEAMMITGLIED GERADE?</b><p style="margin:10px 0 0">Ein Buddy ist eine erfahrene Kollegin oder ein erfahrener Kollege, die/der deinem neuen Teammitglied beim Einleben hilft — nicht du selbst. In dieser Gesprächsphase gilt: ' + esc(buddyTaktung) + '</p></div>'
     : '';
   const fokusBox = m.fokus ? '<div class="box"><b>WORUM GEHT ES IN DIESER GESPRÄCHSPHASE?</b><p class="lead" style="margin:10px 0 0">Jedes Gespräch hat einen roten Faden — das Thema, um das sich an diesem Tag alles dreht. Bei diesem Gespräch ist das: ' + esc(m.fokus) + ' Was du dafür genau fragst und worauf du achtest, steht auf den nächsten Seiten.</p></div>' : '';
+  // Carmen-Next-Ergänzung (nicht aus dem Original-PDF): ein fertiger
+  // Fragenkatalog fürs Gespräch, damit sich niemand selbst Fragen ausdenken muss.
+  const fragenBox = (m.vorschlagsfragen && m.vorschlagsfragen.length)
+    ? '<div class="box"><b>FRAGEN, DIE DU STELLEN KANNST.</b><p class="lead" style="margin:10px 0 12px">Du musst dir vorher nichts überlegen — nutze diese Fragen einfach als Leitfaden im Gespräch.</p><ul class="qlist">' + m.vorschlagsfragen.map(function (q) { return '<li>' + esc(q) + '</li>'; }).join('') + '</ul></div>'
+    : '';
   const teilnehmerFields = pickFields(m.fields, ['teilnehmer']);
   const zeitraum = phase ? phase.zeitraum : '';
   return (
     '<section class="slide headCenter" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 0) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
-    stepHint('Auf dieser Seite bereitest du dich auf das Gespräch vor. Geh die Checkliste durch und schau, was in dieser Zeit schon passiert ist. Trage außerdem ein, wer beim Gespräch dabei sein wird. Klicke danach unten auf „Weiter".') +
+    stepHint('Auf dieser Seite bereitest du dich auf das Gespräch vor. Du bekommst fertige Fragen, die du der Person stellen kannst — du musst dir also nichts selbst überlegen. Geh danach die Checkliste durch und trage ein, wer beim Gespräch dabei sein wird. Klicke danach unten auf „Weiter".') +
     '<h1>' + milestoneHeadline(m) + '</h1>' +
-    fokusBox + buddyBox +
+    fokusBox + buddyBox + fragenBox +
     '<h2>IST DIESE GESPRÄCHSPHASE ABGESCHLOSSEN?</h2>' +
     '<p class="lead">Diese Liste zeigt, was in ' + esc(zeitraum || 'dieser Zeit') + ' eigentlich passiert sein sollte. Geh sie vor dem Gespräch kurz durch: Was passt schon? Was fehlt noch? Ein offener Punkt ist kein Problem — er wird einfach zum Thema im Gespräch.</p>' +
     checksList('m' + m.n + '_chk', m.checks) +

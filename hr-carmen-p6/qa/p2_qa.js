@@ -133,6 +133,7 @@ function assert(cond, msg) {
   await page.evaluate((n) => window.goTo(n), ms(0, 0));
   const checkHintCount = await page.locator('.slide.active .choice span').count();
   assert(checkHintCount === 3, 'Tag30 Vorbereitung: all 3 checklist items carry a hint span');
+  assert((await page.locator('.slide.active .qlist li').count()) === 6, 'Tag30 Vorbereitung: shows 6 suggested questions (Vorschlagsfragen)');
 
   // ---- Milestone 3 (Tag 90) structured fields + Bewertungsbereiche ----
   await page.evaluate((n) => window.goTo(n), ms(2, 1)); // Tag90 Ziel & Einstieg

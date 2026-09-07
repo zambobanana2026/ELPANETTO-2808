@@ -1,5 +1,28 @@
 # Status — Carmen Next Motor/Config
 
+## P2 — Schritt-Hinweise + Vorschlagsfragen (v5)
+
+Zwei Verständlichkeits-Ergänzungen nach Martins Feedback, beide P2-eigen
+(nur `extraCss`/`cards_p2.json`/`p2.config.js`, Motor und P6 unangetastet):
+
+- **"Nächster Schritt"-Hinweis auf jeder der 48 Slides:** ein großer,
+  zentrierter Block in Mint (`var(--num)`, dieselbe Farbe wie die
+  Seitenzahlen) mit weißer Schrift, der in 3–4 einfachen Sätzen sagt, was
+  auf dieser Seite zu tun ist. Neue `.stepHint`-Klasse, per `stepHint()`-
+  Helper in `p2.config.js` erzeugt. Bewusst ausgelassen auf den beiden
+  Slides mit Video-Platzhalter (Willkommen, Mitarbeitende) — dort war laut
+  Feedback kein Platz dafür.
+- **Vorschlagsfragen (Carmen-Next-Ergänzung, nicht aus dem Original-PDF):**
+  Jede der vier Meilenstein-Vorbereitungs-Seiten (Tag 30/60/90/150–170,
+  jeweils Unterseite 1/6) zeigt jetzt einen fertigen Fragenkatalog
+  (`vorschlagsfragen` in `cards_p2.json`, 6 Fragen je Meilenstein) direkt
+  nach den Kontext-Boxen und vor der Checkliste — Martins Vorgabe war,
+  dem Nutzer so viel wie möglich abzunehmen, damit er sich im Gespräch
+  keine eigenen Fragen mehr überlegen muss. Wie bei der "Typische
+  Reaktionen"-Seite (siehe unten) ist dieser Inhalt neu verfasst, nicht aus
+  dem PDF übernommen — Fragen orientieren sich eng am jeweiligen `fokus`/
+  `bewertungsbereiche` des Meilensteins.
+
 ## P2 — Umstieg auf den Carmen-Klar-Motor, 48 Slides (v4)
 
 Parallel zu diesem P2-Durchgang ist auf einer anderen Branch
