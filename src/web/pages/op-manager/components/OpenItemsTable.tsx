@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { parseAmount } from "../lib/csvParser";
 import { computeRestbetrag, deriveItemStatus, STATUS_LABELS, STATUS_STYLES } from "../lib/openItems";
 import { formatEuro } from "../lib/format";
-import type { OpenItem } from "../types";
+import type { OpenItem, Transaction } from "../types";
 
 const fieldClass = "rounded border border-stone-200 bg-transparent px-1.5 py-1 text-sm focus:border-indigo-500 focus:outline-none";
 
@@ -74,12 +74,13 @@ function EditableAmountCell({ value, onCommit, width = "w-20" }: { value: number
 
 interface OpenItemsTableProps {
   items: OpenItem[];
+  matchesById?: Record<string, Transaction>;
   onUpdateField: <K extends keyof OpenItem>(id: string, field: K, value: OpenItem[K]) => void;
   onMarkPaidOff: (id: string) => void;
   onDelete: (id: string) => void;
 }
 
-export function OpenItemsTable({ items, onUpdateField, onMarkPaidOff, onDelete }: OpenItemsTableProps) {
+export function OpenItemsTable({ items, matchesById, onUpdateField, onMarkPaidOff, onDelete }: OpenItemsTableProps) {
   if (items.length === 0) {
     return (
       <div className="rounded-xl border border-dashed border-stone-300 bg-white py-16 text-center text-stone-400">
@@ -111,6 +112,10 @@ export function OpenItemsTable({ items, onUpdateField, onMarkPaidOff, onDelete }
           {items.map((item) => {
             const status = deriveItemStatus(item);
             const restbetrag = computeRestbetrag(item);
+            const match = matchesById?.[item.id];
+            const suggestVerwendungszweck =
+              match?.verwendungszweck &&
+              match.verwendungszweck.trim().toLowerCase() !== (item.verwendungszweck || "").trim().toLowerCase();
             return (
               <tr key={item.id} className="border-b border-stone-100 last:border-0">
                 <td className="px-3 py-2.5 text-center">
@@ -137,7 +142,19 @@ export function OpenItemsTable({ items, onUpdateField, onMarkPaidOff, onDelete }
                   <EditableTextCell value={item.kategorie} onCommit={(v) => onUpdateField(item.id, "kategorie", v)} width="w-28" />
                 </td>
                 <td className="px-3 py-2.5">
-                  <EditableTextCell value={item.verwendungszweck} onCommit={(v) => onUpdateField(item.id, "verwendungszweck", v)} width="w-40" />
+                  <div className="flex flex-col gap-1">
+                    <EditableTextCell value={item.verwendungszweck} onCommit={(v) => onUpdateField(item.id, "verwendungszweck", v)} width="w-40" />
+                    {suggestVerwendungszweck && (
+                      <button
+                        type="button"
+                        title={`Aus Kontoauszug übernehmen: "${match!.verwendungszweck}"`}
+                        onClick={() => onUpdateField(item.id, "verwendungszweck", match!.verwendungszweck)}
+                        className="w-40 truncate rounded border border-indigo-200 bg-indigo-50 px-1.5 py-1 text-left text-xs font-medium text-indigo-700 hover:bg-indigo-100"
+                      >
+                        🔗 „{match!.verwendungszweck}“ übernehmen
+                      </button>
+                    )}
+                  </div>
                 </td>
                 <td className="px-3 py-2.5 text-right">
                   <EditableAmountCell value={item.gesamtbetrag} onCommit={(v) => onUpdateField(item.id, "gesamtbetrag", v)} />

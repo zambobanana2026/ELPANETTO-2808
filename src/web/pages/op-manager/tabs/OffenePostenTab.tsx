@@ -2,15 +2,19 @@ import { useMemo, useState } from "react";
 import { OpenItemForm } from "../components/OpenItemForm";
 import { OpenItemsSummary } from "../components/OpenItemsSummary";
 import { OpenItemsTable } from "../components/OpenItemsTable";
-import { computeOpenItemsSummary, sortOpenItems } from "../lib/openItems";
+import { computeOpenItemsSummary, findMatchingTransaction, sortOpenItems } from "../lib/openItems";
 import { loadOpenItemsState, saveOpenItemsState, type OpenItemsPersistedState } from "../lib/openItemsStorage";
+import { loadState as loadKontoauszugState } from "../lib/storage";
 import { playSuccessChime } from "../lib/sound";
-import type { OpenItem } from "../types";
+import type { OpenItem, Transaction } from "../types";
 
 export function OffenePostenTab() {
   const [initial] = useState(() => loadOpenItemsState());
   const [items, setItems] = useState<OpenItem[]>(initial.items);
   const [soundEnabled, setSoundEnabled] = useState(initial.soundEnabled);
+  // Read-only reference to the Kontoauszug transactions, used only to
+  // suggest a matching Verwendungszweck below — never written back to.
+  const [kontoauszugTransactions] = useState<Transaction[]>(() => loadKontoauszugState().transactions);
 
   const persist = (next: Partial<OpenItemsPersistedState>) => {
     saveOpenItemsState({
@@ -63,6 +67,14 @@ export function OffenePostenTab() {
 
   const sortedItems = useMemo(() => sortOpenItems(items), [items]);
   const summary = useMemo(() => computeOpenItemsSummary(items), [items]);
+  const matchesById = useMemo(() => {
+    const map: Record<string, Transaction> = {};
+    for (const item of items) {
+      const match = findMatchingTransaction(item, kontoauszugTransactions);
+      if (match) map[item.id] = match;
+    }
+    return map;
+  }, [items, kontoauszugTransactions]);
 
   return (
     <div className="flex flex-col gap-6 p-4 sm:p-6">
@@ -86,7 +98,13 @@ export function OffenePostenTab() {
 
       <OpenItemsSummary summary={summary} />
 
-      <OpenItemsTable items={sortedItems} onUpdateField={handleUpdateField} onMarkPaidOff={handleMarkPaidOff} onDelete={handleDelete} />
+      <OpenItemsTable
+        items={sortedItems}
+        matchesById={matchesById}
+        onUpdateField={handleUpdateField}
+        onMarkPaidOff={handleMarkPaidOff}
+        onDelete={handleDelete}
+      />
     </div>
   );
 }

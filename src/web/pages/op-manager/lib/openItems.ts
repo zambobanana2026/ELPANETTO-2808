@@ -1,4 +1,4 @@
-import type { OpenItem, OpenItemStatus, OpenItemsSummary } from "../types";
+import type { OpenItem, OpenItemStatus, OpenItemsSummary, Transaction } from "../types";
 
 // Remaining balance on a debt/installment item. Never negative — paying
 // more than the total simply zeroes it out rather than going negative.
@@ -54,4 +54,45 @@ export function sortOpenItems(items: OpenItem[]): OpenItem[] {
     }
     return computeRestbetrag(b) - computeRestbetrag(a); // largest remaining balance first
   });
+}
+
+// Loose text match used to link an Offene-Posten item to a Kontoauszug
+// transaction: lowercased, umlauts folded, punctuation stripped, so
+// "Klarna/Digistore24" and "KLARNA*DIGISTORE24 DE" line up.
+function normalizeForMatch(s: string): string {
+  const umlauts: Record<string, string> = { ä: "ae", ö: "oe", ü: "ue", ß: "ss" };
+  return (s || "")
+    .toLowerCase()
+    .replace(/[äöüß]/g, (c) => umlauts[c])
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+
+// A Gläubiger name is sometimes stored as "A/B" when two possible payees
+// apply (e.g. "Klarna/Digistore24") — split on / and , so either half can
+// match on its own.
+function glaeubigerNameCandidates(glaeubiger: string): string[] {
+  return (glaeubiger || "")
+    .split(/[/,]/)
+    .map(normalizeForMatch)
+    .filter((s) => s.length >= 3);
+}
+
+// Finds the Kontoauszug transaction that best explains an Offene-Posten
+// item, matching on Verwendungszweck text or Gläubiger name (either
+// direction, substring). Picks the most recent match when several fit.
+export function findMatchingTransaction(item: OpenItem, transactions: Transaction[]): Transaction | null {
+  const glCandidates = glaeubigerNameCandidates(item.glaeubiger);
+  const itemVz = normalizeForMatch(item.verwendungszweck);
+  let best: Transaction | null = null;
+  for (const tx of transactions) {
+    const txGl = normalizeForMatch(tx.glaeubiger);
+    const txVz = normalizeForMatch(tx.verwendungszweck);
+    const glMatch = glCandidates.some((c) => (txGl && txGl.includes(c)) || (txVz && txVz.includes(c)));
+    const vzMatch = itemVz.length >= 3 && Boolean(txVz) && (txVz.includes(itemVz) || itemVz.includes(txVz));
+    if (glMatch || vzMatch) {
+      if (!best || tx.datum > best.datum) best = tx;
+    }
+  }
+  return best;
 }
