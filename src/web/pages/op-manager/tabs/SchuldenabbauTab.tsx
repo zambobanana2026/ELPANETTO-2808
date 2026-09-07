@@ -32,10 +32,11 @@ export function SchuldenabbauTab() {
       </div>
 
       <p className="text-xs text-stone-400">
-        Jeder Posten zahlt seine eigene Monatsrate. Ist ein Posten abbezahlt, wandert seine Rate ab dem Folgemonat
-        zusätzlich in den aktuellen Schneeball-Ziel-Posten — beschleunigt dessen Abbezahlung, bis auch dieser fertig
-        ist und die nächste Rate übernimmt. Reihenfolge: 🎯 1. Klarna, 🎯 2. Ertan, danach automatisch nach größtem
-        Restbetrag.
+        Du zahlst jeden Monat fest {formatEuro(plan.budget)} für deine offenen Posten — egal wie viele davon schon
+        abbezahlt sind. Jeder offene Posten bekommt zuerst seine eigene Monatsrate; alles, was danach vom Budget
+        übrig ist (egal ob durch längst abbezahlte Posten oder weil ein Posten genau in diesem Monat fertig wird),
+        fließt sofort in den aktuellen Schneeball-Ziel-Posten. Reihenfolge: 🎯 1. Klarna, 🎯 2. Ertan, danach
+        automatisch nach größtem Restbetrag.
       </p>
 
       <div className="overflow-x-auto rounded-xl border border-stone-200 bg-white">

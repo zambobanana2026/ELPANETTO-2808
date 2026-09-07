@@ -41,6 +41,7 @@ export interface SnowballRow {
 
 export interface SnowballPlan {
   rows: SnowballRow[];
+  budget: number;
   debtFreeMonthIndex: number | null;
   debtFreeDate: string | null;
   hitCap: boolean;
@@ -48,12 +49,16 @@ export interface SnowballPlan {
 
 const MAX_MONTHS = 1200; // 100-year safety cap against a runaway loop
 
-// Debt-snowball payoff simulation. Pays every active item's own Monatsrate
-// each month; whenever an item is fully paid off, its Monatsrate joins a
-// shared pool that tops up the CURRENT priority target's payment from the
-// following month on — so the freed-up money keeps accelerating the payoff
-// instead of just disappearing. No interest is modeled (none exists in
-// this data), so a payment always reduces the remaining balance 1:1.
+// Debt-snowball payoff simulation, fixed total monthly budget: the sum of
+// every item's own Monatsrate (today's total) keeps being paid in full
+// every month, no matter how many items are already paid off. Each month,
+// every still-open item first gets its own Monatsrate; whatever's left
+// over from that (both money freed by already-finished items AND any
+// leftover from an item finishing early within the SAME month) cascades
+// immediately down the priority order — so the full budget is always put
+// to work in the month it's freed, never held back to the next one. No
+// interest is modeled (none exists in this data), so a payment always
+// reduces the remaining balance 1:1.
 //
 // Priority order: Klarna first, Ertan second (explicit choice), then every
 // other still-open item by current Restbetrag, largest first.
@@ -71,11 +76,7 @@ export function computeSnowballPlan(items: OpenItem[], today: Date): SnowballPla
   const balances: Record<string, number> = {};
   for (const i of items) balances[i.id] = computeRestbetrag(i);
 
-  let extraPool = 0;
-  for (const i of alreadyDone) extraPool += i.monatsrate;
-
-  let targetPtr = 0;
-  while (targetPtr < priorityOrder.length && balances[priorityOrder[targetPtr].id] <= 0) targetPtr++;
+  const budget = Math.round(items.reduce((sum, i) => sum + i.monatsrate, 0) * 100) / 100;
 
   const payoffMonth: Record<string, number> = {};
   const activeIds = new Set(active.map((i) => i.id));
@@ -83,22 +84,26 @@ export function computeSnowballPlan(items: OpenItem[], today: Date): SnowballPla
 
   while (activeIds.size > 0 && month < MAX_MONTHS) {
     month++;
-    const currentTargetId = targetPtr < priorityOrder.length ? priorityOrder[targetPtr].id : null;
-    const justPaidOff: OpenItem[] = [];
+    let pool = budget;
     for (const id of activeIds) {
       const item = items.find((i) => i.id === id)!;
-      const payment = item.monatsrate + (id === currentTargetId ? extraPool : 0);
-      balances[id] = Math.max(0, balances[id] - payment);
+      const pay = Math.min(item.monatsrate, balances[id]);
+      balances[id] -= pay;
+      pool -= pay;
+    }
+    for (const t of priorityOrder) {
+      if (pool <= 0) break;
+      if (balances[t.id] <= 0) continue;
+      const pay = Math.min(pool, balances[t.id]);
+      balances[t.id] -= pay;
+      pool -= pay;
+    }
+    for (const id of Array.from(activeIds)) {
       if (balances[id] <= 0) {
         payoffMonth[id] = month;
-        justPaidOff.push(item);
+        activeIds.delete(id);
       }
     }
-    for (const item of justPaidOff) {
-      activeIds.delete(item.id);
-      extraPool += item.monatsrate;
-    }
-    while (targetPtr < priorityOrder.length && balances[priorityOrder[targetPtr].id] <= 0) targetPtr++;
   }
 
   const hitCap = month >= MAX_MONTHS && activeIds.size > 0;
@@ -130,6 +135,7 @@ export function computeSnowballPlan(items: OpenItem[], today: Date): SnowballPla
 
   return {
     rows,
+    budget,
     debtFreeMonthIndex,
     debtFreeDate: debtFreeMonthIndex ? formatYearMonth(addMonths(nextMonthYM, debtFreeMonthIndex - 1)) : null,
     hitCap,
