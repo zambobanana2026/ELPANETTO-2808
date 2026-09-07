@@ -1,5 +1,23 @@
 # Status — Carmen Next Motor/Config
 
+## P2 — Antwortfelder zu den Vorschlagsfragen auf "Typische Reaktionen" (v6)
+
+Auf Martins Vorgabe hin zeigt die dritte Unterseite jedes Meilensteins
+("Typische Reaktionen", 3/6) jetzt zusätzlich die 6 Vorschlagsfragen der
+Vorbereitungs-Seite (1/6) noch einmal — diesmal jeweils mit einem
+Textfeld für die Antwort der Person, plus ein Feld für die Antworten auf
+etwaige eigene Fragen. So kann das ganze Gespräch direkt Frage für Frage
+dokumentiert werden, statt nur vorbereitet.
+
+Neue Felder `m{n}_vf{1..6}_antwort` und `m{n}_eigenefragen_antwort`
+(dynamisch aus `m.vorschlagsfragen` erzeugt, nicht in `cards_p2.json`
+deklariert — der generische `textarea[data-field]`-Binder aus dem Motor
+braucht das nicht). Fließen zusätzlich in `sectionFieldMeta`/
+`renderZusammenfassung` ein (neuer Abschnitt "FRAGEN & ANTWORTEN" pro
+Meilenstein in der Zusammenfassung/PDF). QA um Feldanzahl-Check (7 statt 0
+Textareas auf der Reaktionen-Seite) und eine Per-Mitarbeiter-Isolations-
+prüfung für das neue Antwortfeld erweitert — beides grün, P6 unverändert.
+
 ## P2 — Schritt-Hinweise + Vorschlagsfragen (v5)
 
 Zwei Verständlichkeits-Ergänzungen nach Martins Feedback, beide P2-eigen

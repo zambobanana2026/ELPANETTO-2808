@@ -125,6 +125,11 @@ function assert(cond, msg) {
   await page.evaluate((n) => window.goTo(n), ms(0, 2)); // Tag30 Reaktionen
   assert((await page.locator('.slide.active .qa').count()) === 4, 'Tag30 "Typische Reaktionen" has 4 reaction Q&A blocks');
   assert((await page.locator('.slide.active .compareRow').count()) === 0, 'Tag30 "Typische Reaktionen" carries no compare rows (clean split)');
+  assert((await page.locator('.slide.active textarea[data-field]').count()) === 7, 'Tag30 "Typische Reaktionen": 7 answer fields (6 Vorschlagsfragen + eigene Fragen)');
+  await page.evaluate(() => window.goTo(5));
+  await page.click('.tile:has-text("Anna Testperson")');
+  await page.evaluate((n) => window.goTo(n), ms(0, 2));
+  await page.fill('textarea[data-field="m1_vf1_antwort"]', 'Anna-Antwort');
   await page.evaluate((n) => window.goTo(n), ms(0, 3)); // Tag30 Besser sagen
   assert((await page.locator('.slide.active .compareRow').count()) === 3, 'Tag30 "Besser sagen" has 3 compare rows');
   assert((await page.locator('.slide.active .qa').count()) === 0, 'Tag30 "Besser sagen" carries no reaction blocks (clean split)');
@@ -222,12 +227,14 @@ function assert(cond, msg) {
   const summaryAnna = await page.locator('#summaryOutput').innerText();
   assert(summaryAnna.includes('Anna-Notiz'), 'Zusammenfassung shows Anna\'s own Tag30-Dokumentation entry');
   assert(!summaryAnna.includes('positiv'), 'Zusammenfassung does not leak Ben/other-employee data (Anna never filled Tag90)');
+  assert(summaryAnna.includes('Anna-Antwort'), 'Zusammenfassung shows Anna\'s Vorschlagsfragen-Antwort from "Typische Reaktionen"');
   await page.evaluate(() => window.goTo(5));
   await page.click('.tile:has-text("Ben Testperson")');
   await page.evaluate((n) => window.goTo(n), ZUSAMMENFASSUNG_SLIDE);
   const summaryBen = await page.locator('#summaryOutput').innerText();
   assert(summaryBen.includes('Ben-Notiz'), 'Zusammenfassung shows Ben\'s own Tag30-Dokumentation entry');
   assert(!summaryBen.includes('Anna-Notiz'), 'Zusammenfassung does not leak Anna\'s data into Ben\'s summary');
+  assert(!summaryBen.includes('Anna-Antwort'), 'Zusammenfassung does not leak Anna\'s Vorschlagsfragen-Antwort into Ben\'s summary');
 
   // ---- Reload persistence (includes the just-picked color theme) ----
   await page.reload();

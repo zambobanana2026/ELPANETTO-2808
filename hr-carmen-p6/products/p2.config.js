@@ -185,10 +185,22 @@ function slideMilestoneReaktionen(m, num) {
   const qaHtml = m.reaktionen.map(function (pair) {
     return '<div class="qa"><b>„' + esc(pair[0]) + '“</b><p>' + esc(pair[1]) + '</p></div>';
   }).join('');
+  // Carmen-Next-Ergänzung: die auf der Vorbereitungs-Seite (1/6) vorgeschlagenen
+  // Fragen — plus die eigenen Fragen — noch einmal auflisten, mit Feld für die
+  // jeweilige Antwort, damit das Gespräch direkt dokumentiert werden kann.
+  const vfAntwortFields = (m.vorschlagsfragen || []).map(function (q, i) {
+    return ['FRAGE ' + (i + 1), 'vf' + (i + 1) + '_antwort', 'Antwort notieren …', q];
+  }).concat([
+    ['EIGENE FRAGEN', 'eigenefragen_antwort', 'Antwort(en) notieren …', 'Trage hier ein, was die Person auf deine eigenen Fragen von der Vorbereitungs-Seite geantwortet hat.']
+  ]);
+  const antwortenBox = (m.vorschlagsfragen && m.vorschlagsfragen.length)
+    ? '<h2>DEINE FRAGEN — UND DIE ANTWORTEN.</h2><p class="lead">Das sind die Fragen, die du dir auf der Vorbereitungs-Seite zurechtgelegt hast. Stell sie jetzt und trage direkt ein, was die Person dazu sagt.</p>' + fieldsGrid('m' + m.n, vfAntwortFields)
+    : '';
   return (
     '<section class="slide headCenter" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 2) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
-    stepHint('Hier siehst du, was die neue Person im Gespräch sagen könnte. Zu jeder Aussage steht daneben ein Vorschlag, wie du darauf reagierst. Das hilft dir, auf typische Situationen vorbereitet zu sein. Lies es dir kurz durch und klicke dann auf „Weiter".') +
+    stepHint('Hier stellst du die Fragen, die du dir vorbereitet hast, und trägst die Antworten der Person direkt ein. Danach siehst du noch, was die Person sagen könnte, und wie du darauf reagierst. Klicke danach auf „Weiter".') +
     '<h1>' + milestoneHeadline(m) + '</h1>' +
+    antwortenBox +
     '<h2>WAS DIE NEUE PERSON SAGEN KÖNNTE — UND WIE DU ANTWORTEST.</h2>' +
     qaHtml +
     navBar('Weiter') +
@@ -495,7 +507,10 @@ function sectionFieldMeta(data) {
   const milestoneSections = data.milestones.map(function (m) {
     const prepEntries = pickFields(m.fields, ['teilnehmer', 'eigenefragen']).map(function (f) { return { id: 'm' + m.n + '_' + f[1], label: f[0] }; });
     const vereinbarungEntries = omitFields(m.fields, ['teilnehmer', 'eigenefragen']).map(function (f) { return { id: 'm' + m.n + '_' + f[1], label: f[0] }; });
-    return { title: m.title.toUpperCase(), prepEntries: prepEntries, vereinbarungEntries: vereinbarungEntries };
+    const antwortEntries = (m.vorschlagsfragen || []).map(function (q, i) {
+      return { id: 'm' + m.n + '_vf' + (i + 1) + '_antwort', label: 'Frage: ' + q };
+    }).concat([{ id: 'm' + m.n + '_eigenefragen_antwort', label: 'Antworten auf eigene Fragen' }]);
+    return { title: m.title.toUpperCase(), prepEntries: prepEntries, vereinbarungEntries: vereinbarungEntries, antwortEntries: antwortEntries };
   });
   function toolEntries(fields, prefix) {
     return fields.map(function (f) { return { id: prefix + '_' + f[1], label: f[0] }; });
@@ -614,11 +629,13 @@ const initScript = function (data) {
     '  }\n' +
     '  const milestoneHtml = SECTION_META.milestones.map(function(s){\n' +
     '    const prepHtml = entriesHtml(s.prepEntries);\n' +
+    '    const antwortHtml = entriesHtml(s.antwortEntries || []);\n' +
     '    const vereinbarungHtml = entriesHtml(s.vereinbarungEntries);\n' +
-    '    if(!prepHtml && !vereinbarungHtml) return "";\n' +
+    '    if(!prepHtml && !antwortHtml && !vereinbarungHtml) return "";\n' +
     '    step++;\n' +
     '    return \'<div class="summaryCard"><div class="summaryCardHead"><span class="summaryCardNum">\'+step+\'</span><h3>\'+MotorEngine.escapeHtml(s.title)+\'</h3></div>\' +\n' +
     '      (prepHtml ? \'<div class="summarySection"><b>TEILNEHMER</b>\'+prepHtml+\'</div>\' : "") +\n' +
+    '      (antwortHtml ? \'<div class="summarySection"><b>FRAGEN &amp; ANTWORTEN</b>\'+antwortHtml+\'</div>\' : "") +\n' +
     '      (vereinbarungHtml ? \'<div class="summarySection"><b>VEREINBARUNG</b>\'+vereinbarungHtml+\'</div>\' : "") +\n' +
     '      "</div>";\n' +
     '  }).join("");\n' +
