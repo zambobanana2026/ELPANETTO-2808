@@ -24,27 +24,11 @@ export function OverviewSummaryCards({ summary, kontoauszugSummary, bargeldBesta
         <p className="mt-1 text-xl font-semibold text-amber-600 tabular-nums">
           {formatEuro(summary.offeneVerbindlichkeitenSumme)}
         </p>
-        <p className="mt-1 text-xs text-stone-400">{summary.anzahlOffenePosten} Posten offen</p>
+        <p className="mt-1 text-xs text-stone-400">{summary.anzahlOffenePosten} Posten aktiv</p>
       </div>
-      <div
-        className={`rounded-xl border p-4 ${
-          summary.ueberfaelligSumme > 0 ? "border-red-200 bg-red-50" : "border-stone-200 bg-white"
-        }`}
-      >
-        <p
-          className={`text-xs font-medium uppercase tracking-wide ${
-            summary.ueberfaelligSumme > 0 ? "text-red-500" : "text-stone-500"
-          }`}
-        >
-          Davon überfällig
-        </p>
-        <p
-          className={`mt-1 text-xl font-semibold tabular-nums ${
-            summary.ueberfaelligSumme > 0 ? "text-red-700" : "text-stone-700"
-          }`}
-        >
-          {formatEuro(summary.ueberfaelligSumme)}
-        </p>
+      <div className="rounded-xl border border-stone-200 bg-white p-4">
+        <p className="text-xs font-medium uppercase tracking-wide text-stone-500">Monatliche Raten gesamt</p>
+        <p className="mt-1 text-xl font-semibold text-stone-700 tabular-nums">{formatEuro(summary.monatsrateSumme)}</p>
       </div>
     </div>
   );

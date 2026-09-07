@@ -2,7 +2,6 @@ import { useMemo, useState } from "react";
 import { OpenItemForm } from "../components/OpenItemForm";
 import { OpenItemsSummary } from "../components/OpenItemsSummary";
 import { OpenItemsTable } from "../components/OpenItemsTable";
-import { todayIso } from "../lib/format";
 import { computeOpenItemsSummary, sortOpenItems } from "../lib/openItems";
 import { loadOpenItemsState, saveOpenItemsState, type OpenItemsPersistedState } from "../lib/openItemsStorage";
 import { playSuccessChime } from "../lib/sound";
@@ -22,18 +21,19 @@ export function OffenePostenTab() {
 
   const handleAdd = (input: {
     glaeubiger: string;
-    rechnungsnummer: string;
+    kategorie: string;
     verwendungszweck: string;
-    betrag: number;
-    rechnungsdatum: string;
-    faelligkeitsdatum: string;
+    iban: string;
+    gesamtbetrag: number;
+    monatsrate: number;
+    bereitsBezahlt: number;
+    startMonat: string;
+    istSchneeballZiel: boolean;
     notiz: string;
   }) => {
     const item: OpenItem = {
       id: crypto.randomUUID(),
       ...input,
-      status: "offen",
-      bezahltAm: null,
       erfasstAm: new Date().toISOString(),
       quelle: "manuell",
     };
@@ -42,19 +42,21 @@ export function OffenePostenTab() {
     persist({ items: next });
   };
 
-  const handleMarkPaid = (id: string) => {
-    const next = items.map((item) =>
-      item.id === id ? { ...item, status: "bezahlt" as const, bezahltAm: todayIso() } : item
-    );
+  const handleUpdateField = <K extends keyof OpenItem>(id: string, field: K, value: OpenItem[K]) => {
+    const next = items.map((item) => (item.id === id ? { ...item, [field]: value } : item));
+    setItems(next);
+    persist({ items: next });
+  };
+
+  const handleMarkPaidOff = (id: string) => {
+    const next = items.map((item) => (item.id === id ? { ...item, bereitsBezahlt: item.gesamtbetrag } : item));
     setItems(next);
     persist({ items: next });
     if (soundEnabled) playSuccessChime();
   };
 
-  const handleUnmarkPaid = (id: string) => {
-    const next = items.map((item) =>
-      item.id === id ? { ...item, status: "offen" as const, bezahltAm: null } : item
-    );
+  const handleDelete = (id: string) => {
+    const next = items.filter((item) => item.id !== id);
     setItems(next);
     persist({ items: next });
   };
@@ -84,7 +86,7 @@ export function OffenePostenTab() {
 
       <OpenItemsSummary summary={summary} />
 
-      <OpenItemsTable items={sortedItems} onMarkPaid={handleMarkPaid} onUnmarkPaid={handleUnmarkPaid} />
+      <OpenItemsTable items={sortedItems} onUpdateField={handleUpdateField} onMarkPaidOff={handleMarkPaidOff} onDelete={handleDelete} />
     </div>
   );
 }

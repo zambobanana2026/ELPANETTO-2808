@@ -1,49 +1,57 @@
-import { todayIso } from "./format";
-import type { OpenItem, OpenItemsSummary } from "../types";
+import type { OpenItem, OpenItemStatus, OpenItemsSummary } from "../types";
 
-// "Überfällig" is never stored — it's derived from today's date each time,
-// so an item doesn't need to be re-saved just because a day passed.
-export type DisplayStatus = "offen" | "ueberfaellig" | "bezahlt";
-
-export function deriveDisplayStatus(item: OpenItem, asOfDatum: string = todayIso()): DisplayStatus {
-  if (item.status === "bezahlt") return "bezahlt";
-  return item.faelligkeitsdatum < asOfDatum ? "ueberfaellig" : "offen";
+// Remaining balance on a debt/installment item. Never negative — paying
+// more than the total simply zeroes it out rather than going negative.
+export function computeRestbetrag(item: OpenItem): number {
+  return Math.max(0, Math.round((item.gesamtbetrag - item.bereitsBezahlt) * 100) / 100);
 }
 
-export function computeOpenItemsSummary(items: OpenItem[], asOfDatum: string = todayIso()): OpenItemsSummary {
-  let anzahlOffen = 0;
-  let summeOffen = 0;
-  let summeUeberfaellig = 0;
+// A debt is "erledigt" once fully paid off (restbetrag reaches 0) —
+// derived from the numbers rather than a separately-tracked status flag,
+// so it can never drift out of sync with an edit to Gesamtbetrag/Bereits
+// bezahlt.
+export function deriveItemStatus(item: OpenItem): OpenItemStatus {
+  return computeRestbetrag(item) <= 0 ? "erledigt" : "aktiv";
+}
+
+export function computeOpenItemsSummary(items: OpenItem[]): OpenItemsSummary {
+  let anzahlAktiv = 0;
+  let summeRest = 0;
+  let summeMonatsrate = 0;
 
   for (const item of items) {
-    const status = deriveDisplayStatus(item, asOfDatum);
-    if (status === "bezahlt") continue;
-    anzahlOffen++;
-    summeOffen += item.betrag;
-    if (status === "ueberfaellig") summeUeberfaellig += item.betrag;
+    const restbetrag = computeRestbetrag(item);
+    if (restbetrag <= 0) continue;
+    anzahlAktiv++;
+    summeRest += restbetrag;
+    summeMonatsrate += item.monatsrate;
   }
 
-  return { anzahlOffen, summeOffen, summeUeberfaellig };
+  return {
+    anzahlAktiv,
+    summeRest: Math.round(summeRest * 100) / 100,
+    summeMonatsrate: Math.round(summeMonatsrate * 100) / 100,
+  };
 }
 
-export const STATUS_STYLES: Record<DisplayStatus, string> = {
-  offen: "bg-amber-50 text-amber-700 border border-amber-200",
-  ueberfaellig: "bg-red-50 text-red-700 border border-red-200",
-  bezahlt: "bg-green-50 text-green-700 border border-green-200",
+export const STATUS_STYLES: Record<OpenItemStatus, string> = {
+  aktiv: "bg-amber-50 text-amber-700 border border-amber-200",
+  erledigt: "bg-green-50 text-green-700 border border-green-200",
 };
 
-export const STATUS_LABELS: Record<DisplayStatus, string> = {
-  offen: "Offen",
-  ueberfaellig: "⚠ Überfällig",
-  bezahlt: "✓ Bezahlt",
+export const STATUS_LABELS: Record<OpenItemStatus, string> = {
+  aktiv: "Aktiv",
+  erledigt: "✓ Erledigt",
 };
 
 export function sortOpenItems(items: OpenItem[]): OpenItem[] {
   return [...items].sort((a, b) => {
-    const aPaid = a.status === "bezahlt";
-    const bPaid = b.status === "bezahlt";
-    if (aPaid !== bPaid) return aPaid ? 1 : -1; // unpaid items first
-    if (aPaid && bPaid) return (b.bezahltAm ?? "").localeCompare(a.bezahltAm ?? ""); // most recently paid first
-    return a.faelligkeitsdatum.localeCompare(b.faelligkeitsdatum); // soonest due first
+    const aPaid = deriveItemStatus(a) === "erledigt";
+    const bPaid = deriveItemStatus(b) === "erledigt";
+    if (aPaid !== bPaid) return aPaid ? 1 : -1; // active items first
+    if (Boolean(b.istSchneeballZiel) !== Boolean(a.istSchneeballZiel)) {
+      return b.istSchneeballZiel ? 1 : -1; // snowball target first among active
+    }
+    return computeRestbetrag(b) - computeRestbetrag(a); // largest remaining balance first
   });
 }

@@ -44,27 +44,33 @@ export interface CategoryTotal {
   summe: number;
 }
 
-export type OpenItemStatus = "offen" | "bezahlt";
+export type OpenItemStatus = "aktiv" | "erledigt";
 
+// A debt/installment item (Schuldenabbau-style), not a one-off invoice:
+// tracked by total amount, monthly rate and how much has been paid so far
+// rather than a single due date. Status is always derived (see
+// deriveItemStatus in openItems.ts) from gesamtbetrag - bereitsBezahlt, so
+// it can never drift out of sync with an edit to either number.
 export interface OpenItem {
   id: string;
   glaeubiger: string;
-  rechnungsnummer: string;
+  kategorie: string;
+  iban: string;
   verwendungszweck: string;
-  betrag: number; // always positive — the amount owed
-  rechnungsdatum: string; // ISO format YYYY-MM-DD
-  faelligkeitsdatum: string; // ISO format YYYY-MM-DD
+  gesamtbetrag: number; // always positive — the original total owed
+  monatsrate: number; // always positive
+  bereitsBezahlt: number; // running total paid so far
+  startMonat: string; // "YYYY-MM"
+  istSchneeballZiel: boolean; // prioritized in a debt-snowball payoff strategy
   notiz: string;
-  status: OpenItemStatus;
-  bezahltAm: string | null; // ISO date, set when marked paid
   erfasstAm: string;
   // "manuell" today; a later Kontoauszug-Verknüpfung can add e.g. "kontoauszug-match"
   // without touching existing entries or the code that reads this field.
-  quelle: "manuell";
+  quelle: "manuell" | "import";
 }
 
 export interface OpenItemsSummary {
-  anzahlOffen: number;
-  summeOffen: number;
-  summeUeberfaellig: number;
+  anzahlAktiv: number;
+  summeRest: number;
+  summeMonatsrate: number;
 }

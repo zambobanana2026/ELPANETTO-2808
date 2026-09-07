@@ -3,7 +3,7 @@ import type { AccountSummary, CashExpense, OpenItemsSummary, Transaction } from 
 export interface OverviewSummary {
   gesamtGuthaben: number;
   offeneVerbindlichkeitenSumme: number;
-  ueberfaelligSumme: number;
+  monatsrateSumme: number;
   anzahlOffenePosten: number;
 }
 
@@ -14,9 +14,9 @@ export function computeOverviewSummary(
 ): OverviewSummary {
   return {
     gesamtGuthaben: kontoauszug.aktuellerKontostand + bargeldBestand,
-    offeneVerbindlichkeitenSumme: offenePosten.summeOffen,
-    ueberfaelligSumme: offenePosten.summeUeberfaellig,
-    anzahlOffenePosten: offenePosten.anzahlOffen,
+    offeneVerbindlichkeitenSumme: offenePosten.summeRest,
+    monatsrateSumme: offenePosten.summeMonatsrate,
+    anzahlOffenePosten: offenePosten.anzahlAktiv,
   };
 }
 

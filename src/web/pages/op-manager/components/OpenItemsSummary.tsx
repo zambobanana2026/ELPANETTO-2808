@@ -9,32 +9,16 @@ export function OpenItemsSummary({ summary }: OpenItemsSummaryProps) {
   return (
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
       <div className="rounded-xl border border-stone-200 bg-white p-4">
-        <p className="text-xs font-medium uppercase tracking-wide text-stone-500">Offene Posten</p>
-        <p className="mt-1 text-xl font-semibold text-stone-700 tabular-nums">{summary.anzahlOffen}</p>
+        <p className="text-xs font-medium uppercase tracking-wide text-stone-500">Aktive Posten</p>
+        <p className="mt-1 text-xl font-semibold text-stone-700 tabular-nums">{summary.anzahlAktiv}</p>
       </div>
       <div className="rounded-xl border border-stone-200 bg-white p-4">
-        <p className="text-xs font-medium uppercase tracking-wide text-stone-500">Summe offen</p>
-        <p className="mt-1 text-xl font-semibold text-amber-600 tabular-nums">{formatEuro(summary.summeOffen)}</p>
+        <p className="text-xs font-medium uppercase tracking-wide text-stone-500">Restsumme offen</p>
+        <p className="mt-1 text-xl font-semibold text-amber-600 tabular-nums">{formatEuro(summary.summeRest)}</p>
       </div>
-      <div
-        className={`rounded-xl border p-4 ${
-          summary.summeUeberfaellig > 0 ? "border-red-200 bg-red-50" : "border-stone-200 bg-white"
-        }`}
-      >
-        <p
-          className={`text-xs font-medium uppercase tracking-wide ${
-            summary.summeUeberfaellig > 0 ? "text-red-500" : "text-stone-500"
-          }`}
-        >
-          Davon überfällig
-        </p>
-        <p
-          className={`mt-1 text-xl font-semibold tabular-nums ${
-            summary.summeUeberfaellig > 0 ? "text-red-700" : "text-stone-700"
-          }`}
-        >
-          {formatEuro(summary.summeUeberfaellig)}
-        </p>
+      <div className="rounded-xl border border-indigo-200 bg-indigo-50 p-4">
+        <p className="text-xs font-medium uppercase tracking-wide text-indigo-500">Monatliche Raten gesamt</p>
+        <p className="mt-1 text-xl font-semibold text-indigo-700 tabular-nums">{formatEuro(summary.summeMonatsrate)}</p>
       </div>
     </div>
   );
