@@ -5,6 +5,7 @@ const TABS: { id: OpManagerTabId; label: string }[] = [
   { id: "bargeld", label: "Bargeld" },
   { id: "offene-posten", label: "Offene Posten" },
   { id: "uebersicht", label: "Übersicht" },
+  { id: "schuldenabbau", label: "🎯 Schuldenabbau" },
 ];
 
 interface TabNavProps {

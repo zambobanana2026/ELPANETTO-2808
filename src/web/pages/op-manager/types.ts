@@ -29,7 +29,7 @@ export interface AccountSummary {
   aktuellerKontostand: number;
 }
 
-export type OpManagerTabId = "kontoauszug" | "bargeld" | "offene-posten" | "uebersicht";
+export type OpManagerTabId = "kontoauszug" | "bargeld" | "offene-posten" | "uebersicht" | "schuldenabbau";
 
 export interface CashExpense {
   id: string;

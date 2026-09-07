@@ -59,7 +59,7 @@ export function sortOpenItems(items: OpenItem[]): OpenItem[] {
 // Loose text match used to link an Offene-Posten item to a Kontoauszug
 // transaction: lowercased, umlauts folded, punctuation stripped, so
 // "Klarna/Digistore24" and "KLARNA*DIGISTORE24 DE" line up.
-function normalizeForMatch(s: string): string {
+export function normalizeForMatch(s: string): string {
   const umlauts: Record<string, string> = { ä: "ae", ö: "oe", ü: "ue", ß: "ss" };
   return (s || "")
     .toLowerCase()
