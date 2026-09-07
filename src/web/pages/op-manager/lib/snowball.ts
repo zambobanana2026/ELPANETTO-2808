@@ -42,12 +42,17 @@ export interface SnowballRow {
 export interface SnowballPlan {
   rows: SnowballRow[];
   budget: number;
+  minBudget: number;
   debtFreeMonthIndex: number | null;
   debtFreeDate: string | null;
   hitCap: boolean;
 }
 
 const MAX_MONTHS = 1200; // 100-year safety cap against a runaway loop
+
+export function computeMinBudget(items: OpenItem[]): number {
+  return Math.round(items.reduce((sum, i) => sum + i.monatsrate, 0) * 100) / 100;
+}
 
 // Debt-snowball payoff simulation, fixed total monthly budget: the sum of
 // every item's own Monatsrate (today's total) keeps being paid in full
@@ -60,9 +65,14 @@ const MAX_MONTHS = 1200; // 100-year safety cap against a runaway loop
 // interest is modeled (none exists in this data), so a payment always
 // reduces the remaining balance 1:1.
 //
+// customBudget lets the user commit to paying more than the sum of the
+// minimum Monatsraten each month (e.g. regular Sondertilgungen). It's
+// clamped to never go below that sum — you can't pay less than what's
+// already owed in minimums.
+//
 // Priority order: Klarna first, Ertan second (explicit choice), then every
 // other still-open item by current Restbetrag, largest first.
-export function computeSnowballPlan(items: OpenItem[], today: Date): SnowballPlan {
+export function computeSnowballPlan(items: OpenItem[], today: Date, customBudget?: number | null): SnowballPlan {
   const active = items.filter((i) => computeRestbetrag(i) > 0);
   const alreadyDone = items.filter((i) => computeRestbetrag(i) <= 0);
 
@@ -76,7 +86,8 @@ export function computeSnowballPlan(items: OpenItem[], today: Date): SnowballPla
   const balances: Record<string, number> = {};
   for (const i of items) balances[i.id] = computeRestbetrag(i);
 
-  const budget = Math.round(items.reduce((sum, i) => sum + i.monatsrate, 0) * 100) / 100;
+  const minBudget = computeMinBudget(items);
+  const budget = customBudget != null ? Math.max(minBudget, Math.round(customBudget * 100) / 100) : minBudget;
 
   const payoffMonth: Record<string, number> = {};
   const activeIds = new Set(active.map((i) => i.id));
@@ -136,6 +147,7 @@ export function computeSnowballPlan(items: OpenItem[], today: Date): SnowballPla
   return {
     rows,
     budget,
+    minBudget,
     debtFreeMonthIndex,
     debtFreeDate: debtFreeMonthIndex ? formatYearMonth(addMonths(nextMonthYM, debtFreeMonthIndex - 1)) : null,
     hitCap,
