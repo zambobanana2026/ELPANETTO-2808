@@ -1,5 +1,33 @@
 # Status — Carmen Next Motor/Config
 
+## P2 — Beliebig viele eigene Fragen, statt eines einzelnen Freitextfelds (v7)
+
+Korrektur zu v6: Das einzelne "EIGENE FRAGEN"-Freitextfeld (Vorbereitung)
+und das dazugehörige "EIGENE FRAGEN"-Antwortfeld (Typische Reaktionen)
+waren zu starr — Martins Vorgabe war eine echte Liste, in der beliebig
+viele eigene Fragen einzeln ergänzt werden können, jede mit eigenem
+Antwortfeld auf der Reaktionen-Seite (genau wie die 6 Vorschlagsfragen).
+
+Das statische `eigenefragen`-Feld ist komplett entfernt (`cards_p2.json`,
+alle 4 Meilensteine). Stattdessen: `bucket.customQA[mKey]` (ein Array aus
+`{q, a}`-Objekten je Meilenstein) — unabhängig von `bucket.fields`, weil
+die Anzahl dynamisch ist. Neue UI auf der Vorbereitungs-Seite: eine Liste
+mit Text-Input je Frage + Entfernen-Button + "+ Frage hinzufügen"
+(`.customQBox`/`.customQList`/`.customQRow`, Klassen nur in `extraCss`).
+Auf "Typische Reaktionen" rendert `renderCustomAnswers()` für jede so
+angelegte Frage automatisch ein eigenes Antwortfeld (`.customAInput`),
+mit der Fragen-Formulierung als Feld-Beschriftung. Beides läuft über
+`nav.onEnter()` pro Meilenstein-Slide (`CUSTOM_Q_MAP`, aus
+`FIRST_MILESTONE_SLIDE`/`SLIDES_PER_MILESTONE` berechnet), reine
+Event-Listener-Bindung (kein `onclick`-String-Escaping nötig).
+
+`renderZusammenfassung()` liest `bucket.customQA` direkt (nicht über
+`SECTION_META`, da dynamisch) und zeigt einen eigenen Abschnitt "EIGENE
+FRAGEN & ANTWORTEN" pro Meilenstein, nur wenn dort tatsächlich etwas
+eingetragen wurde. QA um Hinzufügen/Entfernen, Feldanzahl passend zur
+Fragenzahl, Persistenz nach Reload und Per-Mitarbeiter-Isolation der
+eigenen Fragen erweitert — alles grün, P6 unverändert.
+
 ## P2 — Antwortfelder zu den Vorschlagsfragen auf "Typische Reaktionen" (v6)
 
 Auf Martins Vorgabe hin zeigt die dritte Unterseite jedes Meilensteins

@@ -97,7 +97,9 @@ function assert(cond, msg) {
 
   // Tag 30 Vorbereitung holds the "teilnehmer" field, with its explanatory hint; Vereinbarung holds dok/next
   await page.evaluate((n) => window.goTo(n), ms(0, 0));
-  assert((await page.locator('.slide.active textarea[data-field]').count()) === 2, 'Tag30 Vorbereitung slide has exactly 2 fields (Eigene Fragen + Teilnehmer)');
+  assert((await page.locator('.slide.active textarea[data-field]').count()) === 1, 'Tag30 Vorbereitung slide has exactly 1 field (Teilnehmer)');
+  assert((await page.locator('.slide.active #customQList_m1').count()) === 1, 'Tag30 Vorbereitung shows the eigene-Fragen list container');
+  assert((await page.locator('.slide.active .customQRow').count()) === 0, 'Tag30 Vorbereitung starts with no own questions added yet');
   assert((await page.locator('.slide.active .weeklyCheckCard span').first().textContent()).length > 0, 'Tag30 Teilnehmer field carries an explanatory hint');
   await page.evaluate((n) => window.goTo(n), ms(0, 4)); // Vereinbarung
   await page.fill('textarea[data-field="m1_dok"]', 'Ben-Notiz');
@@ -125,11 +127,25 @@ function assert(cond, msg) {
   await page.evaluate((n) => window.goTo(n), ms(0, 2)); // Tag30 Reaktionen
   assert((await page.locator('.slide.active .qa').count()) === 4, 'Tag30 "Typische Reaktionen" has 4 reaction Q&A blocks');
   assert((await page.locator('.slide.active .compareRow').count()) === 0, 'Tag30 "Typische Reaktionen" carries no compare rows (clean split)');
-  assert((await page.locator('.slide.active textarea[data-field]').count()) === 7, 'Tag30 "Typische Reaktionen": 7 answer fields (6 Vorschlagsfragen + eigene Fragen)');
+  assert((await page.locator('.slide.active textarea[data-field]').count()) === 6, 'Tag30 "Typische Reaktionen": 6 answer fields for the built-in Vorschlagsfragen');
+  assert((await page.locator('.slide.active .customAInput').count()) === 0, 'Tag30 "Typische Reaktionen" shows no eigene-Fragen answer fields yet (none added)');
   await page.evaluate(() => window.goTo(5));
   await page.click('.tile:has-text("Anna Testperson")');
-  await page.evaluate((n) => window.goTo(n), ms(0, 2));
+
+  // ---- Beliebig viele eigene Fragen: add/remove on Vorbereitung, answer field appears on Reaktionen ----
+  await page.evaluate((n) => window.goTo(n), ms(0, 0)); // Tag30 Vorbereitung
+  await page.click('button:has-text("+ Frage hinzufügen")');
+  await page.click('button:has-text("+ Frage hinzufügen")');
+  assert((await page.locator('.slide.active .customQRow').count()) === 2, 'two own questions can be added on Vorbereitung');
+  await page.fill('.slide.active .customQInput[data-idx="0"]', 'Wie zufrieden bist du mit dem Onboarding bisher?');
+  await page.locator('.slide.active .customQRemove[data-idx="1"]').click();
+  assert((await page.locator('.slide.active .customQRow').count()) === 1, 'removing an own question works');
+  await page.evaluate((n) => window.goTo(n), ms(0, 2)); // Tag30 Reaktionen
+  assert((await page.locator('.slide.active .customAInput').count()) === 1, 'Tag30 "Typische Reaktionen" shows exactly 1 answer field for the 1 remaining eigene Frage');
+  const customQLabel = await page.locator('.slide.active #customAList_m1 .weeklyCheckCard span').first().textContent();
+  assert(customQLabel.includes('Wie zufrieden bist du mit dem Onboarding bisher?'), 'the eigene Frage text from Vorbereitung is shown as its own label on Reaktionen: got "' + customQLabel + '"');
   await page.fill('textarea[data-field="m1_vf1_antwort"]', 'Anna-Antwort');
+  await page.fill('.slide.active .customAInput[data-idx="0"]', 'Anna-Eigene-Antwort');
   await page.evaluate((n) => window.goTo(n), ms(0, 3)); // Tag30 Besser sagen
   assert((await page.locator('.slide.active .compareRow').count()) === 3, 'Tag30 "Besser sagen" has 3 compare rows');
   assert((await page.locator('.slide.active .qa').count()) === 0, 'Tag30 "Besser sagen" carries no reaction blocks (clean split)');
@@ -228,6 +244,7 @@ function assert(cond, msg) {
   assert(summaryAnna.includes('Anna-Notiz'), 'Zusammenfassung shows Anna\'s own Tag30-Dokumentation entry');
   assert(!summaryAnna.includes('positiv'), 'Zusammenfassung does not leak Ben/other-employee data (Anna never filled Tag90)');
   assert(summaryAnna.includes('Anna-Antwort'), 'Zusammenfassung shows Anna\'s Vorschlagsfragen-Antwort from "Typische Reaktionen"');
+  assert(summaryAnna.includes('Anna-Eigene-Antwort') && summaryAnna.includes('Wie zufrieden bist du mit dem Onboarding bisher?'), 'Zusammenfassung shows Anna\'s own question and its answer');
   await page.evaluate(() => window.goTo(5));
   await page.click('.tile:has-text("Ben Testperson")');
   await page.evaluate((n) => window.goTo(n), ZUSAMMENFASSUNG_SLIDE);
@@ -235,12 +252,18 @@ function assert(cond, msg) {
   assert(summaryBen.includes('Ben-Notiz'), 'Zusammenfassung shows Ben\'s own Tag30-Dokumentation entry');
   assert(!summaryBen.includes('Anna-Notiz'), 'Zusammenfassung does not leak Anna\'s data into Ben\'s summary');
   assert(!summaryBen.includes('Anna-Antwort'), 'Zusammenfassung does not leak Anna\'s Vorschlagsfragen-Antwort into Ben\'s summary');
+  assert(!summaryBen.includes('Anna-Eigene-Antwort'), 'Zusammenfassung does not leak Anna\'s own question/answer into Ben\'s summary');
 
   // ---- Reload persistence (includes the just-picked color theme) ----
   await page.reload();
   assert((await page.locator('#empCount').textContent()) === '20', 'employees persisted after reload');
   await page.evaluate(() => window.goTo(5));
   assert((await page.locator('.tile:has-text("Anna Testperson") .tileSubtitle').textContent()) === 'Teamleitung Vertrieb — Vertrieb', 'position/Abteilung persisted after reload');
+  await page.click('.tile:has-text("Anna Testperson")');
+  await page.evaluate((n) => window.goTo(n), ms(0, 2));
+  const customAVal = await page.inputValue('.slide.active .customAInput[data-idx="0"]');
+  assert(customAVal === 'Anna-Eigene-Antwort', 'eigene-Frage answer persisted after reload: got "' + customAVal + '"');
+  await page.evaluate(() => window.goTo(5));
   await page.click('.tile:has-text("MA 20")'); // re-select the employee this field was filled for
   await page.evaluate((n) => window.goTo(n), ms(2, 4));
   const perspVal = await page.inputValue('textarea[data-field="m3_perspektive"]');

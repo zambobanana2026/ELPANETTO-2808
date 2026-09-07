@@ -143,10 +143,12 @@ function slideMilestoneVorbereitung(m, num, phase) {
   const fokusBox = m.fokus ? '<div class="box"><b>WORUM GEHT ES IN DIESER GESPRÄCHSPHASE?</b><p class="lead" style="margin:10px 0 0">Jedes Gespräch hat einen roten Faden — das Thema, um das sich an diesem Tag alles dreht. Bei diesem Gespräch ist das: ' + esc(m.fokus) + ' Was du dafür genau fragst und worauf du achtest, steht auf den nächsten Seiten.</p></div>' : '';
   // Carmen-Next-Ergänzung (nicht aus dem Original-PDF): ein fertiger
   // Fragenkatalog fürs Gespräch, damit sich niemand selbst Fragen ausdenken muss
-  // — plus ein Freitextfeld, falls der Nutzer noch eigene Fragen ergänzen will.
-  const eigeneFragenField = pickFields(m.fields, ['eigenefragen']);
+  // — plus eine dynamische Liste, in der der Nutzer beliebig viele eigene
+  // Fragen ergänzen kann (gerendert/gepflegt per JS, siehe initScript).
   const fragenBox = (m.vorschlagsfragen && m.vorschlagsfragen.length)
-    ? '<div class="box"><b>FRAGEN, DIE DU STELLEN KANNST.</b><p class="lead" style="margin:10px 0 12px">Du musst dir vorher nichts überlegen — nutze diese Fragen einfach als Leitfaden im Gespräch.</p><ul class="qlist">' + m.vorschlagsfragen.map(function (q) { return '<li>' + esc(q) + '</li>'; }).join('') + '</ul>' + fieldsGrid('m' + m.n, eigeneFragenField) + '</div>'
+    ? '<div class="box"><b>FRAGEN, DIE DU STELLEN KANNST.</b><p class="lead" style="margin:10px 0 12px">Du musst dir vorher nichts überlegen — nutze diese Fragen einfach als Leitfaden im Gespräch.</p><ul class="qlist">' + m.vorschlagsfragen.map(function (q) { return '<li>' + esc(q) + '</li>'; }).join('') + '</ul>' +
+      '<div class="customQBox"><b>EIGENE FRAGEN HINZUFÜGEN.</b><p class="lead" style="margin:10px 0 12px">Trage hier eigene Fragen ein — du kannst so viele hinzufügen, wie du willst. Sie tauchen auf der nächsten Seite automatisch mit einem eigenen Antwortfeld auf.</p><div class="customQList" id="customQList_m' + m.n + '"></div><button class="btn alt" onclick="addCustomQuestion(\'m' + m.n + '\')">+ Frage hinzufügen</button></div>' +
+      '</div>'
     : '';
   const teilnehmerFields = pickFields(m.fields, ['teilnehmer']);
   const zeitraum = phase ? phase.zeitraum : '';
@@ -186,15 +188,15 @@ function slideMilestoneReaktionen(m, num) {
     return '<div class="qa"><b>„' + esc(pair[0]) + '“</b><p>' + esc(pair[1]) + '</p></div>';
   }).join('');
   // Carmen-Next-Ergänzung: die auf der Vorbereitungs-Seite (1/6) vorgeschlagenen
-  // Fragen — plus die eigenen Fragen — noch einmal auflisten, mit Feld für die
-  // jeweilige Antwort, damit das Gespräch direkt dokumentiert werden kann.
+  // Fragen noch einmal auflisten, mit Feld für die jeweilige Antwort, damit
+  // das Gespräch direkt dokumentiert werden kann. Die eigenen Fragen (beliebig
+  // viele, dynamisch) kommen als eigener, per JS gerendeter Block dazu.
   const vfAntwortFields = (m.vorschlagsfragen || []).map(function (q, i) {
     return ['FRAGE ' + (i + 1), 'vf' + (i + 1) + '_antwort', 'Antwort notieren …', q];
-  }).concat([
-    ['EIGENE FRAGEN', 'eigenefragen_antwort', 'Antwort(en) notieren …', 'Trage hier ein, was die Person auf deine eigenen Fragen von der Vorbereitungs-Seite geantwortet hat.']
-  ]);
+  });
   const antwortenBox = (m.vorschlagsfragen && m.vorschlagsfragen.length)
-    ? '<h2>DEINE FRAGEN — UND DIE ANTWORTEN.</h2><p class="lead">Das sind die Fragen, die du dir auf der Vorbereitungs-Seite zurechtgelegt hast. Stell sie jetzt und trage direkt ein, was die Person dazu sagt.</p>' + fieldsGrid('m' + m.n, vfAntwortFields)
+    ? '<h2>DEINE FRAGEN — UND DIE ANTWORTEN.</h2><p class="lead">Das sind die Fragen, die du dir auf der Vorbereitungs-Seite zurechtgelegt hast. Stell sie jetzt und trage direkt ein, was die Person dazu sagt.</p>' + fieldsGrid('m' + m.n, vfAntwortFields) +
+      '<div id="customAList_m' + m.n + '"></div>'
     : '';
   return (
     '<section class="slide headCenter" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 2) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
@@ -226,7 +228,7 @@ function slideMilestoneBesserSagen(m, num) {
 }
 
 function slideMilestoneVereinbarung(m, num) {
-  const restFields = omitFields(m.fields, ['teilnehmer', 'eigenefragen']);
+  const restFields = omitFields(m.fields, ['teilnehmer']);
   return (
     '<section class="slide headCenter" data-slide="' + num + '"><div class="brand">' + milestoneBrand(m, 4) + '</div><div class="num">' + pad2(num) + '</div>' + ctxbar() +
     stepHint('Auf dieser Seite hältst du fest, was im Gespräch besprochen wurde. Trage in die Felder ein, was ihr gemeinsam vereinbart habt. Das hilft dir, später nachzuschauen, was ihr abgemacht hattet. Klicke danach auf „Weiter".') +
@@ -505,12 +507,12 @@ function cardFieldMeta(data) {
 // actually filled in show up.
 function sectionFieldMeta(data) {
   const milestoneSections = data.milestones.map(function (m) {
-    const prepEntries = pickFields(m.fields, ['teilnehmer', 'eigenefragen']).map(function (f) { return { id: 'm' + m.n + '_' + f[1], label: f[0] }; });
-    const vereinbarungEntries = omitFields(m.fields, ['teilnehmer', 'eigenefragen']).map(function (f) { return { id: 'm' + m.n + '_' + f[1], label: f[0] }; });
+    const prepEntries = pickFields(m.fields, ['teilnehmer']).map(function (f) { return { id: 'm' + m.n + '_' + f[1], label: f[0] }; });
+    const vereinbarungEntries = omitFields(m.fields, ['teilnehmer']).map(function (f) { return { id: 'm' + m.n + '_' + f[1], label: f[0] }; });
     const antwortEntries = (m.vorschlagsfragen || []).map(function (q, i) {
       return { id: 'm' + m.n + '_vf' + (i + 1) + '_antwort', label: 'Frage: ' + q };
-    }).concat([{ id: 'm' + m.n + '_eigenefragen_antwort', label: 'Antworten auf eigene Fragen' }]);
-    return { title: m.title.toUpperCase(), prepEntries: prepEntries, vereinbarungEntries: vereinbarungEntries, antwortEntries: antwortEntries };
+    });
+    return { title: m.title.toUpperCase(), prepEntries: prepEntries, vereinbarungEntries: vereinbarungEntries, antwortEntries: antwortEntries, customQKey: 'm' + m.n };
   });
   function toolEntries(fields, prefix) {
     return fields.map(function (f) { return { id: prefix + '_' + f[1], label: f[0] }; });
@@ -528,9 +530,17 @@ function sectionFieldMeta(data) {
 const initScript = function (data) {
   const meta = cardFieldMeta(data);
   const sectionMeta = sectionFieldMeta(data);
+  // Maps each milestone to its "Vorbereitung" slide (where own questions are
+  // added) and "Typische Reaktionen" slide (where their answers are captured)
+  // — drives the dynamic eigene-Fragen list (see renderCustomQList/-Answers).
+  const customQMap = data.milestones.map(function (m, i) {
+    const base = FIRST_MILESTONE_SLIDE + i * SLIDES_PER_MILESTONE;
+    return { key: 'm' + m.n, qSlide: base, aSlide: base + 2 };
+  });
   return (
     'const CARD_META = ' + JSON.stringify(meta) + ';\n' +
     'const SECTION_META = ' + JSON.stringify(sectionMeta) + ';\n' +
+    'const CUSTOM_Q_MAP = ' + JSON.stringify(customQMap) + ';\n' +
     'const store = MotorEngine.createStore("p2_data_v2", function(){ return { employees:{}, employeeOrder:[], activeEmployeeId:null, byEmployee:{}, choices:{} }; });\n' +
     'const manager = MotorEngine.createEmployeeManager({\n' +
     '  store: store,\n' +
@@ -588,6 +598,66 @@ const initScript = function (data) {
     'function removeEmployee(id, ev){ manager.remove(id, ev); }\n' +
     'function restoreFieldsForActive(){ MotorEngine.restoreFields(manager); }\n' +
     '\n' +
+    '// Beliebig viele eigene Fragen je Meilenstein: gespeichert als\n' +
+    '// bucket.customQA[mKey] = [{q,a}, ...], unabhängig von bucket.fields,\n' +
+    '// da die Anzahl dynamisch ist (nicht Teil von CARD_META/SECTION_META).\n' +
+    'function getCustomQA(mKey){\n' +
+    '  const b = manager.currentBucket();\n' +
+    '  if(!b.customQA) b.customQA = {};\n' +
+    '  if(!b.customQA[mKey]) b.customQA[mKey] = [];\n' +
+    '  return b.customQA[mKey];\n' +
+    '}\n' +
+    'function renderCustomQList(mKey){\n' +
+    '  const list = getCustomQA(mKey);\n' +
+    '  const el = document.getElementById("customQList_"+mKey);\n' +
+    '  if(!el) return;\n' +
+    '  el.innerHTML = list.map(function(item, i){\n' +
+    '    return \'<div class="customQRow"><input type="text" class="customQInput" data-mkey="\'+mKey+\'" data-idx="\'+i+\'" placeholder="Eigene Frage eintragen …" value="\'+MotorEngine.escapeHtml(item.q||"")+\'"><span class="customQRemove" data-mkey="\'+mKey+\'" data-idx="\'+i+\'" title="Entfernen">✕</span></div>\';\n' +
+    '  }).join("");\n' +
+    '  el.querySelectorAll(".customQInput").forEach(function(inp){\n' +
+    '    inp.addEventListener("input", function(){ updateCustomQuestion(inp.dataset.mkey, Number(inp.dataset.idx), inp.value); });\n' +
+    '  });\n' +
+    '  el.querySelectorAll(".customQRemove").forEach(function(btn){\n' +
+    '    btn.addEventListener("click", function(){ removeCustomQuestion(btn.dataset.mkey, Number(btn.dataset.idx)); });\n' +
+    '  });\n' +
+    '}\n' +
+    'function addCustomQuestion(mKey){\n' +
+    '  getCustomQA(mKey).push({ q: "", a: "" });\n' +
+    '  store.save();\n' +
+    '  renderCustomQList(mKey);\n' +
+    '}\n' +
+    'function updateCustomQuestion(mKey, i, val){\n' +
+    '  const list = getCustomQA(mKey);\n' +
+    '  if(list[i]){ list[i].q = val; store.save(); }\n' +
+    '}\n' +
+    'function removeCustomQuestion(mKey, i){\n' +
+    '  getCustomQA(mKey).splice(i, 1);\n' +
+    '  store.save();\n' +
+    '  renderCustomQList(mKey);\n' +
+    '}\n' +
+    'function renderCustomAnswers(mKey){\n' +
+    '  const list = getCustomQA(mKey);\n' +
+    '  const el = document.getElementById("customAList_"+mKey);\n' +
+    '  if(!el) return;\n' +
+    '  if(!list.length){ el.innerHTML = ""; return; }\n' +
+    '  el.innerHTML = \'<h2>DEINE EIGENEN FRAGEN — UND DIE ANTWORTEN.</h2><p class="lead">Das sind die Fragen, die du auf der Vorbereitungs-Seite selbst ergänzt hast.</p><div class="weeklyCheckGrid">\' +\n' +
+    '    list.map(function(item, i){\n' +
+    '      const q = (item.q||"").trim() ? item.q : "(Frage "+(i+1)+" ohne Text)";\n' +
+    '      return \'<div class="weeklyCheckCard"><label>EIGENE FRAGE \'+(i+1)+\'</label><span style="display:block;font-weight:400;font-size:13px;color:var(--ci);margin:-4px 0 8px">\'+MotorEngine.escapeHtml(q)+\'</span><textarea class="customAInput" data-mkey="\'+mKey+\'" data-idx="\'+i+\'" placeholder="Antwort notieren …">\'+MotorEngine.escapeHtml(item.a||"")+\'</textarea></div>\';\n' +
+    '    }).join("") + "</div>";\n' +
+    '  el.querySelectorAll(".customAInput").forEach(function(ta){\n' +
+    '    ta.addEventListener("input", function(){ updateCustomAnswer(ta.dataset.mkey, Number(ta.dataset.idx), ta.value); });\n' +
+    '  });\n' +
+    '}\n' +
+    'function updateCustomAnswer(mKey, i, val){\n' +
+    '  const list = getCustomQA(mKey);\n' +
+    '  if(list[i]){ list[i].a = val; store.save(); }\n' +
+    '}\n' +
+    'CUSTOM_Q_MAP.forEach(function(m){\n' +
+    '  nav.onEnter(m.qSlide, function(){ renderCustomQList(m.key); });\n' +
+    '  nav.onEnter(m.aSlide, function(){ renderCustomAnswers(m.key); });\n' +
+    '});\n' +
+    '\n' +
     'nav.onEnter(' + TEAMBERICHT_SLIDE + ', function(){\n' +
     '  MotorEngine.renderTeamReport({\n' +
     '    manager: manager,\n' +
@@ -627,15 +697,25 @@ const initScript = function (data) {
     '      .map(function(e){ return \'<div class="summaryField"><label>\'+e.label+\'</label><p>\'+MotorEngine.escapeHtml(bucket.fields[e.id])+\'</p></div>\'; })\n' +
     '      .join("");\n' +
     '  }\n' +
+    '  function customQAHtml(mKey){\n' +
+    '    const list = (bucket.customQA && bucket.customQA[mKey]) || [];\n' +
+    '    return list.filter(function(item){ return (item.q||"").trim() || (item.a||"").trim(); })\n' +
+    '      .map(function(item, i){\n' +
+    '        const q = (item.q||"").trim() ? item.q : "(Frage "+(i+1)+" ohne Text)";\n' +
+    '        return \'<div class="summaryField"><label>\'+MotorEngine.escapeHtml(q)+\'</label><p>\'+MotorEngine.escapeHtml(item.a||"")+\'</p></div>\';\n' +
+    '      }).join("");\n' +
+    '  }\n' +
     '  const milestoneHtml = SECTION_META.milestones.map(function(s){\n' +
     '    const prepHtml = entriesHtml(s.prepEntries);\n' +
     '    const antwortHtml = entriesHtml(s.antwortEntries || []);\n' +
+    '    const customHtml = customQAHtml(s.customQKey);\n' +
     '    const vereinbarungHtml = entriesHtml(s.vereinbarungEntries);\n' +
-    '    if(!prepHtml && !antwortHtml && !vereinbarungHtml) return "";\n' +
+    '    if(!prepHtml && !antwortHtml && !customHtml && !vereinbarungHtml) return "";\n' +
     '    step++;\n' +
     '    return \'<div class="summaryCard"><div class="summaryCardHead"><span class="summaryCardNum">\'+step+\'</span><h3>\'+MotorEngine.escapeHtml(s.title)+\'</h3></div>\' +\n' +
     '      (prepHtml ? \'<div class="summarySection"><b>TEILNEHMER</b>\'+prepHtml+\'</div>\' : "") +\n' +
     '      (antwortHtml ? \'<div class="summarySection"><b>FRAGEN &amp; ANTWORTEN</b>\'+antwortHtml+\'</div>\' : "") +\n' +
+    '      (customHtml ? \'<div class="summarySection"><b>EIGENE FRAGEN &amp; ANTWORTEN</b>\'+customHtml+\'</div>\' : "") +\n' +
     '      (vereinbarungHtml ? \'<div class="summarySection"><b>VEREINBARUNG</b>\'+vereinbarungHtml+\'</div>\' : "") +\n' +
     '      "</div>";\n' +
     '  }).join("");\n' +
@@ -690,6 +770,12 @@ module.exports = {
     // Plain-language "what to do on this slide" block, shown before every headline —
     // big, green, centered, so it can't be missed.
     '#app .stepHint { display:block; background:var(--num); color:#ffffff; padding:24px 30px; margin:18px 0 0; font-size:19px; font-weight:700; line-height:1.55; text-align:center; max-width:820px; margin-left:auto; margin-right:auto; box-shadow:0 4px 14px rgba(85,205,178,.5); text-shadow:0 1px 2px rgba(0,0,0,.15); }',
-    '#app .stepHint b { display:block; font-size:13px; letter-spacing:2px; text-transform:uppercase; font-weight:800; margin-bottom:10px; color:#ffffff; opacity:.95; }'
+    '#app .stepHint b { display:block; font-size:13px; letter-spacing:2px; text-transform:uppercase; font-weight:800; margin-bottom:10px; color:#ffffff; opacity:.95; }',
+    // Dynamic "eigene Fragen" list (Vorbereitungs-Seite): add/remove any number of own questions.
+    '#app .customQBox { margin-top:16px; padding-top:16px; border-top:1px solid var(--line); }',
+    '#app .customQList { margin:4px 0 12px; }',
+    '#app .customQRow { display:flex; gap:8px; align-items:center; margin-bottom:8px; }',
+    '#app .customQInput { flex:1; padding:10px 12px; border:1px solid var(--line); background:var(--surface); color:var(--ink); font:inherit; }',
+    '#app .customQRemove { cursor:pointer; color:var(--red); font-weight:800; font-size:16px; padding:0 6px; }'
   ].join('\n')
 };
