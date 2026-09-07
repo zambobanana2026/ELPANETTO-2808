@@ -67,6 +67,11 @@ export interface OpenItem {
   // "manuell" today; a later Kontoauszug-Verknüpfung can add e.g. "kontoauszug-match"
   // without touching existing entries or the code that reads this field.
   quelle: "manuell" | "import";
+  // Once the user accepts a suggested Verwendungszweck from the Kontoauszug
+  // (see findMatchingTransaction), this item keeps re-syncing automatically
+  // on every future statement instead of asking again. A manual edit turns
+  // it back off.
+  autoSyncVerwendungszweck?: boolean;
 }
 
 export interface OpenItemsSummary {

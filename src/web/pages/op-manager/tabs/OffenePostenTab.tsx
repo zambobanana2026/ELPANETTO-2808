@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { OpenItemForm } from "../components/OpenItemForm";
 import { OpenItemsSummary } from "../components/OpenItemsSummary";
 import { OpenItemsTable } from "../components/OpenItemsTable";
@@ -65,6 +65,33 @@ export function OffenePostenTab() {
     persist({ items: next });
   };
 
+  // A manual edit always wins over the remembered Kontoauszug-sync — it
+  // turns auto-sync off for this item so the correction sticks.
+  const handleVerwendungszweckEdit = (id: string, value: string) => {
+    const next = items.map((item) =>
+      item.id === id ? { ...item, verwendungszweck: value, autoSyncVerwendungszweck: false } : item
+    );
+    setItems(next);
+    persist({ items: next });
+  };
+
+  // Accepting a suggestion updates the text AND remembers the choice for
+  // this Gläubiger, so every future Kontoauszug import re-syncs it
+  // automatically without asking again.
+  const handleAcceptMatch = (id: string, verwendungszweck: string) => {
+    const next = items.map((item) =>
+      item.id === id ? { ...item, verwendungszweck, autoSyncVerwendungszweck: true } : item
+    );
+    setItems(next);
+    persist({ items: next });
+  };
+
+  const handleSetAutoSync = (id: string, enabled: boolean) => {
+    const next = items.map((item) => (item.id === id ? { ...item, autoSyncVerwendungszweck: enabled } : item));
+    setItems(next);
+    persist({ items: next });
+  };
+
   const sortedItems = useMemo(() => sortOpenItems(items), [items]);
   const summary = useMemo(() => computeOpenItemsSummary(items), [items]);
   const matchesById = useMemo(() => {
@@ -75,6 +102,25 @@ export function OffenePostenTab() {
     }
     return map;
   }, [items, kontoauszugTransactions]);
+
+  // Items the user has explicitly confirmed ("übernehmen") stay in sync
+  // with the Kontoauszug automatically from then on — every newly imported
+  // statement is compared and, if the matched Verwendungszweck changed,
+  // applied without requiring another click.
+  useEffect(() => {
+    const next = items.map((item) => {
+      if (!item.autoSyncVerwendungszweck) return item;
+      const match = matchesById[item.id];
+      if (!match?.verwendungszweck) return item;
+      if (match.verwendungszweck.trim().toLowerCase() === (item.verwendungszweck || "").trim().toLowerCase()) return item;
+      return { ...item, verwendungszweck: match.verwendungszweck };
+    });
+    if (next.some((item, i) => item !== items[i])) {
+      setItems(next);
+      persist({ items: next });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items, matchesById]);
 
   return (
     <div className="flex flex-col gap-6 p-4 sm:p-6">
@@ -102,6 +148,9 @@ export function OffenePostenTab() {
         items={sortedItems}
         matchesById={matchesById}
         onUpdateField={handleUpdateField}
+        onVerwendungszweckEdit={handleVerwendungszweckEdit}
+        onAcceptMatch={handleAcceptMatch}
+        onSetAutoSync={handleSetAutoSync}
         onMarkPaidOff={handleMarkPaidOff}
         onDelete={handleDelete}
       />

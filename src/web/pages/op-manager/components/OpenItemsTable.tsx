@@ -76,11 +76,23 @@ interface OpenItemsTableProps {
   items: OpenItem[];
   matchesById?: Record<string, Transaction>;
   onUpdateField: <K extends keyof OpenItem>(id: string, field: K, value: OpenItem[K]) => void;
+  onVerwendungszweckEdit: (id: string, value: string) => void;
+  onAcceptMatch: (id: string, verwendungszweck: string) => void;
+  onSetAutoSync: (id: string, enabled: boolean) => void;
   onMarkPaidOff: (id: string) => void;
   onDelete: (id: string) => void;
 }
 
-export function OpenItemsTable({ items, matchesById, onUpdateField, onMarkPaidOff, onDelete }: OpenItemsTableProps) {
+export function OpenItemsTable({
+  items,
+  matchesById,
+  onUpdateField,
+  onVerwendungszweckEdit,
+  onAcceptMatch,
+  onSetAutoSync,
+  onMarkPaidOff,
+  onDelete,
+}: OpenItemsTableProps) {
   if (items.length === 0) {
     return (
       <div className="rounded-xl border border-dashed border-stone-300 bg-white py-16 text-center text-stone-400">
@@ -113,9 +125,10 @@ export function OpenItemsTable({ items, matchesById, onUpdateField, onMarkPaidOf
             const status = deriveItemStatus(item);
             const restbetrag = computeRestbetrag(item);
             const match = matchesById?.[item.id];
-            const suggestVerwendungszweck =
+            const isSyncedWithMatch =
               match?.verwendungszweck &&
-              match.verwendungszweck.trim().toLowerCase() !== (item.verwendungszweck || "").trim().toLowerCase();
+              match.verwendungszweck.trim().toLowerCase() === (item.verwendungszweck || "").trim().toLowerCase();
+            const suggestVerwendungszweck = Boolean(match?.verwendungszweck) && !item.autoSyncVerwendungszweck && !isSyncedWithMatch;
             return (
               <tr key={item.id} className="border-b border-stone-100 last:border-0">
                 <td className="px-3 py-2.5 text-center">
@@ -143,15 +156,29 @@ export function OpenItemsTable({ items, matchesById, onUpdateField, onMarkPaidOf
                 </td>
                 <td className="px-3 py-2.5">
                   <div className="flex flex-col gap-1">
-                    <EditableTextCell value={item.verwendungszweck} onCommit={(v) => onUpdateField(item.id, "verwendungszweck", v)} width="w-40" />
+                    <EditableTextCell
+                      value={item.verwendungszweck}
+                      onCommit={(v) => onVerwendungszweckEdit(item.id, v)}
+                      width="w-40"
+                    />
                     {suggestVerwendungszweck && (
                       <button
                         type="button"
-                        title={`Aus Kontoauszug übernehmen: "${match!.verwendungszweck}"`}
-                        onClick={() => onUpdateField(item.id, "verwendungszweck", match!.verwendungszweck)}
+                        title={`Aus Kontoauszug übernehmen und für künftige Monate merken: "${match!.verwendungszweck}"`}
+                        onClick={() => onAcceptMatch(item.id, match!.verwendungszweck)}
                         className="w-40 truncate rounded border border-indigo-200 bg-indigo-50 px-1.5 py-1 text-left text-xs font-medium text-indigo-700 hover:bg-indigo-100"
                       >
                         🔗 „{match!.verwendungszweck}“ übernehmen
+                      </button>
+                    )}
+                    {item.autoSyncVerwendungszweck && (
+                      <button
+                        type="button"
+                        title="Automatischen Abgleich mit dem Kontoauszug für diesen Posten deaktivieren"
+                        onClick={() => onSetAutoSync(item.id, false)}
+                        className="w-40 truncate rounded border border-green-200 bg-green-50 px-1.5 py-1 text-left text-xs font-medium text-green-700 hover:bg-green-100"
+                      >
+                        🔁 automatisch synchron ✕
                       </button>
                     )}
                   </div>
