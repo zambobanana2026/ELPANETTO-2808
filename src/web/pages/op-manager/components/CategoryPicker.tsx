@@ -16,11 +16,26 @@ export function CategoryPicker({
   onDeleteCategory,
 }: CategoryPickerProps) {
   const [newCategory, setNewCategory] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
-  const handleAdd = (e: React.FormEvent) => {
-    e.preventDefault();
+  // Not a <form> on purpose: this component is always used nested inside
+  // CashExpenseForm's own <form>, and a <form> inside a <form> is invalid
+  // HTML — browsers handle it inconsistently, and on some viewers the
+  // "+ Hinzufügen" click ends up triggering a real native form submission
+  // (a full page reload) instead of ever reaching this handler. A plain
+  // button + manual Enter-key handling avoids relying on any form
+  // submission at all.
+  const handleAdd = () => {
     const trimmed = newCategory.trim();
-    if (trimmed.length === 0 || categories.includes(trimmed)) return;
+    if (trimmed.length === 0) {
+      setError("Bitte einen Namen eingeben.");
+      return;
+    }
+    if (categories.includes(trimmed)) {
+      setError(`"${trimmed}" gibt es schon.`);
+      return;
+    }
+    setError(null);
     onAddCategory(trimmed);
     setNewCategory("");
   };
@@ -54,21 +69,32 @@ export function CategoryPicker({
           </span>
         ))}
       </div>
-      <form onSubmit={handleAdd} className="flex gap-2">
+      <div className="flex gap-2">
         <input
           type="text"
           placeholder="Neue Kategorie…"
           value={newCategory}
-          onChange={(e) => setNewCategory(e.target.value)}
+          onChange={(e) => {
+            setNewCategory(e.target.value);
+            setError(null);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              handleAdd();
+            }
+          }}
           className="rounded-lg border border-stone-300 px-2.5 py-1.5 text-sm focus:border-indigo-500 focus:outline-none"
         />
         <button
-          type="submit"
+          type="button"
+          onClick={handleAdd}
           className="rounded-lg border border-stone-300 px-3 py-1.5 text-sm font-medium text-stone-600 hover:border-indigo-400 hover:text-indigo-600"
         >
           + Hinzufügen
         </button>
-      </form>
+      </div>
+      {error && <p className="text-xs font-medium text-red-600">{error}</p>}
     </div>
   );
 }
