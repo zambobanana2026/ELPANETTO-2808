@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { MonthlyPaymentsView } from "../components/MonthlyPaymentsView";
 import { OpenItemForm } from "../components/OpenItemForm";
 import { OpenItemsSummary } from "../components/OpenItemsSummary";
 import { OpenItemsTable } from "../components/OpenItemsTable";
@@ -12,6 +13,7 @@ export function OffenePostenTab() {
   const [initial] = useState(() => loadOpenItemsState());
   const [items, setItems] = useState<OpenItem[]>(initial.items);
   const [soundEnabled, setSoundEnabled] = useState(initial.soundEnabled);
+  const [view, setView] = useState<"liste" | "monate">("liste");
   // Read-only reference to the Kontoauszug transactions, used only to
   // suggest a matching Verwendungszweck below — never written back to.
   const [kontoauszugTransactions] = useState<Transaction[]>(() => loadKontoauszugState().transactions);
@@ -102,12 +104,17 @@ export function OffenePostenTab() {
     persist({ items: next });
   };
 
-  // Accepting a suggestion updates the amount AND remembers the choice for
-  // this Gläubiger, so every future Kontoauszug import re-syncs it
-  // (summing all matching payments) automatically without asking again.
+  // Accepting a suggestion remembers whatever was already entered as
+  // bereitsBezahlt (e.g. amounts paid before Kontoauszug tracking started)
+  // as a fixed historical baseline, then adds the matched Kontoauszug sum
+  // on top — never replacing it. From then on every future Kontoauszug
+  // import keeps re-syncing (baseline + freshly summed payments)
+  // automatically without asking again or losing the baseline.
   const handleAcceptPaymentMatch = (id: string, amount: number) => {
     const next = items.map((item) =>
-      item.id === id ? { ...item, bereitsBezahlt: amount, autoSyncBereitsBezahlt: true } : item
+      item.id === id
+        ? { ...item, historischBezahlt: item.bereitsBezahlt, bereitsBezahlt: item.bereitsBezahlt + amount, autoSyncBereitsBezahlt: true }
+        : item
     );
     setItems(next);
     persist({ items: next });
@@ -155,8 +162,9 @@ export function OffenePostenTab() {
       }
       if (item.autoSyncBereitsBezahlt) {
         const paymentSum = paymentSumsById[item.id];
-        if (paymentSum != null && Math.abs(paymentSum - updated.bereitsBezahlt) >= 0.005) {
-          updated = { ...updated, bereitsBezahlt: paymentSum };
+        const target = (updated.historischBezahlt || 0) + (paymentSum || 0);
+        if (paymentSum != null && Math.abs(target - updated.bereitsBezahlt) >= 0.005) {
+          updated = { ...updated, bereitsBezahlt: target };
         }
       }
       return updated;
@@ -190,20 +198,41 @@ export function OffenePostenTab() {
 
       <OpenItemsSummary summary={summary} />
 
-      <OpenItemsTable
-        items={sortedItems}
-        matchesById={matchesById}
-        paymentSumsById={paymentSumsById}
-        onUpdateField={handleUpdateField}
-        onVerwendungszweckEdit={handleVerwendungszweckEdit}
-        onAcceptMatch={handleAcceptMatch}
-        onSetAutoSync={handleSetAutoSync}
-        onBereitsBezahltEdit={handleBereitsBezahltEdit}
-        onAcceptPaymentMatch={handleAcceptPaymentMatch}
-        onSetPaymentAutoSync={handleSetPaymentAutoSync}
-        onMarkPaidOff={handleMarkPaidOff}
-        onDelete={handleDelete}
-      />
+      <div className="flex gap-2 border-b border-stone-200">
+        <button
+          type="button"
+          onClick={() => setView("liste")}
+          className={`px-3 py-2 text-sm font-medium ${view === "liste" ? "border-b-2 border-indigo-600 text-indigo-700" : "text-stone-400 hover:text-stone-600"}`}
+        >
+          Liste
+        </button>
+        <button
+          type="button"
+          onClick={() => setView("monate")}
+          className={`px-3 py-2 text-sm font-medium ${view === "monate" ? "border-b-2 border-indigo-600 text-indigo-700" : "text-stone-400 hover:text-stone-600"}`}
+        >
+          📅 Nach Monat
+        </button>
+      </div>
+
+      {view === "liste" ? (
+        <OpenItemsTable
+          items={sortedItems}
+          matchesById={matchesById}
+          paymentSumsById={paymentSumsById}
+          onUpdateField={handleUpdateField}
+          onVerwendungszweckEdit={handleVerwendungszweckEdit}
+          onAcceptMatch={handleAcceptMatch}
+          onSetAutoSync={handleSetAutoSync}
+          onBereitsBezahltEdit={handleBereitsBezahltEdit}
+          onAcceptPaymentMatch={handleAcceptPaymentMatch}
+          onSetPaymentAutoSync={handleSetPaymentAutoSync}
+          onMarkPaidOff={handleMarkPaidOff}
+          onDelete={handleDelete}
+        />
+      ) : (
+        <MonthlyPaymentsView items={items} transactions={kontoauszugTransactions} />
+      )}
     </div>
   );
 }

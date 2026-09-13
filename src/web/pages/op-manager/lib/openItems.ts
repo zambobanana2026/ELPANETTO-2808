@@ -105,19 +105,41 @@ export function findMatchingTransaction(item: OpenItem, transactions: Transactio
   return best;
 }
 
-// Sums every matching outgoing payment (negative amount) to suggest as
-// "Bereits bezahlt" — excludes Geldtransit (internal money movement, not a
-// real payment) and Bar-Abhebung-marked rows (cash withdrawals, not a
-// payment to this specific creditor). Several matches (e.g. monthly
-// installments already visible in the Kontoauszug) are added together.
+// Every Kontoauszug row that counts as an actual payment toward this item —
+// excludes Geldtransit (internal money movement, not a real payment) and
+// Bar-Abhebung-marked rows (cash withdrawals, not a payment to this
+// specific creditor). Exposed so the monthly payments view can show which
+// of these happened in which month.
+export function getMatchingPaymentTransactions(item: OpenItem, transactions: Transaction[]): Transaction[] {
+  return findAllMatchingTransactions(item, transactions).filter(
+    (tx) => tx.betrag < 0 && tx.verwendungszweck !== GELDTRANSIT_LABEL && !tx.istBarAbhebung
+  );
+}
+
+// Sums every matching payment to suggest as "Bereits bezahlt". Several
+// matches (e.g. monthly installments already visible in the Kontoauszug)
+// are added together.
 export function computeMatchingPaymentSum(item: OpenItem, transactions: Transaction[]): number {
-  const matches = findAllMatchingTransactions(item, transactions);
-  let sum = 0;
-  for (const tx of matches) {
-    if (tx.betrag >= 0) continue;
-    if (tx.verwendungszweck === GELDTRANSIT_LABEL) continue;
-    if (tx.istBarAbhebung) continue;
-    sum += Math.abs(tx.betrag);
-  }
+  const sum = getMatchingPaymentTransactions(item, transactions).reduce((acc, tx) => acc + Math.abs(tx.betrag), 0);
   return Math.round(sum * 100) / 100;
+}
+
+export interface MonthlyPayment {
+  monat: string; // "YYYY-MM"
+  glaeubiger: string;
+  betrag: number;
+  datum: string;
+}
+
+// Every Kontoauszug-matched payment across all open items, for a month-by-
+// month view of what got paid when (answers "was habe ich in einem Monat
+// bezahlt?").
+export function computeMonthlyPayments(items: OpenItem[], transactions: Transaction[]): MonthlyPayment[] {
+  const result: MonthlyPayment[] = [];
+  for (const item of items) {
+    for (const tx of getMatchingPaymentTransactions(item, transactions)) {
+      result.push({ monat: tx.datum.slice(0, 7), glaeubiger: item.glaeubiger, betrag: Math.abs(tx.betrag), datum: tx.datum });
+    }
+  }
+  return result;
 }

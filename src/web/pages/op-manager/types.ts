@@ -72,10 +72,17 @@ export interface OpenItem {
   // on every future statement instead of asking again. A manual edit turns
   // it back off.
   autoSyncVerwendungszweck?: boolean;
-  // Same idea for bereitsBezahlt: once accepted, it's kept equal to the sum
-  // of all matching Kontoauszug payments (see computeMatchingPaymentSum) on
-  // every future statement. A manual edit turns it back off.
+  // Same idea for bereitsBezahlt: once accepted, it's kept equal to
+  // historischBezahlt + the sum of all matching Kontoauszug payments (see
+  // computeMatchingPaymentSum) on every future statement. A manual edit
+  // turns it back off.
   autoSyncBereitsBezahlt?: boolean;
+  // A one-time manual baseline for payments made before the Kontoauszug
+  // tracking started (or before this item's auto-sync was first accepted).
+  // Captured automatically when the "übernehmen" suggestion is accepted, so
+  // it never gets overwritten by newly detected Kontoauszug payments —
+  // those only ever add on top via autoSyncBereitsBezahlt.
+  historischBezahlt?: number;
 }
 
 export interface OpenItemsSummary {

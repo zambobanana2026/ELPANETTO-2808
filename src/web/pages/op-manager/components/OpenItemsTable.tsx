@@ -203,11 +203,11 @@ export function OpenItemsTable({
                     {suggestPayment && (
                       <button
                         type="button"
-                        title="Aus Kontoauszug übernehmen und für künftige Monate merken"
+                        title={`+${formatEuro(paymentSum!)} aus Kontoauszug zum bisherigen Betrag addieren und für künftige Monate merken (bisheriger Betrag bleibt als Basis erhalten)`}
                         onClick={() => onAcceptPaymentMatch(item.id, paymentSum!)}
                         className="rounded border border-indigo-200 bg-indigo-50 px-1.5 py-1 text-right text-xs font-medium text-indigo-700 hover:bg-indigo-100"
                       >
-                        🔗 {formatEuro(paymentSum!)} übernehmen
+                        🔗 +{formatEuro(paymentSum!)} übernehmen
                       </button>
                     )}
                     {item.autoSyncBereitsBezahlt && (
