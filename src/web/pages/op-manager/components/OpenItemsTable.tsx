@@ -75,10 +75,14 @@ function EditableAmountCell({ value, onCommit, width = "w-20" }: { value: number
 interface OpenItemsTableProps {
   items: OpenItem[];
   matchesById?: Record<string, Transaction>;
+  paymentSumsById?: Record<string, number>;
   onUpdateField: <K extends keyof OpenItem>(id: string, field: K, value: OpenItem[K]) => void;
   onVerwendungszweckEdit: (id: string, value: string) => void;
   onAcceptMatch: (id: string, verwendungszweck: string) => void;
   onSetAutoSync: (id: string, enabled: boolean) => void;
+  onBereitsBezahltEdit: (id: string, value: number) => void;
+  onAcceptPaymentMatch: (id: string, amount: number) => void;
+  onSetPaymentAutoSync: (id: string, enabled: boolean) => void;
   onMarkPaidOff: (id: string) => void;
   onDelete: (id: string) => void;
 }
@@ -86,10 +90,14 @@ interface OpenItemsTableProps {
 export function OpenItemsTable({
   items,
   matchesById,
+  paymentSumsById,
   onUpdateField,
   onVerwendungszweckEdit,
   onAcceptMatch,
   onSetAutoSync,
+  onBereitsBezahltEdit,
+  onAcceptPaymentMatch,
+  onSetPaymentAutoSync,
   onMarkPaidOff,
   onDelete,
 }: OpenItemsTableProps) {
@@ -129,6 +137,9 @@ export function OpenItemsTable({
               match?.verwendungszweck &&
               match.verwendungszweck.trim().toLowerCase() === (item.verwendungszweck || "").trim().toLowerCase();
             const suggestVerwendungszweck = Boolean(match?.verwendungszweck) && !item.autoSyncVerwendungszweck && !isSyncedWithMatch;
+            const paymentSum = paymentSumsById?.[item.id];
+            const isPaymentSynced = paymentSum != null && Math.abs(paymentSum - item.bereitsBezahlt) < 0.005;
+            const suggestPayment = paymentSum != null && paymentSum > 0 && !item.autoSyncBereitsBezahlt && !isPaymentSynced;
             return (
               <tr key={item.id} className="border-b border-stone-100 last:border-0">
                 <td className="px-3 py-2.5 text-center">
@@ -187,7 +198,29 @@ export function OpenItemsTable({
                   <EditableAmountCell value={item.gesamtbetrag} onCommit={(v) => onUpdateField(item.id, "gesamtbetrag", v)} />
                 </td>
                 <td className="px-3 py-2.5 text-right">
-                  <EditableAmountCell value={item.bereitsBezahlt} onCommit={(v) => onUpdateField(item.id, "bereitsBezahlt", v)} />
+                  <div className="flex flex-col items-end gap-1">
+                    <EditableAmountCell value={item.bereitsBezahlt} onCommit={(v) => onBereitsBezahltEdit(item.id, v)} />
+                    {suggestPayment && (
+                      <button
+                        type="button"
+                        title="Aus Kontoauszug übernehmen und für künftige Monate merken"
+                        onClick={() => onAcceptPaymentMatch(item.id, paymentSum!)}
+                        className="rounded border border-indigo-200 bg-indigo-50 px-1.5 py-1 text-right text-xs font-medium text-indigo-700 hover:bg-indigo-100"
+                      >
+                        🔗 {formatEuro(paymentSum!)} übernehmen
+                      </button>
+                    )}
+                    {item.autoSyncBereitsBezahlt && (
+                      <button
+                        type="button"
+                        title="Automatischen Abgleich mit dem Kontoauszug für diesen Posten deaktivieren"
+                        onClick={() => onSetPaymentAutoSync(item.id, false)}
+                        className="rounded border border-green-200 bg-green-50 px-1.5 py-1 text-right text-xs font-medium text-green-700 hover:bg-green-100"
+                      >
+                        🔁 automatisch synchron ✕
+                      </button>
+                    )}
+                  </div>
                 </td>
                 <td className={`px-3 py-2.5 text-right font-medium tabular-nums ${restbetrag > 0 ? "text-stone-800" : "text-green-600"}`}>
                   {formatEuro(restbetrag)}

@@ -72,6 +72,10 @@ export interface OpenItem {
   // on every future statement instead of asking again. A manual edit turns
   // it back off.
   autoSyncVerwendungszweck?: boolean;
+  // Same idea for bereitsBezahlt: once accepted, it's kept equal to the sum
+  // of all matching Kontoauszug payments (see computeMatchingPaymentSum) on
+  // every future statement. A manual edit turns it back off.
+  autoSyncBereitsBezahlt?: boolean;
 }
 
 export interface OpenItemsSummary {

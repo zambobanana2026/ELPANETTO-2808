@@ -1,3 +1,4 @@
+import { GELDTRANSIT_LABEL } from "./constants";
 import type { OpenItem, OpenItemStatus, OpenItemsSummary, Transaction } from "../types";
 
 // Remaining balance on a debt/installment item. Never negative — paying
@@ -78,21 +79,45 @@ function glaeubigerNameCandidates(glaeubiger: string): string[] {
     .filter((s) => s.length >= 3);
 }
 
-// Finds the Kontoauszug transaction that best explains an Offene-Posten
-// item, matching on Verwendungszweck text or Gläubiger name (either
-// direction, substring). Picks the most recent match when several fit.
-export function findMatchingTransaction(item: OpenItem, transactions: Transaction[]): Transaction | null {
+// Every Kontoauszug transaction that plausibly belongs to this Offene-
+// Posten item, matching on Verwendungszweck text or Gläubiger name
+// (either direction, substring).
+function findAllMatchingTransactions(item: OpenItem, transactions: Transaction[]): Transaction[] {
   const glCandidates = glaeubigerNameCandidates(item.glaeubiger);
   const itemVz = normalizeForMatch(item.verwendungszweck);
-  let best: Transaction | null = null;
-  for (const tx of transactions) {
+  return transactions.filter((tx) => {
     const txGl = normalizeForMatch(tx.glaeubiger);
     const txVz = normalizeForMatch(tx.verwendungszweck);
     const glMatch = glCandidates.some((c) => (txGl && txGl.includes(c)) || (txVz && txVz.includes(c)));
     const vzMatch = itemVz.length >= 3 && Boolean(txVz) && (txVz.includes(itemVz) || itemVz.includes(txVz));
-    if (glMatch || vzMatch) {
-      if (!best || tx.datum > best.datum) best = tx;
-    }
+    return glMatch || vzMatch;
+  });
+}
+
+// Finds the Kontoauszug transaction that best explains an Offene-Posten
+// item's Verwendungszweck. Picks the most recent match when several fit.
+export function findMatchingTransaction(item: OpenItem, transactions: Transaction[]): Transaction | null {
+  const matches = findAllMatchingTransactions(item, transactions);
+  let best: Transaction | null = null;
+  for (const tx of matches) {
+    if (!best || tx.datum > best.datum) best = tx;
   }
   return best;
+}
+
+// Sums every matching outgoing payment (negative amount) to suggest as
+// "Bereits bezahlt" — excludes Geldtransit (internal money movement, not a
+// real payment) and Bar-Abhebung-marked rows (cash withdrawals, not a
+// payment to this specific creditor). Several matches (e.g. monthly
+// installments already visible in the Kontoauszug) are added together.
+export function computeMatchingPaymentSum(item: OpenItem, transactions: Transaction[]): number {
+  const matches = findAllMatchingTransactions(item, transactions);
+  let sum = 0;
+  for (const tx of matches) {
+    if (tx.betrag >= 0) continue;
+    if (tx.verwendungszweck === GELDTRANSIT_LABEL) continue;
+    if (tx.istBarAbhebung) continue;
+    sum += Math.abs(tx.betrag);
+  }
+  return Math.round(sum * 100) / 100;
 }
